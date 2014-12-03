@@ -8,8 +8,8 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface Document : NSDocument
+@interface Document : NSDocument <NSTextViewDelegate>
 
+@property (strong, nonatomic) NSMutableString *documentContent;
 
 @end
-
