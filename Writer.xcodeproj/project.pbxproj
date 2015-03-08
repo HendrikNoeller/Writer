@@ -125,7 +125,6 @@
 		B138B57519E1C973000489C4 /* Writer */ = {
 			isa = PBXGroup;
 			children = (
-				B138B62219E1D891000489C4 /* New Group */,
 				B138B57A19E1C973000489C4 /* Document.h */,
 				B138B57B19E1C973000489C4 /* Document.m */,
 				B1D0B84919E31B86005252E4 /* PrintView.h */,
@@ -165,13 +164,6 @@
 				B138B58E19E1C974000489C4 /* Info.plist */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		B138B62219E1D891000489C4 /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "New Group";
 			sourceTree = "<group>";
 		};
 		B138B62419E1D8A4000489C4 /* Frameworks */ = {
@@ -468,7 +460,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Writer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "-licucore";
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -485,7 +477,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = Writer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "-licucore";
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
