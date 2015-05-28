@@ -12,7 +12,7 @@
 				<string>fountain</string>
 			</array>
 			<key>CFBundleTypeIconFile</key>
-			<string>Document Icon</string>
+			<string>DocumentIcon</string>
 			<key>CFBundleTypeName</key>
 			<string>Fountain script</string>
 			<key>CFBundleTypeOSTypes</key>

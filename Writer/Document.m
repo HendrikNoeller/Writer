@@ -240,9 +240,9 @@ static NSString *ommitClose= @"*/";
     if (cursorLocation.location  + cursorLocation.length <= [[self.textView string] length]) {
         //Checking if the selected text is allready formated in the specified way
         NSString *selectedString = [self.textView.string substringWithRange:cursorLocation];
-        if ([selectedString length] == 0) {
-            return;
-        }
+
+        NSUInteger addedCharacters = 0;
+        
         if ([selectedString length] >= [beginningSymbol length] + [endSymbol length] && [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[selectedString substringFromIndex:[selectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
             //The Text is formated, remove!!!
             [self.textView replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], [selectedString length] - [beginningSymbol length] - [endSymbol length])]];
@@ -250,7 +250,7 @@ static NSString *ommitClose= @"*/";
         } else {
             //The Text isn't formated, but let's alter the cursor range and check again because there might be formatting right outside the selected area
             NSRange modifiedCursorLocation = cursorLocation;
-            if (modifiedCursorLocation.location >= [beginningSymbol length]) {
+            if (cursorLocation.location >= [beginningSymbol length] && (cursorLocation.location + cursorLocation.length) <= ([[self.textView string] length] - [endSymbol length])) {
                 if (modifiedCursorLocation.location + modifiedCursorLocation.length + [endSymbol length] - 1 <= [[self.textView string] length]) {
                     modifiedCursorLocation = NSMakeRange(modifiedCursorLocation.location - [beginningSymbol length], modifiedCursorLocation.length + [beginningSymbol length]  + [endSymbol length]);
                 }
@@ -266,9 +266,11 @@ static NSString *ommitClose= @"*/";
                 [self.textView replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0) withString:endSymbol];
                 [self.textView replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0) withString:beginningSymbol];
                 [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length + [beginningSymbol length] + [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
+                addedCharacters = [endSymbol length];
             }
         }
         [self textDidChange:nil];
+        self.textView.selectedRange = NSMakeRange(cursorLocation.location+cursorLocation.length+addedCharacters, 0);
     }
 }
 

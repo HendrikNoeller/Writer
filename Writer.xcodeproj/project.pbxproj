@@ -25,8 +25,8 @@
 		B138B66D19E1E8CA000489C4 /* ScriptCSS.css in Resources */ = {isa = PBXBuildFile; fileRef = B138B66019E1E8CA000489C4 /* ScriptCSS.css */; };
 		B138B66E19E1E8CA000489C4 /* License.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B138B66219E1E8CA000489C4 /* License.rtf */; };
 		B138B66F19E1E8CA000489C4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = B138B66419E1E8CA000489C4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		B165719319E47B5200220BE3 /* Document Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = B165719219E47B5200220BE3 /* Document Icon.png */; };
 		B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B62A3919E3402F009F6E23 /* ColorView.m */; };
+		B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */; };
 		B1D0B84B19E31B86005252E4 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D0B84A19E31B86005252E4 /* PrintView.m */; };
 /* End PBXBuildFile section */
 
@@ -75,9 +75,9 @@
 		B138B66219E1E8CA000489C4 /* License.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = License.rtf; sourceTree = "<group>"; };
 		B138B66319E1E8CA000489C4 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		B138B66419E1E8CA000489C4 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
-		B165719219E47B5200220BE3 /* Document Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Document Icon.png"; path = "../../Images/Document Icon.png"; sourceTree = "<group>"; };
 		B1B62A3819E3402F009F6E23 /* ColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorView.h; sourceTree = "<group>"; };
 		B1B62A3919E3402F009F6E23 /* ColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorView.m; sourceTree = "<group>"; };
+		B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DocumentIcon.icns; path = "../../Images/Document Icon/DocumentIcon.icns"; sourceTree = "<group>"; };
 		B1D0B84919E31B86005252E4 /* PrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintView.h; sourceTree = "<group>"; };
 		B1D0B84A19E31B86005252E4 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -134,7 +134,7 @@
 				B138B57D19E1C973000489C4 /* Document.xib */,
 				B138B58219E1C973000489C4 /* MainMenu.xib */,
 				B138B58019E1C973000489C4 /* Images.xcassets */,
-				B165719219E47B5200220BE3 /* Document Icon.png */,
+				B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */,
 				B138B57619E1C973000489C4 /* Supporting Files */,
 			);
 			path = Writer;
@@ -298,10 +298,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */,
 				B138B57F19E1C973000489C4 /* Document.xib in Resources */,
 				B138B66E19E1E8CA000489C4 /* License.rtf in Resources */,
 				B138B58119E1C973000489C4 /* Images.xcassets in Resources */,
-				B165719319E47B5200220BE3 /* Document Icon.png in Resources */,
 				B138B66D19E1E8CA000489C4 /* ScriptCSS.css in Resources */,
 				B138B58419E1C973000489C4 /* MainMenu.xib in Resources */,
 			);
