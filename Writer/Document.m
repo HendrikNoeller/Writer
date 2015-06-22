@@ -145,7 +145,7 @@
 
 #pragma mark - Formatting Buttons
 
-static NSString *lineBreak = @"\n===\n\n";
+static NSString *lineBreak = @"\n\n===\n\n";
 static NSString *boldSymbol = @"**";
 static NSString *italicSymbol = @"*";
 static NSString *underlinedSymbol = @"_";
@@ -156,7 +156,7 @@ static NSString *ommitClose= @"*/";
 - (NSString*)titlePage
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-    [dateFormatter setDateFormat:@"dd.mm.yyyy"];
+    [dateFormatter setDateFormat:@"dd.MM.yyyy"];
     return [NSString stringWithFormat:@"Title: \nCredit: \nAuthor: \nDraft date: %@\nContact: \n\n", [dateFormatter stringFromDate:[NSDate date]]];
 }
 

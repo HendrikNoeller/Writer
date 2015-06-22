@@ -176,6 +176,7 @@
     if (self.finishedWebViews == [self.subviews count]) {
         [self display];
         NSPrintOperation* printOperation = [NSPrintOperation printOperationWithView:self];
+        printOperation.jobTitle = [[[self.document.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject];
         [printOperation runOperationModalForWindow:((NSWindowController*)self.document.windowControllers[0]).window delegate:nil didRunSelector:nil contextInfo:nil];
         self.finishedWebViews = 0;
         self.document = nil;
