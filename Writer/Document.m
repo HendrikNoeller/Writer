@@ -68,6 +68,9 @@
                                                               green:0.5
                                                                blue:0.5
                                                               alpha:1.0];
+    [self.textView setFont:[self courier]];
+    NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
+    [typingAttributes setObject:[self courier] forKey:@"Font"];
 }
 
 + (BOOL)autosavesInPlace {

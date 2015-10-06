@@ -42,11 +42,11 @@
                                         <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" findBarPosition="aboveHorizontalRuler" translatesAutoresizingMaskIntoConstraints="NO" id="rMk-On-uQK">
                                             <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                             <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="wnt-On-gB3">
-                                                <rect key="frame" x="1" y="1" width="223" height="133"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView importsGraphics="NO" richText="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="XpL-ef-jhx">
-                                                        <rect key="frame" x="0.0" y="0.0" width="223" height="605"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <size key="minSize" width="800" height="599"/>
