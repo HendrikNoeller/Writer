@@ -129,7 +129,6 @@
 
 - (void)textDidChange:(NSNotification *)notification
 {
-    [self.textView setFont:self.courier];
     [self updateDocumentContent];
 }
 
@@ -186,14 +185,14 @@ static NSString *ommitClose= @"*/";
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
     [[[self undoManager] prepareWithInvocationTarget:self] removeString:string atIndex:index];
-    [self textDidChange:nil];
+    [self textDidChange:[[NSNotification alloc] init]];
 }
 
 - (void)removeString:(NSString*)string atIndex:(NSUInteger)index
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
     [[[self undoManager] prepareWithInvocationTarget:self] addString:string atIndex:index];
-    [self textDidChange:nil];
+    [self textDidChange:[[NSNotification alloc] init]];
 }
 
 
@@ -289,7 +288,7 @@ static NSString *ommitClose= @"*/";
                 addedCharacters = [endSymbol length];
             }
         }
-        [self textDidChange:nil];
+        [self textDidChange:[[NSNotification alloc] init]];
         self.textView.selectedRange = NSMakeRange(cursorLocation.location+cursorLocation.length+addedCharacters, 0);
     }
 }

@@ -31,7 +31,7 @@
 #import "FNPaginator.h"
 #import "FNHTMLScript.h"
 #import "FNElement.h"
-@interface PrintView ()
+@interface PrintView () <WebFrameLoadDelegate>
 @property (nonatomic) NSUInteger finishedWebViews;
 @property (weak, nonatomic) Document *document;
 @end

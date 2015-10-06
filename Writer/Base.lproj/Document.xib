@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="6254" systemVersion="14B25" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="6254"/>
-        <plugIn identifier="com.apple.WebKitIBPlugin" version="6254"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="8191"/>
+        <plugIn identifier="com.apple.WebKitIBPlugin" version="8191"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="Document">
@@ -27,16 +27,16 @@
                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <customView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3qa-Wg-PsD" customClass="ColorView">
-                        <rect key="frame" x="0.0" y="0.0" width="814" height="599"/>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="3qa-Wg-PsD" customClass="ColorView">
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                     </customView>
-                    <tabView misplaced="YES" drawsBackground="NO" allowsTruncatedLabels="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="gz5-tZ-Ofd" userLabel="Tab View">
-                        <rect key="frame" x="0.0" y="0.0" width="814" height="599"/>
+                    <tabView drawsBackground="NO" allowsTruncatedLabels="NO" type="noTabsNoBorder" translatesAutoresizingMaskIntoConstraints="NO" id="gz5-tZ-Ofd" userLabel="Tab View">
+                        <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                         <font key="font" metaFont="system"/>
                         <tabViewItems>
                             <tabViewItem label="Text" identifier="1" id="stc-hX-uX6" userLabel="Text Tab">
                                 <view key="view" id="Qth-9B-jWR">
-                                    <rect key="frame" x="0.0" y="0.0" width="814" height="599"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" findBarPosition="aboveHorizontalRuler" translatesAutoresizingMaskIntoConstraints="NO" id="rMk-On-uQK">
@@ -74,12 +74,12 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="FQ7-37-2It">
-                                                <rect key="frame" x="224" y="1" width="15" height="133"/>
+                                                <rect key="frame" x="784" y="0.0" width="16" height="599"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
                                         <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="3sV-wB-s5Q">
-                                            <rect key="frame" x="736" y="9" width="57" height="17"/>
+                                            <rect key="frame" x="738" y="9" width="55" height="17"/>
                                             <buttonCell key="cell" type="inline" title="Preview" bezelStyle="inline" alignment="center" borderStyle="border" inset="2" id="CkD-hd-5Gb">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="smallSystemBold"/>
@@ -101,10 +101,10 @@
                             </tabViewItem>
                             <tabViewItem label="Render" identifier="2" id="Ycm-en-OeX" userLabel="Render Tab">
                                 <view key="view" id="ECs-3D-rzc">
-                                    <rect key="frame" x="0.0" y="0.0" width="814" height="599"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <webView misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Vil-EQ-uOZ">
+                                        <webView translatesAutoresizingMaskIntoConstraints="NO" id="Vil-EQ-uOZ">
                                             <rect key="frame" x="50" y="0.0" width="700" height="599"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="700" id="6XZ-rK-7fU"/>
@@ -113,8 +113,8 @@
                                                 <nil key="identifier"/>
                                             </webPreferences>
                                         </webView>
-                                        <button verticalHuggingPriority="750" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RTx-77-uWH">
-                                            <rect key="frame" x="758" y="9" width="35" height="17"/>
+                                        <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="RTx-77-uWH">
+                                            <rect key="frame" x="760" y="9" width="33" height="17"/>
                                             <buttonCell key="cell" type="inline" title="Edit" bezelStyle="inline" alignment="center" borderStyle="border" inset="2" id="5cR-2N-jct">
                                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                                 <font key="font" metaFont="smallSystemBold"/>
