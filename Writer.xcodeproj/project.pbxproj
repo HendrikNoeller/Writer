@@ -420,6 +420,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -455,6 +456,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -472,9 +474,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "-licucore";
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
-				PRODUCT_BUNDLE_IDENTIFIER = "de.HendrikNoeller.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = de.HendrikNoeller.Writer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
 			};
 			name = Debug;
 		};
@@ -491,9 +493,9 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "-licucore";
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
-				PRODUCT_BUNDLE_IDENTIFIER = "de.HendrikNoeller.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = de.HendrikNoeller.Writer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
 			};
 			name = Release;
 		};
