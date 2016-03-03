@@ -28,7 +28,11 @@
 		B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B62A3919E3402F009F6E23 /* ColorView.m */; };
 		B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */; };
 		B1D0B84B19E31B86005252E4 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D0B84A19E31B86005252E4 /* PrintView.m */; };
-		B1E7FF531BC45969008E2B99 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B1E7FF521BC45969008E2B99 /* Credits.rtf */; settings = {ASSET_TAGS = (); }; };
+		B1E7FF531BC45969008E2B99 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B1E7FF521BC45969008E2B99 /* Credits.rtf */; };
+		B1F04ED81C88ACAD001C4D27 /* Courier Prime Bold Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED41C88AC99001C4D27 /* Courier Prime Bold Italic.ttf */; };
+		B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */; };
+		B1F04EDA1C88ACAD001C4D27 /* Courier Prime Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */; };
+		B1F04EDB1C88ACAD001C4D27 /* Courier Prime.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +87,10 @@
 		B1D0B84A19E31B86005252E4 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
 		B1E7FF511BC4555B008E2B99 /* Writer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Writer.entitlements; sourceTree = "<group>"; };
 		B1E7FF521BC45969008E2B99 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		B1F04ED41C88AC99001C4D27 /* Courier Prime Bold Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Bold Italic.ttf"; sourceTree = "<group>"; };
+		B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Bold.ttf"; sourceTree = "<group>"; };
+		B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Italic.ttf"; sourceTree = "<group>"; };
+		B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +118,7 @@
 				B138B57519E1C973000489C4 /* Writer */,
 				B138B64E19E1E8CA000489C4 /* Fountain */,
 				B138B66119E1E8CA000489C4 /* RegexKitLite */,
+				B1F04ED31C88AC99001C4D27 /* CourierPrime */,
 				B138B62419E1D8A4000489C4 /* Frameworks */,
 				B138B58C19E1C974000489C4 /* WriterTests */,
 				B138B57419E1C973000489C4 /* Products */,
@@ -215,6 +224,17 @@
 			path = RegexKitLite;
 			sourceTree = "<group>";
 		};
+		B1F04ED31C88AC99001C4D27 /* CourierPrime */ = {
+			isa = PBXGroup;
+			children = (
+				B1F04ED41C88AC99001C4D27 /* Courier Prime Bold Italic.ttf */,
+				B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */,
+				B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */,
+				B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */,
+			);
+			path = CourierPrime;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -304,6 +324,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B1F04ED81C88ACAD001C4D27 /* Courier Prime Bold Italic.ttf in Resources */,
+				B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */,
+				B1F04EDA1C88ACAD001C4D27 /* Courier Prime Italic.ttf in Resources */,
+				B1F04EDB1C88ACAD001C4D27 /* Courier Prime.ttf in Resources */,
 				B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */,
 				B138B57F19E1C973000489C4 /* Document.xib in Resources */,
 				B138B66E19E1E8CA000489C4 /* License.rtf in Resources */,
@@ -420,7 +444,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
-				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
+				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -456,7 +480,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
+				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -476,7 +500,7 @@
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
 				PRODUCT_BUNDLE_IDENTIFIER = de.HendrikNoeller.Writer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
+				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
 			};
 			name = Debug;
 		};
@@ -495,7 +519,7 @@
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
 				PRODUCT_BUNDLE_IDENTIFIER = de.HendrikNoeller.Writer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "c1e69f82-0f93-47c4-856b-0b1d816250e4";
+				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
 			};
 			name = Release;
 		};

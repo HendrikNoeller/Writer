@@ -117,8 +117,8 @@
 
 - (void)updateWebView
 {
-    FNScript *scrit = [[FNScript alloc] initWithString:_documentContent];
-    FNHTMLScript *htmpScript = [[FNHTMLScript alloc] initWithScript:scrit document:self];
+    FNScript *script = [[FNScript alloc] initWithString:_documentContent];
+    FNHTMLScript *htmpScript = [[FNHTMLScript alloc] initWithScript:script document:self];
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
 }
 
@@ -138,7 +138,7 @@
 - (NSFont*)courier
 {
     if (!_courier) {
-        _courier = [NSFont fontWithName:@"Courier" size:13];
+        _courier = [NSFont fontWithName:@"Courier Prime" size:13];
     }
     return _courier;
 }

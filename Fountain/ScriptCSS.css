@@ -31,7 +31,7 @@ html {
 body {
 	background-color: #fff;
 	color: #3e3e3e;
-	font: 12px/1.0em 'Courier', serif;
+	font: 12px/1.0em 'Courier Prime', serif;
 	padding: 0;
 	margin: 0;
 }
@@ -94,6 +94,9 @@ body > p:first-child {
 	position: absolute;
 	right: 0;
 	top: 0;
+}
+.lyrics {
+    font-style: italic;
 }
 #script-title {
     overflow: hidden;

@@ -262,6 +262,23 @@
                 [text replaceOccurrencesOfString:@"^" withString:@"" options:NSCaseInsensitiveSearch range:NSMakeRange(0, text.length)];
             }
             
+            if ([element.elementType isEqualToString:@"Character"]) {
+                [text replaceOccurrencesOfRegex:@"^@" withString:@""];
+            }
+            
+            if ([element.elementType isEqualToString:@"Scene Heading"]) {
+                [text replaceOccurrencesOfRegex:@"^\\." withString:@""];
+            }
+            
+            if ([element.elementType isEqualToString:@"Lyrics"]) {
+                [text replaceOccurrencesOfRegex:@"^~" withString:@""];
+            }
+            
+            if ([element.elementType isEqualToString:@"Action"]) {
+                [text replaceOccurrencesOfRegex:@"^\\!" withString:@""];
+            }
+            
+            
             [text replaceOccurrencesOfRegex:BOLD_ITALIC_UNDERLINE_PATTERN withString:@"<strong><em><u>$2</strong></em></u>"];
             [text replaceOccurrencesOfRegex:BOLD_ITALIC_PATTERN withString:@"<strong><em>$2</strong></em>"];
             [text replaceOccurrencesOfRegex:BOLD_UNDERLINE_PATTERN withString:@"<strong><u>$2</u></strong>"];
@@ -271,6 +288,9 @@
             [text replaceOccurrencesOfRegex:UNDERLINE_PATTERN withString:@"<u>$2</u>"];
             
             [text replaceOccurrencesOfRegex:@"\\[{2}(.*?)\\]{2}" withString:@""];
+            
+            //Find newlines and replace them with <br/>
+            text = [[text stringByReplacingOccurrencesOfString:@"\n" withString:@"<br>"] mutableCopy];
             
             if (![text isEqualToString:@""]) {
                 NSMutableString *additionalClasses = [NSMutableString string];
