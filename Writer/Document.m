@@ -155,6 +155,12 @@ static NSString *noteOpen = @"[[";
 static NSString *noteClose= @"]]";
 static NSString *ommitOpen = @"/*";
 static NSString *ommitClose= @"*/";
+static NSString *forceHeadingSymbol = @".";
+static NSString *forceActionSymbol = @"!";
+static NSString *forceCharacterSymbol = @"@";
+static NSString *forceTransitionSymbol = @">";
+static NSString *forceLyricsSymbol = @"~";
+
 - (NSString*)titlePage
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -188,14 +194,14 @@ static NSString *ommitClose= @"*/";
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
     [[[self undoManager] prepareWithInvocationTarget:self] removeString:string atIndex:index];
-    [self textDidChange:[[NSNotification alloc] init]];
+    [self updateDocumentContent];
 }
 
 - (void)removeString:(NSString*)string atIndex:(NSUInteger)index
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
     [[[self undoManager] prepareWithInvocationTarget:self] addString:string atIndex:index];
-    [self textDidChange:[[NSNotification alloc] init]];
+    [self updateDocumentContent];
 }
 
 
@@ -291,9 +297,104 @@ static NSString *ommitClose= @"*/";
                 addedCharacters = [endSymbol length];
             }
         }
-        [self textDidChange:[[NSNotification alloc] init]];
+        [self updateDocumentContent];
         self.textView.selectedRange = NSMakeRange(cursorLocation.location+cursorLocation.length+addedCharacters, 0);
     }
+}
+
+- (IBAction)forceHeading:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceHeadingSymbol];
+    }
+}
+
+- (IBAction)forceAction:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceActionSymbol];
+    }
+}
+
+- (IBAction)forceCharacter:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceCharacterSymbol];
+    }
+}
+
+- (IBAction)forceTransition:(id)sender
+{
+    
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceTransitionSymbol];
+    }
+}
+
+- (IBAction)forceLyrics:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceLyricsSymbol];
+    }
+}
+
+- (void)forceLineType:(NSRange)cursorLocation symbol:(NSString*)symbol
+{
+    //Find the index of the first symbol of the line
+    NSUInteger indexOfLineBeginning = cursorLocation.location;
+    while (true) {
+        if (indexOfLineBeginning == 0) {
+            break;
+        }
+        NSString *characterBefore = [[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning - 1, 1)];
+        if ([characterBefore isEqualToString:@"\n"]) {
+            break;
+        }
+        
+        indexOfLineBeginning--;
+    }
+    NSRange firstCharacterRange = NSMakeRange(indexOfLineBeginning, 1);
+    NSString *firstCharacter = [[self.textView string] substringWithRange:firstCharacterRange];
+    
+    //If the line is already forced to the desired type, remove the force
+    if ([firstCharacter isEqualToString:symbol]) {
+        [self.textView replaceCharactersInRange:firstCharacterRange withString:@""];
+    } else {
+        //If the line is not forced to the desirey type, check if it is forced to be something else
+        BOOL otherForce = NO;
+        
+        NSArray *allForceSymbols = @[forceActionSymbol, forceCharacterSymbol, forceHeadingSymbol, forceLyricsSymbol, forceTransitionSymbol];
+        
+        for (NSString *otherSymbol in allForceSymbols) {
+            if (otherSymbol != symbol && [firstCharacter isEqualToString:otherSymbol]) {
+                otherForce = YES;
+                break;
+            }
+        }
+        
+        //If it is force to be another t
+        if (otherForce) {
+            [self.textView replaceCharactersInRange:firstCharacterRange withString:symbol];
+        } else {
+            [self.textView replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
+        }
+    }
+    [self updateDocumentContent];
 }
 
 

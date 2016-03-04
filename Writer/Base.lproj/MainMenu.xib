@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7706" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7706"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -368,6 +368,32 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="ccp-HV-yr1"/>
+                            <menuItem title="Force Scene Heading" keyEquivalent="H" id="zQH-Oq-iw8">
+                                <connections>
+                                    <action selector="forceHeading:" target="-1" id="f1W-J4-4us"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Force Action" keyEquivalent="A" id="Oob-ml-0qq">
+                                <connections>
+                                    <action selector="forceAction:" target="-1" id="jTi-Nf-gTZ"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Force Character" keyEquivalent="C" id="EyT-o0-jab">
+                                <connections>
+                                    <action selector="forceCharacter:" target="-1" id="okV-rx-mpS"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Force Transition" keyEquivalent="T" id="QOz-eE-b10">
+                                <connections>
+                                    <action selector="forceTransition:" target="-1" id="xSe-v8-x3l"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Force Lyrics" keyEquivalent="L" id="iAy-tL-tFv">
+                                <connections>
+                                    <action selector="forceLyrics:" target="-1" id="xa3-Pw-Oav"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="Ygd-Y8-VFo"/>
                             <menuItem title="Note" id="fKt-Xk-jG8">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
