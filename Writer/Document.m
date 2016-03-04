@@ -26,8 +26,8 @@
  THE SOFTWARE.
  */
 
-#import "Document.h"
 #import <WebKit/WebKit.h>
+#import "Document.h"
 #import "FNScript.h"
 #import "FNHTMLScript.h"
 #import "PrintView.h"
@@ -368,7 +368,18 @@ static NSString *forceLyricsSymbol = @"~";
         
         indexOfLineBeginning--;
     }
-    NSRange firstCharacterRange = NSMakeRange(indexOfLineBeginning, 1);
+    NSRange firstCharacterRange;
+    //If the cursor resides in an empty line
+    //Which either happens because the beginning of the line is the end of the document
+    //Or is indicated by the next character being a newline
+    //The range for the first charate in line needs to be an empty string
+    if (indexOfLineBeginning == [[self.textView string] length]) {
+        firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
+    } else if ([[[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning, 1)] isEqualToString:@"\n"]){
+        firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
+    } else {
+        firstCharacterRange = NSMakeRange(indexOfLineBeginning, 1);
+    }
     NSString *firstCharacter = [[self.textView string] substringWithRange:firstCharacterRange];
     
     //If the line is already forced to the desired type, remove the force
@@ -387,7 +398,8 @@ static NSString *forceLyricsSymbol = @"~";
             }
         }
         
-        //If it is force to be another t
+        //If the line is forced to be something else, replace that force with the new force
+        //If not, insert the new character before the first one
         if (otherForce) {
             [self.textView replaceCharactersInRange:firstCharacterRange withString:symbol];
         } else {
@@ -401,10 +413,8 @@ static NSString *forceLyricsSymbol = @"~";
 
 #pragma mark - Sharing Menu
 
-- (IBAction)share:(id)sender
-{
-    
-}
+//Empty function, which needs to exists to make the share button work.
+- (IBAction)share:(id)sender {}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {

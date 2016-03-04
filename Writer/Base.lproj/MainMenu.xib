@@ -394,16 +394,15 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="Ygd-Y8-VFo"/>
+                            <menuItem title="Ommit" keyEquivalent="/" id="5Y3-LZ-qMb">
+                                <connections>
+                                    <action selector="makeOmmitted:" target="-1" id="90f-5c-LBm"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Note" id="fKt-Xk-jG8">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="makeNote:" target="-1" id="egH-7G-shU"/>
-                                </connections>
-                            </menuItem>
-                            <menuItem title="Ommit" id="5Y3-LZ-qMb">
-                                <modifierMask key="keyEquivalentModifierMask"/>
-                                <connections>
-                                    <action selector="makeOmmitted:" target="-1" id="90f-5c-LBm"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="SNs-fE-ES7"/>
