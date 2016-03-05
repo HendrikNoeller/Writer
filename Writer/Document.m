@@ -35,10 +35,30 @@
 #import "ColorView.h"
 
 @interface Document ()
+@property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (unsafe_unretained) IBOutlet WebView *webView;
 @property (unsafe_unretained) IBOutlet NSTabView *tabView;
 @property (weak) IBOutlet ColorView *backgroundView;
+
+#pragma mark - Toolbar Buttons
+@property (weak) IBOutlet NSButton *boldToolbarButton;
+@property (weak) IBOutlet NSButton *italicToolbarButton;
+@property (weak) IBOutlet NSButton *underlineToolbarButton;
+@property (weak) IBOutlet NSButton *ommitToolbarButton;
+@property (weak) IBOutlet NSButton *noteToolbarButton;
+@property (weak) IBOutlet NSButton *forceHeadingToolbarButton;
+@property (weak) IBOutlet NSButton *forceActionToolbarButton;
+@property (weak) IBOutlet NSButton *forceCharacterToolbarButton;
+@property (weak) IBOutlet NSButton *forceTransitionToolbarButton;
+@property (weak) IBOutlet NSButton *forceLyricsToolbarButton;
+@property (weak) IBOutlet NSButton *titlepageToolbarButton;
+@property (weak) IBOutlet NSButton *pagebreakToolbarButton;
+@property (weak) IBOutlet NSButton *previewToolbarButton;
+@property (weak) IBOutlet NSButton *printToolbarButton;
+
+@property (strong) NSArray *toolbarButtons;
+
 
 @property (strong, nonatomic) NSFont *courier;
 
@@ -62,6 +82,8 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
+//    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
+    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
     [self updateTextView];
     self.textView.textContainerInset = NSMakeSize(20, 20);
@@ -186,7 +208,22 @@ static NSString *forceLyricsSymbol = @"~";
     if ([self selectedTabViewTab] == 0) {
         NSRange cursorLocation = [self cursorLocation];
         if (cursorLocation.location != NSNotFound) {
-            [self addString:lineBreak atIndex:cursorLocation.location + cursorLocation.length];
+            //Step forward to end of line
+            NSUInteger location = cursorLocation.location + cursorLocation.length;
+            NSUInteger length = [[self.textView string] length];
+            while (true) {
+                if (location == length) {
+                    break;
+                }
+                NSString *nextChar = [[self.textView string] substringWithRange:NSMakeRange(location, 1)];
+                if ([nextChar isEqualToString:@"\n"]) {
+                    break;
+                }
+                
+                location++;
+            }
+            self.textView.selectedRange = NSMakeRange(location, 0);
+            [self addString:lineBreak atIndex:location];
         }
     }
 }
@@ -454,9 +491,25 @@ static NSString *forceLyricsSymbol = @"~";
 {
     if ([self selectedTabViewTab] == 0) {
         [self updateWebView];
+        
         [self setSelectedTabViewTab:1];
+        
+        //Disable everything in the toolbar except print and preview
+        for (NSButton *button in self.toolbarButtons) {
+            if (button != _printToolbarButton && button != _previewToolbarButton) {
+                button.enabled = NO;
+            }
+        }
+        
     } else {
         [self setSelectedTabViewTab:0];
+        
+        //Enable everything in the toolbar except print and preview
+        for (NSButton *button in self.toolbarButtons) {
+            if (button != _printToolbarButton && button != _previewToolbarButton) {
+                button.enabled = YES;
+            }
+        }
     }
 }
 
