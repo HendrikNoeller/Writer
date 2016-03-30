@@ -97,6 +97,7 @@ body > p:first-child {
 }
 .lyrics {
     font-style: italic;
+    text-align: center;
 }
 #script-title {
     overflow: hidden;

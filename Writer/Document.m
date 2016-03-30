@@ -3,7 +3,8 @@
 //  Writer
 //
 //  Created by Hendrik Noeller on 05.10.14.
-//  Copyright (c) 2015 Hendrik Noeller. All rights reserved.
+//  Copyright (c) 2016 Hendrik Noeller. All rights reserved.
+
 //
 
 /*
@@ -26,18 +27,38 @@
  THE SOFTWARE.
  */
 
-#import "Document.h"
 #import <WebKit/WebKit.h>
+#import "Document.h"
 #import "FNScript.h"
 #import "FNHTMLScript.h"
 #import "PrintView.h"
 #import "ColorView.h"
 
 @interface Document ()
+@property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (unsafe_unretained) IBOutlet WebView *webView;
 @property (unsafe_unretained) IBOutlet NSTabView *tabView;
 @property (weak) IBOutlet ColorView *backgroundView;
+
+#pragma mark - Toolbar Buttons
+@property (weak) IBOutlet NSButton *boldToolbarButton;
+@property (weak) IBOutlet NSButton *italicToolbarButton;
+@property (weak) IBOutlet NSButton *underlineToolbarButton;
+@property (weak) IBOutlet NSButton *ommitToolbarButton;
+@property (weak) IBOutlet NSButton *noteToolbarButton;
+@property (weak) IBOutlet NSButton *forceHeadingToolbarButton;
+@property (weak) IBOutlet NSButton *forceActionToolbarButton;
+@property (weak) IBOutlet NSButton *forceCharacterToolbarButton;
+@property (weak) IBOutlet NSButton *forceTransitionToolbarButton;
+@property (weak) IBOutlet NSButton *forceLyricsToolbarButton;
+@property (weak) IBOutlet NSButton *titlepageToolbarButton;
+@property (weak) IBOutlet NSButton *pagebreakToolbarButton;
+@property (weak) IBOutlet NSButton *previewToolbarButton;
+@property (weak) IBOutlet NSButton *printToolbarButton;
+
+@property (strong) NSArray *toolbarButtons;
+
 
 @property (strong, nonatomic) NSFont *courier;
 
@@ -61,6 +82,8 @@
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
+//    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
+    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
     [self updateTextView];
     self.textView.textContainerInset = NSMakeSize(20, 20);
@@ -155,6 +178,12 @@ static NSString *noteOpen = @"[[";
 static NSString *noteClose= @"]]";
 static NSString *ommitOpen = @"/*";
 static NSString *ommitClose= @"*/";
+static NSString *forceHeadingSymbol = @".";
+static NSString *forceActionSymbol = @"!";
+static NSString *forceCharacterSymbol = @"@";
+static NSString *forceTransitionSymbol = @">";
+static NSString *forceLyricsSymbol = @"~";
+
 - (NSString*)titlePage
 {
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
@@ -179,7 +208,22 @@ static NSString *ommitClose= @"*/";
     if ([self selectedTabViewTab] == 0) {
         NSRange cursorLocation = [self cursorLocation];
         if (cursorLocation.location != NSNotFound) {
-            [self addString:lineBreak atIndex:cursorLocation.location + cursorLocation.length];
+            //Step forward to end of line
+            NSUInteger location = cursorLocation.location + cursorLocation.length;
+            NSUInteger length = [[self.textView string] length];
+            while (true) {
+                if (location == length) {
+                    break;
+                }
+                NSString *nextChar = [[self.textView string] substringWithRange:NSMakeRange(location, 1)];
+                if ([nextChar isEqualToString:@"\n"]) {
+                    break;
+                }
+                
+                location++;
+            }
+            self.textView.selectedRange = NSMakeRange(location, 0);
+            [self addString:lineBreak atIndex:location];
         }
     }
 }
@@ -188,14 +232,14 @@ static NSString *ommitClose= @"*/";
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
     [[[self undoManager] prepareWithInvocationTarget:self] removeString:string atIndex:index];
-    [self textDidChange:[[NSNotification alloc] init]];
+    [self updateDocumentContent];
 }
 
 - (void)removeString:(NSString*)string atIndex:(NSUInteger)index
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
     [[[self undoManager] prepareWithInvocationTarget:self] addString:string atIndex:index];
-    [self textDidChange:[[NSNotification alloc] init]];
+    [self updateDocumentContent];
 }
 
 
@@ -291,19 +335,124 @@ static NSString *ommitClose= @"*/";
                 addedCharacters = [endSymbol length];
             }
         }
-        [self textDidChange:[[NSNotification alloc] init]];
+        [self updateDocumentContent];
         self.textView.selectedRange = NSMakeRange(cursorLocation.location+cursorLocation.length+addedCharacters, 0);
     }
+}
+
+- (IBAction)forceHeading:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceHeadingSymbol];
+    }
+}
+
+- (IBAction)forceAction:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceActionSymbol];
+    }
+}
+
+- (IBAction)forceCharacter:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceCharacterSymbol];
+    }
+}
+
+- (IBAction)forceTransition:(id)sender
+{
+    
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceTransitionSymbol];
+    }
+}
+
+- (IBAction)forceLyrics:(id)sender
+{
+    //Check if the currently selected tab is the one for editing
+    if ([self selectedTabViewTab] == 0) {
+        //Retreiving the cursor location
+        NSRange cursorLocation = [self cursorLocation];
+        [self forceLineType:cursorLocation symbol:forceLyricsSymbol];
+    }
+}
+
+- (void)forceLineType:(NSRange)cursorLocation symbol:(NSString*)symbol
+{
+    //Find the index of the first symbol of the line
+    NSUInteger indexOfLineBeginning = cursorLocation.location;
+    while (true) {
+        if (indexOfLineBeginning == 0) {
+            break;
+        }
+        NSString *characterBefore = [[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning - 1, 1)];
+        if ([characterBefore isEqualToString:@"\n"]) {
+            break;
+        }
+        
+        indexOfLineBeginning--;
+    }
+    NSRange firstCharacterRange;
+    //If the cursor resides in an empty line
+    //Which either happens because the beginning of the line is the end of the document
+    //Or is indicated by the next character being a newline
+    //The range for the first charate in line needs to be an empty string
+    if (indexOfLineBeginning == [[self.textView string] length]) {
+        firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
+    } else if ([[[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning, 1)] isEqualToString:@"\n"]){
+        firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
+    } else {
+        firstCharacterRange = NSMakeRange(indexOfLineBeginning, 1);
+    }
+    NSString *firstCharacter = [[self.textView string] substringWithRange:firstCharacterRange];
+    
+    //If the line is already forced to the desired type, remove the force
+    if ([firstCharacter isEqualToString:symbol]) {
+        [self.textView replaceCharactersInRange:firstCharacterRange withString:@""];
+    } else {
+        //If the line is not forced to the desirey type, check if it is forced to be something else
+        BOOL otherForce = NO;
+        
+        NSArray *allForceSymbols = @[forceActionSymbol, forceCharacterSymbol, forceHeadingSymbol, forceLyricsSymbol, forceTransitionSymbol];
+        
+        for (NSString *otherSymbol in allForceSymbols) {
+            if (otherSymbol != symbol && [firstCharacter isEqualToString:otherSymbol]) {
+                otherForce = YES;
+                break;
+            }
+        }
+        
+        //If the line is forced to be something else, replace that force with the new force
+        //If not, insert the new character before the first one
+        if (otherForce) {
+            [self.textView replaceCharactersInRange:firstCharacterRange withString:symbol];
+        } else {
+            [self.textView replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
+        }
+    }
+    [self updateDocumentContent];
 }
 
 
 
 #pragma mark - Sharing Menu
 
-- (IBAction)share:(id)sender
-{
-    
-}
+//Empty function, which needs to exists to make the share button work.
+- (IBAction)share:(id)sender {}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
@@ -342,9 +491,25 @@ static NSString *ommitClose= @"*/";
 {
     if ([self selectedTabViewTab] == 0) {
         [self updateWebView];
+        
         [self setSelectedTabViewTab:1];
+        
+        //Disable everything in the toolbar except print and preview
+        for (NSButton *button in self.toolbarButtons) {
+            if (button != _printToolbarButton && button != _previewToolbarButton) {
+                button.enabled = NO;
+            }
+        }
+        
     } else {
         [self setSelectedTabViewTab:0];
+        
+        //Enable everything in the toolbar except print and preview
+        for (NSButton *button in self.toolbarButtons) {
+            if (button != _printToolbarButton && button != _previewToolbarButton) {
+                button.enabled = YES;
+            }
+        }
     }
 }
 
