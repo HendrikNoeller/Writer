@@ -145,8 +145,7 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="4jl-xj-Gg1"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="pWc-gq-qZ8"/>
-                    <toolbarItem implicitItemIdentifier="A1CDB983-675B-41EF-8084-AA9EC7CBF232" label="Bold" paletteLabel="Bold" image="Bold" id="GNH-Jy-OnK">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="A1CDB983-675B-41EF-8084-AA9EC7CBF232" label="Bold" paletteLabel="Bold" toolTip="Makes the currently selected text bold, or makes you start typing bold if you have not selected any text." image="Bold" id="GNH-Jy-OnK">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="6Zj-2I-mQJ">
@@ -161,8 +160,7 @@
                             <action selector="makeBold:" target="-2" id="RQ9-qg-711"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="545B460A-75D7-433C-9108-E0AD9E236747" label="Italic" paletteLabel="Italic" image="Italic" id="3tX-t0-2gN">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="545B460A-75D7-433C-9108-E0AD9E236747" label="Italic" paletteLabel="Italic" toolTip="Makes the currently selected text italic, or makes you start typing italic if you have not selected any text." image="Italic" id="3tX-t0-2gN">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="YZl-B1-yyf">
@@ -177,8 +175,7 @@
                             <action selector="makeItalic:" target="-2" id="JgP-Iu-Tr5"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="D0409D1F-9A14-42CC-B93C-1FE9651FE5ED" label="Underline" paletteLabel="Underline" image="Underline" id="2WA-eI-3L8">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="D0409D1F-9A14-42CC-B93C-1FE9651FE5ED" label="Underline" paletteLabel="Underline" toolTip="Makes the currently selected text underlined, or makes you start typing underlined if you have not selected any text." image="Underline" id="2WA-eI-3L8">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="t2S-ck-wt0">
@@ -193,8 +190,7 @@
                             <action selector="makeUnderlined:" target="-2" id="I7H-Ih-ZOi"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9F7AA6E6-3482-42E6-B802-E098DA143AF8" label="Ommit" paletteLabel="Ommit" image="Ommit" id="bwC-Ue-sbS">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="9F7AA6E6-3482-42E6-B802-E098DA143AF8" label="Ommit" paletteLabel="Ommit" toolTip="Makes the currently selected text ommited, or makes you start typing ommited if you have not selected any text." image="Ommit" id="bwC-Ue-sbS">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="UfY-1R-epx">
@@ -209,8 +205,7 @@
                             <action selector="makeOmmitted:" target="-2" id="XpO-HC-9MT"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="39B32448-75CD-457E-87C3-9EE0862BB06D" label="Note" paletteLabel="Note" image="Note" id="Ttm-LG-FuG">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="39B32448-75CD-457E-87C3-9EE0862BB06D" label="Note" paletteLabel="Note" toolTip="Makes the currently selected text a note, or makes you start typing a note if you have not selected any text." image="Note" id="Ttm-LG-FuG">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="5xl-bA-Iy2">
@@ -225,8 +220,7 @@
                             <action selector="makeNote:" target="-2" id="LNY-Tr-MCL"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="DDD4F5F5-BEB3-454D-818F-A691F56B8F3B" label="Title Page" paletteLabel="Title Page" image="TitlePage" id="aak-z8-Qj6">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="DDD4F5F5-BEB3-454D-818F-A691F56B8F3B" label="Title Page" paletteLabel="Title Page" toolTip="Adds a title page to the beginning of the document if none is in place." image="TitlePage" id="aak-z8-Qj6">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="qaE-x4-VZq">
@@ -241,8 +235,7 @@
                             <action selector="addTitlePage:" target="-2" id="dt8-bJ-axX"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="4F207046-E907-4381-A590-B2271A3B3879" label="Page Break" paletteLabel="Page Break" image="PageBreak" id="9mQ-A9-dsK">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="4F207046-E907-4381-A590-B2271A3B3879" label="Page Break" paletteLabel="Page Break" toolTip="Adds a page break after the currently selected line" image="PageBreak" id="9mQ-A9-dsK">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="A5m-Yr-VqJ">
@@ -257,8 +250,7 @@
                             <action selector="addPageBreak:" target="-2" id="kXD-0H-U4G"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="FD941BD9-F0D1-4A65-9600-C50CA61B7BFB" label="Preview" paletteLabel="Preview" image="NSQuickLookTemplate" id="lgj-ll-c7X">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="FD941BD9-F0D1-4A65-9600-C50CA61B7BFB" label="Preview" paletteLabel="Preview" toolTip="Toggles between editing and preview mode" image="NSQuickLookTemplate" id="lgj-ll-c7X">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="7Wv-7c-Fh6">
@@ -273,8 +265,7 @@
                             <action selector="preview:" target="-2" id="ZN0-2P-im7"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="E4D1ABE5-B8DB-445F-9818-56624C70EE12" label="Print" paletteLabel="Print" image="Print" id="cYi-BW-wsF">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="E4D1ABE5-B8DB-445F-9818-56624C70EE12" label="Print" paletteLabel="Print" toolTip="Prints the document" image="Print" id="cYi-BW-wsF">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="gEp-KZ-Tzf">
@@ -289,8 +280,22 @@
                             <action selector="printDocument:" target="-2" id="d8Y-We-4Xy"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2D1F2E2E-8F56-427B-A830-0A77A08C709F" label="Force Heading" paletteLabel="Force Heading" image="ForceHeading" id="8pb-TY-T1u">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="10FB0449-0EA7-4975-9A1F-390FE2B598C8" label="PDF" paletteLabel="PDF" toolTip="Exports the document as a .pdf file" image="PDF" id="CoH-tX-j1e">
+                        <size key="minSize" width="46" height="32"/>
+                        <size key="maxSize" width="46" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="rJ1-dy-EfK">
+                            <rect key="frame" x="0.0" y="14" width="46" height="32"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="PDF" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="0Rn-f3-2jE">
+                                <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                        <connections>
+                            <action selector="exportPDF:" target="-2" id="7rX-AQ-e8P"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2D1F2E2E-8F56-427B-A830-0A77A08C709F" label="Force Heading" paletteLabel="Force Heading" toolTip="Forces the currently selected line to be a heading." image="ForceHeading" id="8pb-TY-T1u">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="4gP-Hh-L29">
@@ -305,8 +310,7 @@
                             <action selector="forceHeading:" target="-2" id="Z4K-Yd-9S4"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="756D4E17-427D-4E36-890E-32D7E81348E1" label="Force Action" paletteLabel="Force Action" image="ForceAction" id="OxO-pW-33M">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="756D4E17-427D-4E36-890E-32D7E81348E1" label="Force Action" paletteLabel="Force Action" toolTip="Forces the currently selected line to be action." image="ForceAction" id="OxO-pW-33M">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="oMv-P1-uQi">
@@ -321,8 +325,7 @@
                             <action selector="forceAction:" target="-2" id="k2S-fB-46r"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="AF9DFE4E-A1DE-41C1-8454-F2BBC2CE95E7" label="Force Character" paletteLabel="Force Chraracter" image="ForceCharacter" id="59F-3g-8gY">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="AF9DFE4E-A1DE-41C1-8454-F2BBC2CE95E7" label="Force Character" paletteLabel="Force Chraracter" toolTip="Forces the currently selected line to be a characters name." image="ForceCharacter" id="59F-3g-8gY">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="WCs-D3-8v5">
@@ -337,8 +340,7 @@
                             <action selector="forceCharacter:" target="-2" id="Q4x-p6-SbU"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="6D805B5C-0502-43B9-A794-04588FC6DE3A" label="Force Transition" paletteLabel="Force Transition" image="ForceTransition" id="wAT-Cr-nth">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="6D805B5C-0502-43B9-A794-04588FC6DE3A" label="Force Transition" paletteLabel="Force Transition" toolTip="Forces the currently selected line to be a transition." image="ForceTransition" id="wAT-Cr-nth">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="9LZ-bK-aoO">
@@ -353,8 +355,7 @@
                             <action selector="forceTransition:" target="-2" id="f02-gj-0Z0"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A0F8F8C2-99FC-406A-8DE8-26AF3CD406CE" label="Force Lyrics" paletteLabel="Force Lyrics" image="ForceLyrics" id="Sah-Oq-pJx">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="A0F8F8C2-99FC-406A-8DE8-26AF3CD406CE" label="Force Lyrics" paletteLabel="Force Lyrics" toolTip="Forces the currently selected line to be lyrics." image="ForceLyrics" id="Sah-Oq-pJx">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="QVL-ic-xrE">
@@ -381,6 +382,7 @@
                     <toolbarItem reference="9mQ-A9-dsK"/>
                     <toolbarItem reference="pWc-gq-qZ8"/>
                     <toolbarItem reference="lgj-ll-c7X"/>
+                    <toolbarItem reference="CoH-tX-j1e"/>
                     <toolbarItem reference="cYi-BW-wsF"/>
                 </defaultToolbarItems>
             </toolbar>
@@ -401,6 +403,7 @@
         <image name="NSQuickLookTemplate" width="19" height="12"/>
         <image name="Note" width="25" height="25"/>
         <image name="Ommit" width="25" height="25"/>
+        <image name="PDF" width="25" height="25"/>
         <image name="PageBreak" width="25" height="25"/>
         <image name="Print" width="25" height="25"/>
         <image name="TitlePage" width="25" height="25"/>
