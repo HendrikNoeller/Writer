@@ -57,6 +57,7 @@
 @property (weak) IBOutlet NSButton *pagebreakToolbarButton;
 @property (weak) IBOutlet NSButton *previewToolbarButton;
 @property (weak) IBOutlet NSButton *printToolbarButton;
+@property (weak) IBOutlet NSButton *pdfToolbarButton;
 
 @property (strong) NSArray *toolbarButtons;
 
@@ -84,7 +85,7 @@
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
 //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
-    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
+    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton, _pdfToolbarButton];
     
     self.textView.textContainerInset = NSMakeSize(20, 20);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
@@ -307,12 +308,17 @@ static NSString *forceLyricsSymbol = @"~";
     if (cursorLocation.location  + cursorLocation.length <= [[self getText] length]) {
         //Checking if the selected text is allready formated in the specified way
         NSString *selectedString = [self.textView.string substringWithRange:cursorLocation];
+        NSInteger selectedLength = [selectedString length];
+        NSInteger symbolLength = [beginningSymbol length] + [endSymbol length];
 
         NSUInteger addedCharacters = 0;
         
-        if ([selectedString length] >= [beginningSymbol length] + [endSymbol length] && [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[selectedString substringFromIndex:[selectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
-            //The Text is formated, remove!!!
-            [self.textView replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], [selectedString length] - [beginningSymbol length] - [endSymbol length])]];
+        if (selectedLength >= symbolLength &&
+            [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] &&
+            [[selectedString substringFromIndex:selectedLength - [endSymbol length]] isEqualToString:endSymbol]) {
+            //The Text is formated, remove the formatting
+            [self.textView replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], selectedLength - [beginningSymbol length] - [endSymbol length])]];
+            //Put a corresponding undo action
             [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
         } else {
             //The Text isn't formated, but let's alter the cursor range and check again because there might be formatting right outside the selected area
@@ -324,7 +330,7 @@ static NSString *forceLyricsSymbol = @"~";
             }
             NSString *newSelectedString = [self.textView.string substringWithRange:modifiedCursorLocation];
             //Repeating the check from above
-            if ([newSelectedString length] >= [beginningSymbol length] + [endSymbol length] && [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
+            if ([newSelectedString length] >= symbolLength && [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
                 //The Text is formated outside of the original selection, remove!!!
                 [self.textView replaceCharactersInRange:modifiedCursorLocation withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length], [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
                 [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(modifiedCursorLocation.location, modifiedCursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
@@ -500,9 +506,9 @@ static NSString *forceLyricsSymbol = @"~";
         
         [self setSelectedTabViewTab:1];
         
-        //Disable everything in the toolbar except print and preview
+        //Disable everything in the toolbar except print and preview and pdf
         for (NSButton *button in self.toolbarButtons) {
-            if (button != _printToolbarButton && button != _previewToolbarButton) {
+            if (button != _printToolbarButton && button != _previewToolbarButton && button != _pdfToolbarButton) {
                 button.enabled = NO;
             }
         }
@@ -510,9 +516,9 @@ static NSString *forceLyricsSymbol = @"~";
     } else {
         [self setSelectedTabViewTab:0];
         
-        //Enable everything in the toolbar except print and preview
+        //Enable everything in the toolbar except print and preview and pdf
         for (NSButton *button in self.toolbarButtons) {
-            if (button != _printToolbarButton && button != _previewToolbarButton) {
+            if (button != _printToolbarButton && button != _previewToolbarButton && button != _pdfToolbarButton) {
                 button.enabled = YES;
             }
         }

@@ -18,6 +18,7 @@
                 <outlet property="noteToolbarButton" destination="5xl-bA-Iy2" id="ukI-9P-RUr"/>
                 <outlet property="ommitToolbarButton" destination="UfY-1R-epx" id="iOv-Uw-dDR"/>
                 <outlet property="pagebreakToolbarButton" destination="A5m-Yr-VqJ" id="N6k-EA-TpG"/>
+                <outlet property="pdfToolbarButton" destination="rJ1-dy-EfK" id="J9y-9k-N0s"/>
                 <outlet property="previewToolbarButton" destination="7Wv-7c-Fh6" id="pJg-Z0-rAe"/>
                 <outlet property="printToolbarButton" destination="gEp-KZ-Tzf" id="MUG-H0-AZe"/>
                 <outlet property="tabView" destination="gz5-tZ-Ofd" id="v37-ia-HrJ"/>
