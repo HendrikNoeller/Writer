@@ -60,6 +60,7 @@
 
 @property (strong) NSArray *toolbarButtons;
 
+@property (strong, nonatomic) NSString *contentBuffer; //Keeps the text until the text view is initialized
 
 @property (strong, nonatomic) NSFont *courier;
 
@@ -73,7 +74,6 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.documentContent = [[NSMutableString alloc] init];
         self.printInfo.topMargin = 25;
         self.printInfo.bottomMargin = 50;
     }
@@ -86,7 +86,6 @@
 //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
     self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
-    [self updateTextView];
     self.textView.textContainerInset = NSMakeSize(20, 20);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
                                                               green:0.5
@@ -95,6 +94,12 @@
     [self.textView setFont:[self courier]];
     NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
     [typingAttributes setObject:[self courier] forKey:@"Font"];
+    
+    if (self.contentBuffer) {
+        [self setText:self.contentBuffer];
+    } else {
+        [self setText:@""];
+    }
 }
 
 + (BOOL)autosavesInPlace {
@@ -108,7 +113,7 @@
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
     // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-    NSData *dataRepresentation = [self.documentContent dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *dataRepresentation = [[self getText] dataUsingEncoding:NSUTF8StringEncoding];
     return dataRepresentation;
 }
 
@@ -116,8 +121,13 @@
     // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
     // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
     // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-    self.documentContent = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] mutableCopy];
+    [self setText:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
     return YES;
+}
+
+- (NSString *)getText
+{
+    return [self.textView string];
 }
 
 - (IBAction)printDocument:(id)sender
@@ -133,34 +143,22 @@
 
 #pragma mark - View and Model Syncing
 
-- (void)updateDocumentContent
-{
-    _documentContent = [[self.textView string] mutableCopy];
-}
-
-- (void)updateTextView
-{
-    [self.textView setString:[self.documentContent copy]];
-}
-
 - (void)updateWebView
 {
-    FNScript *script = [[FNScript alloc] initWithString:_documentContent];
+    FNScript *script = [[FNScript alloc] initWithString:[self getText]];
     FNHTMLScript *htmpScript = [[FNHTMLScript alloc] initWithScript:script document:self];
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
 }
 
 
-- (void)setDocumentContent:(NSMutableString *)documentContent
+- (void)setText:(NSString *)text
 {
-    _documentContent = documentContent;
-    [self updateTextView];
-    [self updateWebView];
-}
-
-- (void)textDidChange:(NSNotification *)notification
-{
-    [self updateDocumentContent];
+    if (!self.textView) {
+        self.contentBuffer = text;
+    } else {
+        [self.textView setString:text];
+        [self updateWebView];
+    }
 }
 
 - (NSFont*)courier
@@ -200,9 +198,9 @@ static NSString *forceLyricsSymbol = @"~";
 - (IBAction)addTitlePage:(id)sender
 {
     if ([self selectedTabViewTab] == 0) {
-        if ([self.documentContent length] < 6) {
+        if ([[self getText] length] < 6) {
             [self addString:[self titlePage] atIndex:0];
-        } else if (![[self.documentContent substringWithRange:NSMakeRange(0, 6)] isEqualToString:@"Title:"]) {
+        } else if (![[[self getText] substringWithRange:NSMakeRange(0, 6)] isEqualToString:@"Title:"]) {
             [self addString:[self titlePage] atIndex:0];
         }
     }
@@ -215,12 +213,12 @@ static NSString *forceLyricsSymbol = @"~";
         if (cursorLocation.location != NSNotFound) {
             //Step forward to end of line
             NSUInteger location = cursorLocation.location + cursorLocation.length;
-            NSUInteger length = [[self.textView string] length];
+            NSUInteger length = [[self getText] length];
             while (true) {
                 if (location == length) {
                     break;
                 }
-                NSString *nextChar = [[self.textView string] substringWithRange:NSMakeRange(location, 1)];
+                NSString *nextChar = [[self getText] substringWithRange:NSMakeRange(location, 1)];
                 if ([nextChar isEqualToString:@"\n"]) {
                     break;
                 }
@@ -237,14 +235,12 @@ static NSString *forceLyricsSymbol = @"~";
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
     [[[self undoManager] prepareWithInvocationTarget:self] removeString:string atIndex:index];
-    [self updateDocumentContent];
 }
 
 - (void)removeString:(NSString*)string atIndex:(NSUInteger)index
 {
     [self.textView replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
     [[[self undoManager] prepareWithInvocationTarget:self] addString:string atIndex:index];
-    [self updateDocumentContent];
 }
 
 
@@ -308,7 +304,7 @@ static NSString *forceLyricsSymbol = @"~";
 - (void)format:(NSRange)cursorLocation beginningSymbol:(NSString*)beginningSymbol endSymbol:(NSString*)endSymbol
 {
     //Checking if the cursor location is vaild
-    if (cursorLocation.location  + cursorLocation.length <= [[self.textView string] length]) {
+    if (cursorLocation.location  + cursorLocation.length <= [[self getText] length]) {
         //Checking if the selected text is allready formated in the specified way
         NSString *selectedString = [self.textView.string substringWithRange:cursorLocation];
 
@@ -321,8 +317,8 @@ static NSString *forceLyricsSymbol = @"~";
         } else {
             //The Text isn't formated, but let's alter the cursor range and check again because there might be formatting right outside the selected area
             NSRange modifiedCursorLocation = cursorLocation;
-            if (cursorLocation.location >= [beginningSymbol length] && (cursorLocation.location + cursorLocation.length) <= ([[self.textView string] length] - [endSymbol length])) {
-                if (modifiedCursorLocation.location + modifiedCursorLocation.length + [endSymbol length] - 1 <= [[self.textView string] length]) {
+            if (cursorLocation.location >= [beginningSymbol length] && (cursorLocation.location + cursorLocation.length) <= ([[self getText] length] - [endSymbol length])) {
+                if (modifiedCursorLocation.location + modifiedCursorLocation.length + [endSymbol length] - 1 <= [[self getText] length]) {
                     modifiedCursorLocation = NSMakeRange(modifiedCursorLocation.location - [beginningSymbol length], modifiedCursorLocation.length + [beginningSymbol length]  + [endSymbol length]);
                 }
             }
@@ -340,7 +336,6 @@ static NSString *forceLyricsSymbol = @"~";
                 addedCharacters = [endSymbol length];
             }
         }
-        [self updateDocumentContent];
         self.textView.selectedRange = NSMakeRange(cursorLocation.location+cursorLocation.length+addedCharacters, 0);
     }
 }
@@ -404,7 +399,7 @@ static NSString *forceLyricsSymbol = @"~";
         if (indexOfLineBeginning == 0) {
             break;
         }
-        NSString *characterBefore = [[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning - 1, 1)];
+        NSString *characterBefore = [[self getText] substringWithRange:NSMakeRange(indexOfLineBeginning - 1, 1)];
         if ([characterBefore isEqualToString:@"\n"]) {
             break;
         }
@@ -416,14 +411,14 @@ static NSString *forceLyricsSymbol = @"~";
     //Which either happens because the beginning of the line is the end of the document
     //Or is indicated by the next character being a newline
     //The range for the first charate in line needs to be an empty string
-    if (indexOfLineBeginning == [[self.textView string] length]) {
+    if (indexOfLineBeginning == [[self getText] length]) {
         firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
-    } else if ([[[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning, 1)] isEqualToString:@"\n"]){
+    } else if ([[[self getText] substringWithRange:NSMakeRange(indexOfLineBeginning, 1)] isEqualToString:@"\n"]){
         firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
     } else {
         firstCharacterRange = NSMakeRange(indexOfLineBeginning, 1);
     }
-    NSString *firstCharacter = [[self.textView string] substringWithRange:firstCharacterRange];
+    NSString *firstCharacter = [[self getText] substringWithRange:firstCharacterRange];
     
     //If the line is already forced to the desired type, remove the force
     if ([firstCharacter isEqualToString:symbol]) {
@@ -449,7 +444,6 @@ static NSString *forceLyricsSymbol = @"~";
             [self.textView replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
         }
     }
-    [self updateDocumentContent];
 }
 
 
@@ -482,7 +476,7 @@ static NSString *forceLyricsSymbol = @"~";
         }
         return YES;
     } else if ([menuItem.title isEqualToString:@"Print…"] || [menuItem.title isEqualToString:@"Export to PDF"]) {
-        NSArray* words = [[self.textView string] componentsSeparatedByCharactersInSet :[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSArray* words = [[self getText] componentsSeparatedByCharactersInSet :[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         NSString* visibleCharacters = [words componentsJoinedByString:@""];
         if ([visibleCharacters length] == 0) {
             return NO;

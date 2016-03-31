@@ -49,7 +49,7 @@
         _document = document;
         
         //Create a script from the Document
-        FNScript *script = [[FNScript alloc] initWithString:[document.documentContent copy]];
+        FNScript *script = [[FNScript alloc] initWithString:[[document getText] copy]];
         
         //Remove the title page and put it into an extra script, if there is any title page information
         FNScript *titleScript;
