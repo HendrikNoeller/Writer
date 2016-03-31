@@ -35,12 +35,14 @@
 @interface PrintView () <WebFrameLoadDelegate>
 @property (nonatomic) NSUInteger finishedWebViews;
 @property (weak, nonatomic) Document *document;
+@property bool pdf;
 @end
 @implementation PrintView
 
-- (id)initWithDocument:(Document*)document
+- (id)initWithDocument:(Document*)document toPDF:(bool)pdf
 {
     self = [super init];
+    self.pdf = pdf;
     if (self) {
         
         _finishedWebViews = 0;
@@ -62,6 +64,10 @@
         [paginator paginate];
         
         NSMutableArray *scripts = [[NSMutableArray alloc] init];
+        
+        if ([paginator numberOfPages] == 0) {
+            return nil;
+        }
         
         for (int i = 0; i < [paginator numberOfPages]; i++) {
             FNScript *pageScript = [[FNScript alloc] init];
@@ -176,11 +182,38 @@
     self.finishedWebViews = self.finishedWebViews + 1;
     if (self.finishedWebViews == [self.subviews count]) {
         [self display];
-        NSPrintOperation* printOperation = [NSPrintOperation printOperationWithView:self];
-        printOperation.jobTitle = [[[self.document.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject];
-        [printOperation runOperationModalForWindow:((NSWindowController*)self.document.windowControllers[0]).window delegate:nil didRunSelector:nil contextInfo:nil];
-        self.finishedWebViews = 0;
-        self.document = nil;
+        if (self.pdf) {
+            NSSavePanel *saveDialog = [NSSavePanel savePanel];
+            saveDialog.parentWindow = self.document.windowControllers[0].window;
+            [saveDialog setAllowedFileTypes:@[@"pdf"]];
+            [saveDialog setNameFieldLabel:[[[self.document.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+            [saveDialog beginSheetModalForWindow:self.document.windowControllers[0].window completionHandler:^(NSInteger result) {
+                if (result == NSFileHandlingPanelOKButton) {
+                    NSPrintInfo *printInfo = [self.document.printInfo copy];
+                    [printInfo.dictionary addEntriesFromDictionary:@{
+                                                                     NSPrintJobDisposition: NSPrintSaveJob,
+                                                                     NSPrintJobSavingURL: saveDialog.URL
+                                                                     }];
+                    NSPrintOperation* printOperation = [NSPrintOperation printOperationWithView:self printInfo:printInfo];
+                    printOperation.showsPrintPanel = NO;
+                    printOperation.showsProgressPanel = YES;
+                    
+                    [printOperation runOperation];
+                    
+                } else {
+                    NSLog(@"Saving cancelled");
+                }
+            }];
+            
+            
+        } else {
+            NSPrintOperation* printOperation = [NSPrintOperation printOperationWithView:self];
+            printOperation.jobTitle = [[[self.document.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject];
+            [printOperation runOperationModalForWindow:((NSWindowController*)self.document.windowControllers[0]).window delegate:nil didRunSelector:nil contextInfo:nil];
+            self.finishedWebViews = 0;
+            self.document = nil;
+        }
+        
     }
 }
 

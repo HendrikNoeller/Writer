@@ -35,6 +35,7 @@
 #import "ColorView.h"
 
 @interface Document ()
+
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (unsafe_unretained) IBOutlet WebView *webView;
@@ -121,9 +122,13 @@
 
 - (IBAction)printDocument:(id)sender
 {
-    self.printView = [[PrintView alloc] initWithDocument:self];
+    self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
 }
 
+- (IBAction)exportPDF:(id)sender
+{
+    self.printView = [[PrintView alloc] initWithDocument:self toPDF:YES];
+}
 
 
 #pragma mark - View and Model Syncing
@@ -476,7 +481,14 @@ static NSString *forceLyricsSymbol = @"~";
             [menuItem.submenu addItem:noThingPleaseSaveItem];
         }
         return YES;
+    } else if ([menuItem.title isEqualToString:@"Print…"] || [menuItem.title isEqualToString:@"Export to PDF"]) {
+        NSArray* words = [[self.textView string] componentsSeparatedByCharactersInSet :[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString* visibleCharacters = [words componentsJoinedByString:@""];
+        if ([visibleCharacters length] == 0) {
+            return NO;
+        }
     }
+    
     return YES;
 }
 
