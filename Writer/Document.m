@@ -33,6 +33,7 @@
 #import "FNHTMLScript.h"
 #import "PrintView.h"
 #import "ColorView.h"
+#import "ContinousFountainParser.h"
 
 @interface Document ()
 
@@ -65,7 +66,10 @@
 
 @property (strong, nonatomic) NSFont *courier;
 
-@property (strong, nonatomic) PrintView *printView;
+@property (strong, nonatomic) PrintView *printView; //To keep the asynchronously working print data generator in memory
+
+@property (strong, nonatomic) ContinousFountainParser* parser;
+
 @end
 
 #define THEME_KEY @"Theme"
