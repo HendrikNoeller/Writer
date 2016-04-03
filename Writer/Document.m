@@ -68,6 +68,15 @@
 @property (strong, nonatomic) PrintView *printView;
 @end
 
+#define THEME_KEY @"Theme"
+
+typedef enum : NSUInteger {
+    light,
+    dark,
+    solarizedLight,
+    solarizedDark
+} Theme;
+
 @implementation Document
 
 #pragma mark - Document Basics
@@ -96,11 +105,15 @@
     NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
     [typingAttributes setObject:[self courier] forKey:@"Font"];
     
+    //Put any previously loaded data into the text view
     if (self.contentBuffer) {
         [self setText:self.contentBuffer];
     } else {
         [self setText:@""];
     }
+    
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    [Document setTheme:[defaults integerForKey:THEME_KEY] writeToDefaults:NO];
 }
 
 + (BOOL)autosavesInPlace {
@@ -141,14 +154,49 @@
     self.printView = [[PrintView alloc] initWithDocument:self toPDF:YES];
 }
 
-
-#pragma mark - View and Model Syncing
-
 - (void)updateWebView
 {
     FNScript *script = [[FNScript alloc] initWithString:[self getText]];
     FNHTMLScript *htmpScript = [[FNHTMLScript alloc] initWithScript:script document:self];
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
+}
+
++ (void)setTheme:(Theme)theme writeToDefaults:(BOOL)write
+{
+    if (write) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setInteger:theme forKey:THEME_KEY];
+    }
+    
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        switch (theme) {
+            case light:
+                [doc.textView setBackgroundColor:[NSColor colorWithWhite:1.0 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithWhite:0.0 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithWhite:0.1 alpha:1.0]];
+                break;
+                
+            case dark:
+                [doc.textView setBackgroundColor:[NSColor colorWithWhite:0.0 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithWhite:1.0 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithWhite:0.9 alpha:1.0]];
+                break;
+                
+            case solarizedLight:
+                [doc.textView setBackgroundColor:[NSColor colorWithRed:0.99 green:0.969 blue:0.89 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithRed:0.345 green:0.427 blue:0.455 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithRed:0.396 green:0.482 blue:0.51 alpha:1.0]];
+                break;
+                
+            case solarizedDark:
+                [doc.textView setBackgroundColor:[NSColor colorWithRed:0.004 green:0.169 blue:0.208 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithRed:0.514 green:0.580 blue:0.584 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithRed:0.576 green:0.627 blue:0.631 alpha:1.0]];
+                break;
+        }
+    }
 }
 
 
@@ -168,6 +216,20 @@
         _courier = [NSFont fontWithName:@"Courier Prime" size:13];
     }
     return _courier;
+}
+
+- (void)textDidChange:(NSNotification *)notification
+{
+    //Get current line
+    
+    //Analyze current line
+    
+    //If forces -> force
+    //If caps -> Character
+    //If 
+    
+    //Format it
+    
 }
 
 
@@ -487,6 +549,38 @@ static NSString *forceLyricsSymbol = @"~";
         if ([visibleCharacters length] == 0) {
             return NO;
         }
+    } else if ([menuItem.title isEqualToString:@"Light"]) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        Theme theme = [defaults integerForKey:THEME_KEY];
+        if (theme == light) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
+    } else if ([menuItem.title isEqualToString:@"Dark"]) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        Theme theme = [defaults integerForKey:THEME_KEY];
+        if (theme == dark) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
+    } else if ([menuItem.title isEqualToString:@"Solarized Light"]) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        Theme theme = [defaults integerForKey:THEME_KEY];
+        if (theme == solarizedLight) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
+    } else if ([menuItem.title isEqualToString:@"Solarized Dark"]) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        Theme theme = [defaults integerForKey:THEME_KEY];
+        if (theme == solarizedDark) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
     }
     
     return YES;
@@ -535,6 +629,25 @@ static NSString *forceLyricsSymbol = @"~";
     [self.tabView selectTabViewItem:[self.tabView tabViewItemAtIndex:index]];
 }
 
+- (IBAction)setLightMode:(id)sender
+{
+    [Document setTheme:light writeToDefaults:YES];
+}
+
+- (IBAction)setDarkMode:(id)sender
+{
+    [Document setTheme:dark writeToDefaults:YES];
+}
+
+- (IBAction)setSolarizedLightMode:(id)sender
+{
+    [Document setTheme:solarizedLight writeToDefaults:YES];
+}
+
+- (IBAction)setSolarizedDarkMode:(id)sender
+{
+    [Document setTheme:solarizedDark writeToDefaults:YES];
+}
 
 #pragma mark - Help
 

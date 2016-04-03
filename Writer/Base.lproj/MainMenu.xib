@@ -433,6 +433,37 @@ DQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
                         <items>
+                            <menuItem title="Theme" id="SdI-kP-vhN">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" id="RAa-ji-vvT">
+                                    <items>
+                                        <menuItem title="Light" id="sjW-1b-FG2">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setLightMode:" target="-1" id="k3s-ST-O6M"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Dark" id="21z-2L-bTp">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setDarkMode:" target="-1" id="eNF-51-PEc"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Solarized Light" id="ASg-iB-VLy">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setSolarizedLightMode:" target="-1" id="DJC-cW-GUe"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Solarized Dark" id="WTd-Wb-MVI">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="setSolarizedDarkMode:" target="-1" id="gMv-lR-jv1"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="VwT-WD-YPe"/>
