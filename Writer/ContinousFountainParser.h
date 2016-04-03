@@ -11,12 +11,16 @@
 
 @interface ContinousFountainParser : NSObject
 
+@property (nonatomic) NSMutableArray *lines; //Stores every line as an element. Multiple lines of stuff
+@property (nonatomic) NSMutableArray *changedIndices; //Stores every line that needs to be formatted according to the type
+
 - (ContinousFountainParser*)initWithString:(NSString*)string;
 
 - (void)parseChange:(NSNotification*)change;
-- (void)applyFormatChangesInTextView:(NSTextView*)textView;
 
+- (NSString*)stringAtLine:(NSUInteger)line;
 - (LineType)typeAtLine:(NSUInteger)line;
+- (NSUInteger)positionAtLine:(NSUInteger)line;
 
 - (NSString*)toString;
 @end

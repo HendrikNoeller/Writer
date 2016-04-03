@@ -33,9 +33,12 @@
     ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:script];
     
     NSUInteger i = 0; //User a counter and add "i++" after each line to prevent changing all numbers on every insertion
-    XCTAssertEqual([parser typeAtLine:i], titlePageTitle); i++;
-    XCTAssertEqual([parser typeAtLine:i], titlePageAuthor); i++;
-    XCTAssertEqual([parser typeAtLine:i], titlePageCredit); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageTitle);
+    XCTAssertEqual([parser positionAtLine:i], 0); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageAuthor);
+    XCTAssertEqual([parser positionAtLine:i], 14); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageCredit);
+    XCTAssertEqual([parser positionAtLine:i], 36); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageSource); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageDraftDate); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;

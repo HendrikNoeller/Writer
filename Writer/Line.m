@@ -10,12 +10,13 @@
 
 @implementation Line
 
-- (Line*)initWithString:(NSString*)string type:(LineType)type
+- (Line*)initWithString:(NSString*)string type:(LineType)type position:(NSUInteger)position
 {
     self = [super init];
     if (self) {
         _string = string;
         _type = type;
+        _position = position;
     }
     return self;
 }

@@ -10,12 +10,6 @@
 #import "Line.h"
 #import "NSString+Whitespace.h"
 
-@interface ContinousFountainParser ()
-
-@property (nonatomic) NSMutableArray *lines; //Stores every line as an element. Multiple lines of stuff
-@property (nonatomic) NSMutableArray *changedIndices; //Stores every line that needs to be formatted according to the type
-@end
-
 @implementation ContinousFountainParser
 
 - (ContinousFountainParser*)initWithString:(NSString*)string
@@ -36,23 +30,23 @@
     
 }
 
-- (void)applyFormatChangesInTextView:(NSTextView*)textView
-{
-    
-}
-
 - (void)parseText:(NSString*)text
 {
     NSArray *lines = [text componentsSeparatedByString:@"\n"];
+    
+    NSUInteger positon = 0; //To track at which position every line begins
+    
     for (NSString *rawLine in lines) {
         NSInteger index = [self.lines count];
         LineType type = [self parseLine:rawLine atIndex:index];
-        Line* line = [[Line alloc] initWithString:rawLine type:type];
+        Line* line = [[Line alloc] initWithString:rawLine type:type position:positon];
         
         //Add to lines array
         [self.lines addObject:line];
         //Mark change in buffered changes
         [self.changedIndices addObject:@(index)];
+        
+        positon += [rawLine length] + 1; // +1 for newline character
     }
 }
 
@@ -117,22 +111,25 @@
     }
     
     //Check for scene headings (lines beginning with "INT", "EXT", "EST", "INT./EXT", "INT/EXT", "I/E"
-    if (length >= 8) {
-        NSString* firstChars = [string substringToIndex:8];
-        if ([firstChars isEqualToString:@"INT./EXT"]) {
+    
+    if (length >= 3) {
+        NSString* firstChars = [string substringToIndex:3];
+        if ([firstChars isEqualToString:@"INT"] ||
+            [firstChars isEqualToString:@"EXT"] ||
+            [firstChars isEqualToString:@"EST"] ||
+            [firstChars isEqualToString:@"I/E"]) {
             return heading;
         }
+        
         if (length >= 7) {
             firstChars = [string substringToIndex:7];
             if ([firstChars isEqualToString:@"INT/EXT"]) {
                 return heading;
             }
-            if (length >= 3) {
-                firstChars = [string substringToIndex:3];
-                if ([firstChars isEqualToString:@"INT"] ||
-                    [firstChars isEqualToString:@"EXT"] ||
-                    [firstChars isEqualToString:@"EST"] ||
-                    [firstChars isEqualToString:@"I/E"]) {
+            
+            if (length >= 8) {
+                firstChars = [string substringToIndex:8];
+                if ([firstChars isEqualToString:@"INT./EXT"]) {
                     return heading;
                 }
             }
@@ -145,8 +142,8 @@
         return centered;
     }
     
-    //Check if all uppercase = character name.
-    if ([[string uppercaseString] isEqualToString:string] && !containsOnlyWhitespace) {
+    //Check if all uppercase (and at least 3 characters to not indent every capital leter before anything else follows) = character name.
+    if (length >= 3 && [[string uppercaseString] isEqualToString:string] && !containsOnlyWhitespace) {
         // A character line ending in ^ is a double dialogue character
         if (lastChar == '^') {
             return doubleDialogueCharacter;
@@ -232,13 +229,33 @@
     return action;
 }
 
+- (NSString*)stringAtLine:(NSUInteger)line
+{
+    if (line >= [self.lines count]) {
+        return @"";
+    } else {
+        Line* l = self.lines[line];
+        return l.string;
+    }
+}
+
 - (LineType)typeAtLine:(NSUInteger)line
 {
     if (line >= [self.lines count]) {
-        return 0;
+        return -1;
     } else {
         Line* l = self.lines[line];
         return l.type;
+    }
+}
+
+- (NSUInteger)positionAtLine:(NSUInteger)line
+{
+    if (line >= [self.lines count]) {
+        return -1;
+    } else {
+        Line* l = self.lines[line];
+        return l.position;
     }
 }
 

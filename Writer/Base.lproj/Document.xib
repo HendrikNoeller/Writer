@@ -22,7 +22,7 @@
                 <outlet property="previewToolbarButton" destination="7Wv-7c-Fh6" id="pJg-Z0-rAe"/>
                 <outlet property="printToolbarButton" destination="gEp-KZ-Tzf" id="MUG-H0-AZe"/>
                 <outlet property="tabView" destination="gz5-tZ-Ofd" id="v37-ia-HrJ"/>
-                <outlet property="textView" destination="XpL-ef-jhx" id="8vu-y3-46B"/>
+                <outlet property="textView" destination="6pm-Ac-n3m" id="cty-Cr-AYB"/>
                 <outlet property="titlepageToolbarButton" destination="qaE-x4-VZq" id="llA-7J-z5i"/>
                 <outlet property="toolbar" destination="4If-wa-HNF" id="Nx5-w4-mgL"/>
                 <outlet property="underlineToolbarButton" destination="t2S-ck-wt0" id="BDP-Yj-YGk"/>
@@ -55,51 +55,51 @@
                                     <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" findBarPosition="aboveHorizontalRuler" translatesAutoresizingMaskIntoConstraints="NO" id="rMk-On-uQK">
+                                        <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mky-48-wwA">
                                             <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
-                                            <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="wnt-On-gB3">
+                                            <clipView key="contentView" id="sxN-R8-PHt">
                                                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textView importsGraphics="NO" richText="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="XpL-ef-jhx">
-                                                        <rect key="frame" x="0.0" y="0.0" width="599" height="599"/>
+                                                    <textView importsGraphics="NO" findStyle="bar" continuousSpellChecking="YES" allowsUndo="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="6pm-Ac-n3m">
+                                                        <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <size key="minSize" width="800" height="599"/>
-                                                        <size key="maxSize" width="942" height="10000000"/>
+                                                        <size key="maxSize" width="836" height="10000000"/>
                                                         <attributedString key="textStorage">
-                                                            <fragment content="Kein Text">
+                                                            <fragment content="TEXT">
                                                                 <attributes>
-                                                                    <font key="NSFont" size="13" name="Courier"/>
-                                                                    <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                                    <font key="NSFont" size="13" name="CourierPrime"/>
+                                                                    <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                                 </attributes>
                                                             </fragment>
                                                         </attributedString>
                                                         <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                         <size key="minSize" width="800" height="599"/>
-                                                        <size key="maxSize" width="942" height="10000000"/>
+                                                        <size key="maxSize" width="836" height="10000000"/>
                                                         <connections>
-                                                            <outlet property="delegate" destination="-2" id="Eul-oQ-hYD"/>
+                                                            <outlet property="delegate" destination="-2" id="lmD-aH-hkQ"/>
                                                         </connections>
                                                     </textView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </clipView>
-                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="fAI-Ka-pty">
-                                                <rect key="frame" x="-100" y="-100" width="800" height="16"/>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="LxF-lQ-YYW">
+                                                <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
-                                            <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="FQ7-37-2It">
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="NLv-wd-O2O">
                                                 <rect key="frame" x="784" y="0.0" width="16" height="599"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="rMk-On-uQK" firstAttribute="top" secondItem="Qth-9B-jWR" secondAttribute="top" id="FHS-d4-izn"/>
-                                        <constraint firstItem="rMk-On-uQK" firstAttribute="leading" secondItem="Qth-9B-jWR" secondAttribute="leading" id="MRo-CK-AOy"/>
-                                        <constraint firstAttribute="trailing" secondItem="rMk-On-uQK" secondAttribute="trailing" id="bkS-lU-8wA"/>
-                                        <constraint firstAttribute="bottom" secondItem="rMk-On-uQK" secondAttribute="bottom" id="n92-ZO-GWZ"/>
+                                        <constraint firstItem="Mky-48-wwA" firstAttribute="top" secondItem="Qth-9B-jWR" secondAttribute="top" id="2sf-fb-9XP"/>
+                                        <constraint firstAttribute="trailing" secondItem="Mky-48-wwA" secondAttribute="trailing" id="jp6-cC-eDj"/>
+                                        <constraint firstAttribute="bottom" secondItem="Mky-48-wwA" secondAttribute="bottom" id="lbh-yN-sJt"/>
+                                        <constraint firstItem="Mky-48-wwA" firstAttribute="leading" secondItem="Qth-9B-jWR" secondAttribute="leading" id="wLK-It-sn2"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>
