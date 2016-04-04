@@ -33,6 +33,7 @@
 #import "FNHTMLScript.h"
 #import "PrintView.h"
 #import "ColorView.h"
+#import "ThemeManager.h"
 
 @interface Document ()
 
@@ -66,16 +67,9 @@
 @property (strong, nonatomic) NSFont *courier;
 
 @property (strong, nonatomic) PrintView *printView;
+
+@property (strong, nonatomic) ThemeManager* themeManager;
 @end
-
-#define THEME_KEY @"Theme"
-
-typedef enum : NSUInteger {
-    light,
-    dark,
-    solarizedLight,
-    solarizedDark
-} Theme;
 
 @implementation Document
 
@@ -112,8 +106,9 @@ typedef enum : NSUInteger {
         [self setText:@""];
     }
     
-    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    [Document setTheme:[defaults integerForKey:THEME_KEY] writeToDefaults:NO];
+    //Initialize Theme Manager
+    self.themeManager = [ThemeManager sharedManager];
+    [self loadSelectedTheme];
 }
 
 + (BOOL)autosavesInPlace {
@@ -161,43 +156,6 @@ typedef enum : NSUInteger {
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
 }
 
-+ (void)setTheme:(Theme)theme writeToDefaults:(BOOL)write
-{
-    if (write) {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        [defaults setInteger:theme forKey:THEME_KEY];
-    }
-    
-    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
-    
-    for (Document* doc in openDocuments) {
-        switch (theme) {
-            case light:
-                [doc.textView setBackgroundColor:[NSColor colorWithWhite:1.0 alpha:1.0]];
-                [doc.textView setTextColor:[NSColor colorWithWhite:0.0 alpha:1.0]];
-                [doc.textView setInsertionPointColor:[NSColor colorWithWhite:0.1 alpha:1.0]];
-                break;
-                
-            case dark:
-                [doc.textView setBackgroundColor:[NSColor colorWithWhite:0.0 alpha:1.0]];
-                [doc.textView setTextColor:[NSColor colorWithWhite:1.0 alpha:1.0]];
-                [doc.textView setInsertionPointColor:[NSColor colorWithWhite:0.9 alpha:1.0]];
-                break;
-                
-            case solarizedLight:
-                [doc.textView setBackgroundColor:[NSColor colorWithRed:0.99 green:0.969 blue:0.89 alpha:1.0]];
-                [doc.textView setTextColor:[NSColor colorWithRed:0.345 green:0.427 blue:0.455 alpha:1.0]];
-                [doc.textView setInsertionPointColor:[NSColor colorWithRed:0.396 green:0.482 blue:0.51 alpha:1.0]];
-                break;
-                
-            case solarizedDark:
-                [doc.textView setBackgroundColor:[NSColor colorWithRed:0.004 green:0.169 blue:0.208 alpha:1.0]];
-                [doc.textView setTextColor:[NSColor colorWithRed:0.514 green:0.580 blue:0.584 alpha:1.0]];
-                [doc.textView setInsertionPointColor:[NSColor colorWithRed:0.576 green:0.627 blue:0.631 alpha:1.0]];
-                break;
-        }
-    }
-}
 
 
 - (void)setText:(NSString *)text
@@ -516,10 +474,12 @@ static NSString *forceLyricsSymbol = @"~";
 
 
 
-#pragma mark - Sharing Menu
+#pragma mark - User Interaction
 
-//Empty function, which needs to exists to make the share button work.
+//Empty function, which needs to exists to make the share access the validateMenuItems function
 - (IBAction)share:(id)sender {}
+
+- (IBAction)themes:(id)sender {}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
@@ -549,38 +509,20 @@ static NSString *forceLyricsSymbol = @"~";
         if ([visibleCharacters length] == 0) {
             return NO;
         }
-    } else if ([menuItem.title isEqualToString:@"Light"]) {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        Theme theme = [defaults integerForKey:THEME_KEY];
-        if (theme == light) {
-            [menuItem setState:NSOnState];
-        } else {
-            [menuItem setState:NSOffState];
+    } else if ([menuItem.title isEqualToString:@"Theme"]) {
+        [menuItem.submenu removeAllItems];
+        
+        NSUInteger selectedTheme = [self.themeManager selectedTheme];
+        NSUInteger count = [self.themeManager numberOfThemes];
+        for (int i = 0; i < count; i++) {
+            NSString *themeName = [self.themeManager nameForThemeAtIndex:i];
+            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:themeName action:@selector(selectTheme:) keyEquivalent:@""];
+            if (i == selectedTheme) {
+                [item setState:NSOnState];
+            }
+            [menuItem.submenu addItem:item];
         }
-    } else if ([menuItem.title isEqualToString:@"Dark"]) {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        Theme theme = [defaults integerForKey:THEME_KEY];
-        if (theme == dark) {
-            [menuItem setState:NSOnState];
-        } else {
-            [menuItem setState:NSOffState];
-        }
-    } else if ([menuItem.title isEqualToString:@"Solarized Light"]) {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        Theme theme = [defaults integerForKey:THEME_KEY];
-        if (theme == solarizedLight) {
-            [menuItem setState:NSOnState];
-        } else {
-            [menuItem setState:NSOffState];
-        }
-    } else if ([menuItem.title isEqualToString:@"Solarized Dark"]) {
-        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-        Theme theme = [defaults integerForKey:THEME_KEY];
-        if (theme == solarizedDark) {
-            [menuItem setState:NSOnState];
-        } else {
-            [menuItem setState:NSOffState];
-        }
+        return YES;
     }
     
     return YES;
@@ -591,7 +533,27 @@ static NSString *forceLyricsSymbol = @"~";
     [[sender representedObject] performWithItems:@[self.fileURL]];
 }
 
-#pragma mark - User Interaction
+- (IBAction)selectTheme:(id)sender
+{
+    if ([sender isKindOfClass:[NSMenuItem class]]) {
+        NSMenuItem* menuItem = sender;
+        NSString* itemName = menuItem.title;
+        [self.themeManager selectThemeWithName:itemName];
+        [self loadSelectedTheme];
+    }
+}
+
+- (void)loadSelectedTheme
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        NSTextView *textView = doc.textView;
+        [textView setBackgroundColor:[self.themeManager currentBackgroundColor]];
+        [textView setTextColor:[self.themeManager currentTextColor]];
+        [textView setInsertionPointColor:[self.themeManager currentCaretColor]];
+    }
+}
 
 - (IBAction)preview:(id)sender
 {
@@ -629,25 +591,6 @@ static NSString *forceLyricsSymbol = @"~";
     [self.tabView selectTabViewItem:[self.tabView tabViewItemAtIndex:index]];
 }
 
-- (IBAction)setLightMode:(id)sender
-{
-    [Document setTheme:light writeToDefaults:YES];
-}
-
-- (IBAction)setDarkMode:(id)sender
-{
-    [Document setTheme:dark writeToDefaults:YES];
-}
-
-- (IBAction)setSolarizedLightMode:(id)sender
-{
-    [Document setTheme:solarizedLight writeToDefaults:YES];
-}
-
-- (IBAction)setSolarizedDarkMode:(id)sender
-{
-    [Document setTheme:solarizedDark writeToDefaults:YES];
-}
 
 #pragma mark - Help
 
