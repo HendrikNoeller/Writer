@@ -33,8 +33,11 @@
 #import "FNHTMLScript.h"
 #import "PrintView.h"
 #import "ColorView.h"
+<<<<<<< HEAD
 #import "ContinousFountainParser.h"
+=======
 #import "ThemeManager.h"
+>>>>>>> develop
 
 @interface Document ()
 
@@ -72,6 +75,14 @@
 @property (strong, nonatomic) PrintView *printView; //To keep the asynchronously working print data generator in memory
 
 @property (strong, nonatomic) ContinousFountainParser* parser;
+
+<<<<<<< HEAD
+@end
+
+#define THEME_KEY @"Theme"
+=======
+@property (strong, nonatomic) PrintView *printView;
+>>>>>>> develop
 
 @property (strong, nonatomic) ThemeManager* themeManager;
 @end
@@ -112,12 +123,18 @@
     } else {
         [self setText:@""];
     }
-    //Initialize Theme Manager (before the formatting, because we need the colors for formatting!)
-    self.themeManager = [ThemeManager sharedManager];
-    [self loadSelectedTheme];
+    
+<<<<<<< HEAD
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    [Document setTheme:[defaults integerForKey:THEME_KEY] writeToDefaults:NO];
     
     self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
     [self applyFormatChanges];
+=======
+    //Initialize Theme Manager
+    self.themeManager = [ThemeManager sharedManager];
+    [self loadSelectedTheme];
+>>>>>>> develop
 }
 
 + (BOOL)autosavesInPlace {
@@ -148,16 +165,6 @@
     return [self.textView string];
 }
 
-- (void)setText:(NSString *)text
-{
-    if (!self.textView) {
-        self.contentBuffer = text;
-    } else {
-        [self.textView setString:text];
-        [self updateWebView];
-    }
-}
-
 - (IBAction)printDocument:(id)sender
 {
     self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
@@ -175,6 +182,61 @@
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
 }
 
+<<<<<<< HEAD
+- (void)setText:(NSString *)text
+{
+    if (!self.textView) {
+        self.contentBuffer = text;
+    } else {
+        [self.textView setString:text];
+        [self updateWebView];
+    }
+}
+
+
+
+
+#pragma mark - Formatting
+
++ (void)setTheme:(Theme)theme writeToDefaults:(BOOL)write
+{
+    if (write) {
+        NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+        [defaults setInteger:theme forKey:THEME_KEY];
+    }
+    
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        switch (theme) {
+            case light:
+                [doc.textView setBackgroundColor:[NSColor colorWithWhite:1.0 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithWhite:0.0 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithWhite:0.1 alpha:1.0]];
+                break;
+                
+            case dark:
+                [doc.textView setBackgroundColor:[NSColor colorWithWhite:0.0 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithWhite:1.0 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithWhite:0.9 alpha:1.0]];
+                break;
+                
+            case solarizedLight:
+                [doc.textView setBackgroundColor:[NSColor colorWithRed:0.99 green:0.969 blue:0.89 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithRed:0.345 green:0.427 blue:0.455 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithRed:0.396 green:0.482 blue:0.51 alpha:1.0]];
+                break;
+                
+            case solarizedDark:
+                [doc.textView setBackgroundColor:[NSColor colorWithRed:0.004 green:0.169 blue:0.208 alpha:1.0]];
+                [doc.textView setTextColor:[NSColor colorWithRed:0.514 green:0.580 blue:0.584 alpha:1.0]];
+                [doc.textView setInsertionPointColor:[NSColor colorWithRed:0.576 green:0.627 blue:0.631 alpha:1.0]];
+                break;
+        }
+    }
+}
+=======
+>>>>>>> develop
 
 
 - (void)textDidChange:(NSNotification *)notification
@@ -303,11 +365,6 @@
         
         attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
         
-    } else if (line.type == section) {
-        if (self.themeManager) {
-            NSColor* commentColor = [self.themeManager currentCommentColor];
-            attributes = @{NSForegroundColorAttributeName: commentColor};
-        }
     }
     
     //Maybe grey sections?
@@ -316,7 +373,6 @@
     
     //Remove all former paragraph styles and overwrite fonts
     [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
-    [textStorage removeAttribute:NSForegroundColorAttributeName range:range];
     [textStorage addAttribute:NSFontAttributeName value:[self courier] range:range];
     
     //Add selected attributes
@@ -697,7 +753,6 @@ static NSString *forceLyricsSymbol = @"~";
         NSString* itemName = menuItem.title;
         [self.themeManager selectThemeWithName:itemName];
         [self loadSelectedTheme];
-        [self formattAllLines];
     }
 }
 
