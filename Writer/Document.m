@@ -260,6 +260,8 @@
         
         attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
         
+        [textStorage replaceCharactersInRange:range withString:[line.string uppercaseString]];
+        
     } else if (line.type == parenthetical) {
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
         [paragraphStyle setFirstLineHeadIndent:PARENTHETICAL_INDENT];
@@ -283,6 +285,8 @@
         [paragraphStyle setTailIndent:DD_RIGHT];
         
         attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+        
+        [textStorage replaceCharactersInRange:range withString:[line.string uppercaseString]];
         
     } else if (line.type == doubleDialogueParenthetical) {
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -406,13 +410,13 @@ static NSString *forceLyricsSymbol = @"~";
 
 - (void)addString:(NSString*)string atIndex:(NSUInteger)index
 {
-    [self.textView replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
+    [self replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
     [[[self undoManager] prepareWithInvocationTarget:self] removeString:string atIndex:index];
 }
 
 - (void)removeString:(NSString*)string atIndex:(NSUInteger)index
 {
-    [self.textView replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
+    [self replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
     [[[self undoManager] prepareWithInvocationTarget:self] addString:string atIndex:index];
 }
 
@@ -489,7 +493,7 @@ static NSString *forceLyricsSymbol = @"~";
             [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] &&
             [[selectedString substringFromIndex:selectedLength - [endSymbol length]] isEqualToString:endSymbol]) {
             //The Text is formated, remove the formatting
-            [self.textView replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], selectedLength - [beginningSymbol length] - [endSymbol length])]];
+            [self replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], selectedLength - [beginningSymbol length] - [endSymbol length])]];
             //Put a corresponding undo action
             [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
         } else {
@@ -504,12 +508,12 @@ static NSString *forceLyricsSymbol = @"~";
             //Repeating the check from above
             if ([newSelectedString length] >= symbolLength && [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
                 //The Text is formated outside of the original selection, remove!!!
-                [self.textView replaceCharactersInRange:modifiedCursorLocation withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length], [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
+                [self replaceCharactersInRange:modifiedCursorLocation withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length], [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
                 [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(modifiedCursorLocation.location, modifiedCursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
             } else {
                 //The text really isn't formatted. Just add the formatting using the original data.
-                [self.textView replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0) withString:endSymbol];
-                [self.textView replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0) withString:beginningSymbol];
+                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0) withString:endSymbol];
+                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0) withString:beginningSymbol];
                 [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length + [beginningSymbol length] + [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
                 addedCharacters = [endSymbol length];
             }
@@ -600,7 +604,7 @@ static NSString *forceLyricsSymbol = @"~";
     
     //If the line is already forced to the desired type, remove the force
     if ([firstCharacter isEqualToString:symbol]) {
-        [self.textView replaceCharactersInRange:firstCharacterRange withString:@""];
+        [self replaceCharactersInRange:firstCharacterRange withString:@""];
     } else {
         //If the line is not forced to the desirey type, check if it is forced to be something else
         BOOL otherForce = NO;
@@ -617,10 +621,17 @@ static NSString *forceLyricsSymbol = @"~";
         //If the line is forced to be something else, replace that force with the new force
         //If not, insert the new character before the first one
         if (otherForce) {
-            [self.textView replaceCharactersInRange:firstCharacterRange withString:symbol];
+            [self replaceCharactersInRange:firstCharacterRange withString:symbol];
         } else {
-            [self.textView replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
+            [self replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
         }
+    }
+}
+
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString*)string
+{
+    if ([self textView:self.textView shouldChangeTextInRange:range replacementString:string]) {
+        [self.textView replaceCharactersInRange:range withString:string];
     }
 }
 
