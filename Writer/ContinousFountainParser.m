@@ -9,6 +9,7 @@
 #import "ContinousFountainParser.h"
 #import "Line.h"
 #import "NSString+Whitespace.h"
+#import "NSMutableIndexSet+Lowest.h"
 
 @implementation ContinousFountainParser
 
@@ -25,9 +26,161 @@
     return self;
 }
 
-- (void)parseChange:(NSNotification*)change
+- (void)parseChangeInRange:(NSRange)range withString:(NSString*)string
 {
+    NSMutableIndexSet *changedIndices = [[NSMutableIndexSet alloc] init];
+    if (range.length == 0) { //Addition
+        for (int i = 0; i < string.length; i++) {
+            NSString* character = [string substringWithRange:NSMakeRange(i, 1)];
+            [changedIndices addIndexes:[self parseCharacterAdded:character
+                                                      atPosition:range.location+i]];
+        }
+    } else if ([string length] == 0) { //Removal
+        for (int i = 0; i < range.length; i++) {
+            [changedIndices addIndexes:[self parseCharacterRemovedAtPosition:range.location]];
+        }
+    } else { //Replacement
+        [self parseChangeInRange:range withString:@""]; //First remove
+        [self parseChangeInRange:NSMakeRange(range.location, 0)
+                      withString:string]; // Then add
+    }
     
+    [self correctParsesInLines:changedIndices];
+}
+
+- (NSMutableIndexSet*)parseCharacterAdded:(NSString*)character atPosition:(NSUInteger)position
+{
+    NSUInteger lineIndex = [self lineIndexAtPosition:position];
+    Line* line = self.lines[lineIndex];
+    NSUInteger indexInLine = position - line.position;
+    if ([character isEqualToString:@"\n"]) {
+        NSString* cutOffString;
+        if (indexInLine == [line.string length]) {
+            cutOffString = @"";
+        } else {
+            cutOffString = [line.string substringFromIndex:indexInLine];
+        }
+        
+        LineType newLineType = [self parseLine:cutOffString
+                                       atIndex:lineIndex+1];
+        Line* newLine = [[Line alloc] initWithString:cutOffString
+                                                type:newLineType
+                                            position:position+1];
+        [self.lines insertObject:newLine atIndex:lineIndex+1];
+        
+        [self incrementLinePositionsFromIndex:lineIndex+2 amount:1];
+        
+        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 2)];
+    } else {
+        NSArray* pieces = @[[line.string substringToIndex:indexInLine],
+                            character,
+                            [line.string substringFromIndex:indexInLine]];
+        
+        line.string = [pieces componentsJoinedByString:@""];
+        [self incrementLinePositionsFromIndex:lineIndex+1 amount:1];
+        
+        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 1)];
+    }
+}
+
+- (NSMutableIndexSet*)parseCharacterRemovedAtPosition:(NSUInteger)position
+{
+    NSUInteger lineIndex = [self lineIndexAtPosition:position];
+    Line* line = self.lines[lineIndex];
+    NSUInteger indexInLine = position - line.position;
+    
+    if (indexInLine == [line.string length]) {
+        //Get next line an put together
+        if (lineIndex == [self.lines count] -1) {
+            return nil; //Removed newline at end of document without there being an empty line - should never happen but be sure...
+        }
+        Line* nextLine = self.lines[lineIndex+1];
+        line.string = [line.string stringByAppendingString:nextLine.string];
+        [self.lines removeObjectAtIndex:lineIndex+1];
+        [self decrementLinePositionsFromIndex:lineIndex+1 amount:1];
+        
+        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 1)];
+    } else {
+        NSArray* pieces = @[[line.string substringToIndex:indexInLine],
+                            [line.string substringFromIndex:indexInLine+1]];
+        
+        line.string = [pieces componentsJoinedByString:@""];
+        [self decrementLinePositionsFromIndex:lineIndex+1 amount:1];
+        
+        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 1)];
+    }
+}
+
+- (NSUInteger)lineIndexAtPosition:(NSUInteger)position
+{
+    for (int i = 0; i < [self.lines count]; i++) {
+        Line* line = self.lines[i];
+        
+        if (line.position > position) {
+            return i-1;
+        }
+    }
+    return [self.lines count] - 1;
+}
+
+- (void)incrementLinePositionsFromIndex:(NSUInteger)index amount:(NSUInteger)amount
+{
+    for (; index < [self.lines count]; index++) {
+        Line* line = self.lines[index];
+        
+        line.position += amount;
+    }
+}
+
+- (void)decrementLinePositionsFromIndex:(NSUInteger)index amount:(NSUInteger)amount
+{
+    for (; index < [self.lines count]; index++) {
+        Line* line = self.lines[index];
+        
+        line.position -= amount;
+    }
+}
+
+- (void)correctParsesInLines:(NSMutableIndexSet*)lineIndices
+{
+    while ([lineIndices count] > 0) {
+        [self correctParseInLine:[lineIndices lowestIndex] indicesToDo:lineIndices];
+    }
+}
+
+- (void)correctParseInLine:(NSUInteger)index indicesToDo:(NSMutableIndexSet*)indices
+{
+    //Remove index as done from array if in array
+    if ([indices count]) {
+        NSUInteger lowestToDo = [indices lowestIndex];
+        if (lowestToDo == index) {
+            [indices removeIndex:index];
+        }
+    }
+    
+    //Correct type on this line
+    Line* currentLine = self.lines[index];
+    LineType newType = [self parseLine:currentLine.string atIndex:index];
+    currentLine.type = newType;
+    [self.changedIndices addObject:@(index)];
+    
+    //If there is a next element, check if it might need a reparse
+    if (index < [self.lines count] - 1) {
+        Line* nextLine = self.lines[index+1];
+        if (currentLine.type == character ||
+            currentLine.type == parenthetical ||
+            currentLine.type == dialogue ||
+            currentLine.type == doubleDialogueCharacter ||
+            currentLine.type == doubleDialogueParenthetical ||
+            currentLine.type == doubleDialogue ||
+            nextLine.type == parenthetical ||
+            nextLine.type == dialogue ||
+            nextLine.type == doubleDialogueParenthetical ||
+            nextLine.type == doubleDialogue) {
+            
+            [self correctParseInLine:index+1 indicesToDo:indices];
+        }
+    }
 }
 
 - (void)parseText:(NSString*)text

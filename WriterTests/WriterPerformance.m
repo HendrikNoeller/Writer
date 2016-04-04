@@ -1,5 +1,5 @@
 //
-//  ParserPerformanceTests.m
+//  WriterPerformance.m
 //  Writer
 //
 //  Created by Hendrik Noeller on 03.04.16.
@@ -12,11 +12,11 @@
 #import "FastFountainParser.h"
 #import "FountainParser.h"
 
-@interface ParserPerformanceTests : XCTestCase
+@interface WriterPerformance : XCTestCase
 
 @end
 
-@implementation ParserPerformanceTests
+@implementation WriterPerformance
 
 - (void)setUp {
     [super setUp];
@@ -48,8 +48,103 @@
     }];
 }
 
+- (void)testRemovePerformance {
+    ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:longScript];
+    [self measureBlock:^{
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+    }];
+}
 
-NSString *longScript = @""
+- (void)testInsertPerformance {
+    ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:longScript];
+    [self measureBlock:^{
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+    }];
+}
+
+- (void)testInsertBitByBitPerformance {
+    [self measureBlock:^{
+        ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:@""];
+        NSArray* strings = [longScript componentsSeparatedByString:@"\n"];
+        NSUInteger length = 0;
+        for (NSString* s in strings) {
+            [parser parseChangeInRange:NSMakeRange(length, 0) withString:s];
+            length += s.length;
+        }
+    }];
+}
+
+- (void)testInsertAllAtOncePerformance {
+    [self measureBlock:^{
+        ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:@""];
+        [parser parseChangeInRange:NSMakeRange(0, 0) withString:longScript];
+    }];
+}
+
+
+NSString* shortScript = @""
+@"Title: Script\n"
+@"Author: Florian Maier\n"
+@"Credit: Thomas Maier\n"
+@"source: somewhere\n"
+@"DrAft Date: 42.23.23\n"
+@"Contact: florian@maier.de\n"
+@"\n"
+@"INT. DAY - LIVING ROOM\n"
+@"EXT. DAY - LIVING ROOM\n"
+@"Peter sits somewhere and does something\n"
+@"\n"
+@"PETER\n"
+@"I Like sitting here\n"
+@"it makes me happy\n"
+@"\n"
+@"CHRIS ^\n"
+@"i'm also a person!\n"
+@"\n"
+@"HARRAY\n"
+@"(slightly irritated)\n"
+@"Why do i have parentheses?\n"
+@"They are weird!\n"
+@"\n"
+@"CHIRS ^\n"
+@"(looking at harray)\n"
+@"Why am i over here?\n"
+@"  \n"
+@"And I have holes in my text!\n"
+@"\n"
+@"He indeed looks very happy\n"
+@"fade to:\n"
+@".thisisaheading\n"
+@"!THISISACTION\n"
+@"~lyrics and stuff in this line\n"
+@">transition\n"
+@"      \n"
+@"title: this is not the title page!\n"
+@">center!<\n"
+@"===\n"
+@"======\n"
+@"This is on a new page\n";
+
+
+NSString* longScript = @""
 @"Title: Script\n"
 @"Author: Florian Maier\n"
 @"Credit: Thomas Maier\n"

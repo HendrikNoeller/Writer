@@ -175,22 +175,14 @@
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
 }
 
-
+- (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
+{
+    [self.parser parseChangeInRange:affectedCharRange withString:replacementString];
+    return YES;
+}
 
 - (void)textDidChange:(NSNotification *)notification
 {
-    //Get current line
-    
-    //Analyze current line
-    
-    //If forces -> force
-    //If caps -> Character
-    //If
-    
-    //Format it
-    
-    /* DIRTY METHOD UNTIL INCREMENTAL PARSE IS IMPLEMENTED */
-    self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
     [self applyFormatChanges];
 }
 
@@ -208,6 +200,7 @@
         Line* line = self.parser.lines[index.integerValue];
         [self formatLineOfScreenplay:line];
     }
+    [self.parser.changedIndices removeAllObjects];
 }
 
 #define CHARACTER_INDENT 270
@@ -222,6 +215,8 @@
 
 - (void)formatLineOfScreenplay:(Line*)line
 {
+    NSTextStorage *textStorage = [self.textView textStorage];
+    
     NSUInteger begin = line.position;
     NSUInteger length = [line.string length];
     NSRange range = NSMakeRange(begin, length);
@@ -230,6 +225,8 @@
     
     if (line.type == heading || line.type == pageBreak) {
         attributes = @{NSFontAttributeName: [self boldCourier]};
+        
+        [textStorage replaceCharactersInRange:range withString:[line.string uppercaseString]];
         
     } else if (line.type == lyrics) {
         attributes = @{NSFontAttributeName: [self italicCourier]};
@@ -309,10 +306,6 @@
             attributes = @{NSForegroundColorAttributeName: commentColor};
         }
     }
-    
-    //Maybe grey sections?
-    
-    NSTextStorage *textStorage = [self.textView textStorage];
     
     //Remove all former paragraph styles and overwrite fonts
     [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];

@@ -16,7 +16,7 @@
 
 - (ContinousFountainParser*)initWithString:(NSString*)string;
 
-- (void)parseChange:(NSNotification*)change;
+- (void)parseChangeInRange:(NSRange)range withString:(NSString*)string;
 
 - (NSString*)stringAtLine:(NSUInteger)line;
 - (LineType)typeAtLine:(NSUInteger)line;
