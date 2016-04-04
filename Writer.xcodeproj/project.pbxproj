@@ -10,6 +10,11 @@
 		B13111841CB2885200D07A0C /* ThemeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111831CB2885200D07A0C /* ThemeManager.m */; };
 		B13111881CB289ED00D07A0C /* Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111871CB289ED00D07A0C /* Theme.m */; };
 		B131118A1CB2917000D07A0C /* Themes.plist in Resources */ = {isa = PBXBuildFile; fileRef = B13111891CB2917000D07A0C /* Themes.plist */; };
+		B131118F1CB2A41800D07A0C /* ContinousFountainParser.m in Sources */ = {isa = PBXBuildFile; fileRef = B131118C1CB2A41800D07A0C /* ContinousFountainParser.m */; };
+		B13111901CB2A41800D07A0C /* NSString+Whitespace.m in Sources */ = {isa = PBXBuildFile; fileRef = B131118E1CB2A41800D07A0C /* NSString+Whitespace.m */; };
+		B13111941CB2A42300D07A0C /* Line.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111931CB2A42300D07A0C /* Line.m */; };
+		B131119A1CB2BA7900D07A0C /* WriterPerformance.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111991CB2BA7900D07A0C /* WriterPerformance.m */; };
+		B131119D1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.m in Sources */ = {isa = PBXBuildFile; fileRef = B131119C1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.m */; };
 		B138B57919E1C973000489C4 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B138B57819E1C973000489C4 /* main.m */; };
 		B138B57C19E1C973000489C4 /* Document.m in Sources */ = {isa = PBXBuildFile; fileRef = B138B57B19E1C973000489C4 /* Document.m */; };
 		B138B57F19E1C973000489C4 /* Document.xib in Resources */ = {isa = PBXBuildFile; fileRef = B138B57D19E1C973000489C4 /* Document.xib */; };
@@ -49,12 +54,20 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B131117D1CB1A5DE00D07A0C /* ParserPerformanceTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParserPerformanceTests.m; sourceTree = "<group>"; };
 		B13111821CB2885200D07A0C /* ThemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeManager.h; sourceTree = "<group>"; };
 		B13111831CB2885200D07A0C /* ThemeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeManager.m; sourceTree = "<group>"; };
 		B13111861CB289ED00D07A0C /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
 		B13111871CB289ED00D07A0C /* Theme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Theme.m; sourceTree = "<group>"; };
 		B13111891CB2917000D07A0C /* Themes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Themes.plist; sourceTree = "<group>"; };
+		B131118B1CB2A41800D07A0C /* ContinousFountainParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContinousFountainParser.h; sourceTree = "<group>"; };
+		B131118C1CB2A41800D07A0C /* ContinousFountainParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContinousFountainParser.m; sourceTree = "<group>"; };
+		B131118D1CB2A41800D07A0C /* NSString+Whitespace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Whitespace.h"; sourceTree = "<group>"; };
+		B131118E1CB2A41800D07A0C /* NSString+Whitespace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Whitespace.m"; sourceTree = "<group>"; };
+		B13111921CB2A42300D07A0C /* Line.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Line.h; sourceTree = "<group>"; };
+		B13111931CB2A42300D07A0C /* Line.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Line.m; sourceTree = "<group>"; };
+		B13111991CB2BA7900D07A0C /* WriterPerformance.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WriterPerformance.m; sourceTree = "<group>"; };
+		B131119B1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSMutableIndexSet+Lowest.h"; sourceTree = "<group>"; };
+		B131119C1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableIndexSet+Lowest.m"; sourceTree = "<group>"; };
 		B138B57319E1C973000489C4 /* Writer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Writer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B138B57719E1C973000489C4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B138B57819E1C973000489C4 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -91,7 +104,7 @@
 		B138B66419E1E8CA000489C4 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		B1B62A3819E3402F009F6E23 /* ColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorView.h; sourceTree = "<group>"; };
 		B1B62A3919E3402F009F6E23 /* ColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorView.m; sourceTree = "<group>"; };
-		B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DocumentIcon.icns; path = "../../Images Mac/Document Icon/DocumentIcon.icns"; sourceTree = "<group>"; };
+		B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DocumentIcon.icns; path = ../DocumentIcon.icns; sourceTree = "<group>"; };
 		B1D0B84919E31B86005252E4 /* PrintView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrintView.h; sourceTree = "<group>"; };
 		B1D0B84A19E31B86005252E4 /* PrintView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PrintView.m; sourceTree = "<group>"; };
 		B1E7FF511BC4555B008E2B99 /* Writer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Writer.entitlements; sourceTree = "<group>"; };
@@ -133,6 +146,21 @@
 			name = Themes;
 			sourceTree = "<group>";
 		};
+		B13111911CB2A41B00D07A0C /* Parsing */ = {
+			isa = PBXGroup;
+			children = (
+				B131118B1CB2A41800D07A0C /* ContinousFountainParser.h */,
+				B131118C1CB2A41800D07A0C /* ContinousFountainParser.m */,
+				B13111921CB2A42300D07A0C /* Line.h */,
+				B13111931CB2A42300D07A0C /* Line.m */,
+				B131118D1CB2A41800D07A0C /* NSString+Whitespace.h */,
+				B131118E1CB2A41800D07A0C /* NSString+Whitespace.m */,
+				B131119B1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.h */,
+				B131119C1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.m */,
+			);
+			name = Parsing;
+			sourceTree = "<group>";
+		};
 		B138B56A19E1C973000489C4 = {
 			isa = PBXGroup;
 			children = (
@@ -164,6 +192,7 @@
 				B1B62A3819E3402F009F6E23 /* ColorView.h */,
 				B1B62A3919E3402F009F6E23 /* ColorView.m */,
 				B13111851CB2893F00D07A0C /* Themes */,
+				B13111911CB2A41B00D07A0C /* Parsing */,
 				B1D0B84919E31B86005252E4 /* PrintView.h */,
 				B1D0B84A19E31B86005252E4 /* PrintView.m */,
 				B138B57D19E1C973000489C4 /* Document.xib */,
@@ -188,7 +217,7 @@
 		B138B58C19E1C974000489C4 /* WriterTests */ = {
 			isa = PBXGroup;
 			children = (
-				B131117D1CB1A5DE00D07A0C /* ParserPerformanceTests.m */,
+				B13111991CB2BA7900D07A0C /* WriterPerformance.m */,
 				B138B58F19E1C974000489C4 /* WriterTests.m */,
 				B138B58D19E1C974000489C4 /* Supporting Files */,
 			);
@@ -377,12 +406,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */,
+				B13111941CB2A42300D07A0C /* Line.m in Sources */,
 				B138B66619E1E8CA000489C4 /* FNElement.m in Sources */,
 				B13111841CB2885200D07A0C /* ThemeManager.m in Sources */,
 				B13111881CB289ED00D07A0C /* Theme.m in Sources */,
 				B138B66819E1E8CA000489C4 /* FNPaginator.m in Sources */,
 				B138B57C19E1C973000489C4 /* Document.m in Sources */,
+				B13111901CB2A41800D07A0C /* NSString+Whitespace.m in Sources */,
 				B138B66F19E1E8CA000489C4 /* RegexKitLite.m in Sources */,
+				B131118F1CB2A41800D07A0C /* ContinousFountainParser.m in Sources */,
 				B138B57919E1C973000489C4 /* main.m in Sources */,
 				B138B66A19E1E8CA000489C4 /* FountainParser.m in Sources */,
 				B138B66B19E1E8CA000489C4 /* FountainRegexes.m in Sources */,
@@ -390,6 +422,7 @@
 				B138B66519E1E8CA000489C4 /* FastFountainParser.m in Sources */,
 				B138B66C19E1E8CA000489C4 /* FountainWriter.m in Sources */,
 				B1D0B84B19E31B86005252E4 /* PrintView.m in Sources */,
+				B131119D1CB2C6B300D07A0C /* NSMutableIndexSet+Lowest.m in Sources */,
 				B138B66719E1E8CA000489C4 /* FNHTMLScript.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -399,6 +432,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B138B59019E1C974000489C4 /* WriterTests.m in Sources */,
+				B131119A1CB2BA7900D07A0C /* WriterPerformance.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
