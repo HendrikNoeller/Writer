@@ -11,6 +11,7 @@
 @interface Theme : NSObject
 
 @property (strong, nonatomic) NSColor* backgroundColor;
+@property (strong, nonatomic) NSColor* selectionColor;
 @property (strong, nonatomic) NSColor* textColor;
 @property (strong, nonatomic) NSColor* invisibleTextColor;
 @property (strong, nonatomic) NSColor* caretColor;

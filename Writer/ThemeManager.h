@@ -14,6 +14,7 @@
 
 //Access the current theme
 - (NSColor*) currentBackgroundColor;
+- (NSColor*) currentSelectionColor;
 - (NSColor*) currentTextColor;
 - (NSColor*) currentInvisibleTextColor;
 - (NSColor*) currentCaretColor;

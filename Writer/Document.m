@@ -139,7 +139,7 @@
     // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
     // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
     // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-    [self setText:[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]];
+    [self setText:[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] stringByReplacingOccurrencesOfString:@"\r" withString:@"\n"]];
     return YES;
 }
 
@@ -178,7 +178,6 @@
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
     [self.parser parseChangeInRange:affectedCharRange withString:replacementString];
-//    NSLog(self.parser.toString);
     return YES;
 }
 
@@ -564,29 +563,52 @@ static NSString *forceLyricsSymbol = @"~";
         if (selectedLength >= symbolLength &&
             [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] &&
             [[selectedString substringFromIndex:selectedLength - [endSymbol length]] isEqualToString:endSymbol]) {
+            
             //The Text is formated, remove the formatting
-            [self replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], selectedLength - [beginningSymbol length] - [endSymbol length])]];
+            [self replaceCharactersInRange:cursorLocation
+                                withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length],
+                                                                                          selectedLength - [beginningSymbol length] - [endSymbol length])]];
             //Put a corresponding undo action
-            [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
+            [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location,
+                                                                                      cursorLocation.length - [beginningSymbol length] - [endSymbol length])
+                                                          beginningSymbol:beginningSymbol
+                                                                endSymbol:endSymbol];
         } else {
             //The Text isn't formated, but let's alter the cursor range and check again because there might be formatting right outside the selected area
             NSRange modifiedCursorLocation = cursorLocation;
-            if (cursorLocation.location >= [beginningSymbol length] && (cursorLocation.location + cursorLocation.length) <= ([[self getText] length] - [endSymbol length])) {
+            
+            if (cursorLocation.location >= [beginningSymbol length] &&
+                (cursorLocation.location + cursorLocation.length) <= ([[self getText] length] - [endSymbol length])) {
+                
                 if (modifiedCursorLocation.location + modifiedCursorLocation.length + [endSymbol length] - 1 <= [[self getText] length]) {
-                    modifiedCursorLocation = NSMakeRange(modifiedCursorLocation.location - [beginningSymbol length], modifiedCursorLocation.length + [beginningSymbol length]  + [endSymbol length]);
+                    modifiedCursorLocation = NSMakeRange(modifiedCursorLocation.location - [beginningSymbol length],
+                                                         modifiedCursorLocation.length + [beginningSymbol length]  + [endSymbol length]);
                 }
             }
             NSString *newSelectedString = [self.textView.string substringWithRange:modifiedCursorLocation];
             //Repeating the check from above
-            if ([newSelectedString length] >= symbolLength && [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
+            if ([newSelectedString length] >= symbolLength &&
+                [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] &&
+                [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
+                
                 //The Text is formated outside of the original selection, remove!!!
-                [self replaceCharactersInRange:modifiedCursorLocation withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length], [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
-                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(modifiedCursorLocation.location, modifiedCursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
+                [self replaceCharactersInRange:modifiedCursorLocation
+                                    withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length],
+                                                                                                 [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
+                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(modifiedCursorLocation.location,
+                                                                                          modifiedCursorLocation.length - [beginningSymbol length] - [endSymbol length])
+                                                              beginningSymbol:beginningSymbol
+                                                                    endSymbol:endSymbol];
             } else {
                 //The text really isn't formatted. Just add the formatting using the original data.
-                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0) withString:endSymbol];
-                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0) withString:beginningSymbol];
-                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length + [beginningSymbol length] + [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
+                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0)
+                                    withString:endSymbol];
+                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0)
+                                    withString:beginningSymbol];
+                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location,
+                                                                                          cursorLocation.length + [beginningSymbol length] + [endSymbol length])
+                                                              beginningSymbol:beginningSymbol
+                                                                    endSymbol:endSymbol];
                 addedCharacters = [endSymbol length];
             }
         }
@@ -704,6 +726,7 @@ static NSString *forceLyricsSymbol = @"~";
 {
     if ([self textView:self.textView shouldChangeTextInRange:range replacementString:string]) {
         [self.textView replaceCharactersInRange:range withString:string];
+        [self textDidChange:[NSNotification notificationWithName:@"" object:nil]];
     }
 }
 
@@ -786,6 +809,7 @@ static NSString *forceLyricsSymbol = @"~";
     for (Document* doc in openDocuments) {
         NSTextView *textView = doc.textView;
         [textView setBackgroundColor:[self.themeManager currentBackgroundColor]];
+        [textView setSelectedTextAttributes:@{NSBackgroundColorAttributeName: [self.themeManager currentSelectionColor]}];
         [textView setTextColor:[self.themeManager currentTextColor]];
         [textView setInsertionPointColor:[self.themeManager currentCaretColor]];
     }

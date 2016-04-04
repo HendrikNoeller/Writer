@@ -17,6 +17,12 @@
 				<integer>255</integer>
 				<integer>255</integer>
 			</array>
+			<key>Selection</key>
+			<array>
+				<integer>212</integer>
+				<integer>212</integer>
+				<integer>212</integer>
+			</array>
 			<key>Text</key>
 			<array>
 				<integer>0</integer>
@@ -50,6 +56,12 @@
 				<integer>0</integer>
 				<integer>0</integer>
 				<integer>0</integer>
+			</array>
+			<key>Selection</key>
+			<array>
+				<integer>43</integer>
+				<integer>43</integer>
+				<integer>43</integer>
 			</array>
 			<key>Text</key>
 			<array>
@@ -85,6 +97,12 @@
 				<integer>246</integer>
 				<integer>227</integer>
 			</array>
+			<key>Selection</key>
+			<array>
+				<integer>238</integer>
+				<integer>232</integer>
+				<integer>213</integer>
+			</array>
 			<key>Text</key>
 			<array>
 				<integer>88</integer>
@@ -119,6 +137,12 @@
 				<integer>43</integer>
 				<integer>54</integer>
 			</array>
+			<key>Selection</key>
+			<array>
+				<integer>7</integer>
+				<integer>54</integer>
+				<integer>66</integer>
+			</array>
 			<key>Text</key>
 			<array>
 				<integer>147</integer>
@@ -152,6 +176,12 @@
 				<integer>40</integer>
 				<integer>40</integer>
 				<integer>40</integer>
+			</array>
+			<key>Selection</key>
+			<array>
+				<integer>60</integer>
+				<integer>60</integer>
+				<integer>60</integer>
 			</array>
 			<key>Text</key>
 			<array>
