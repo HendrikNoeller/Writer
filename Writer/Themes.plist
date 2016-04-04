@@ -120,6 +120,34 @@
 				<integer>210</integer>
 			</array>
 		</dict>
+		<dict>
+			<key>Name</key>
+			<string>Monokai</string>
+			<key>Background</key>
+			<array>
+				<integer>40</integer>
+				<integer>40</integer>
+				<integer>40</integer>
+			</array>
+			<key>Text</key>
+			<array>
+				<integer>255</integer>
+				<integer>255</integer>
+				<integer>255</integer>
+			</array>
+			<key>Caret</key>
+			<array>
+				<integer>200</integer>
+				<integer>200</integer>
+				<integer>200</integer>
+			</array>
+			<key>Comment</key>
+			<array>
+				<integer>102</integer>
+				<integer>217</integer>
+				<integer>239</integer>
+			</array>
+		</dict>
 	</array>
 </dict>
 </plist>

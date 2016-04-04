@@ -309,17 +309,19 @@
     
     //Remove all former paragraph styles and overwrite fonts
     [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
-    [textStorage removeAttribute:NSForegroundColorAttributeName range:range];
+    [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentTextColor range:range];
     [textStorage addAttribute:NSFontAttributeName value:[self courier] range:range];
     
     //Add selected attributes
     [textStorage addAttributes:attributes range:range];
 }
 
+#define FONTSIZE 13
+
 - (NSFont*)courier
 {
     if (!_courier) {
-        _courier = [NSFont fontWithName:@"Courier Prime" size:13];
+        _courier = [NSFont fontWithName:@"Courier Prime" size:FONTSIZE];
     }
     return _courier;
 }
@@ -327,7 +329,7 @@
 - (NSFont*)boldCourier
 {
     if (!_boldCourier) {
-        _boldCourier = [NSFont fontWithName:@"Courier Prime Bold" size:13];
+        _boldCourier = [NSFont fontWithName:@"Courier Prime Bold" size:FONTSIZE];
     }
     return _boldCourier;
 }
@@ -335,7 +337,7 @@
 - (NSFont*)italicCourier
 {
     if (!_italicCourier) {
-        _italicCourier = [NSFont fontWithName:@"Courier Prime Italic" size:13];
+        _italicCourier = [NSFont fontWithName:@"Courier Prime Italic" size:FONTSIZE];
     }
     return _italicCourier;
 }
