@@ -12,14 +12,18 @@
 @interface ThemeManager ()
 @property (strong, nonatomic) NSMutableArray* themes;
 @property (nonatomic) NSUInteger selectedTheme;
+@property (nonatomic) NSDictionary* plistContents;
 
 @property (strong, nonatomic) Theme* fallbackTheme;
 @end
 
 @implementation ThemeManager
 
-#pragma mark File Loading
+#define VERSION_KEY @"version"
+#define SELECTED_THEME_KEY @"selectedTheme"
+#define THEMES_KEY @"themes"
 
+#pragma mark File Loading
 
 + (ThemeManager*)sharedManager
 {
@@ -35,26 +39,35 @@
     self = [super init];
     if (self) {
         //Get path to the plist in the applicationSupportFolder
-        NSString *appSupportFolder = [self applicationSupportFolder];
-        NSString* themePlistPath = [appSupportFolder stringByAppendingPathComponent:@"Themes.plist"];
+        NSString* themePlistPath = [self plistFilePath];
+        NSString* bundleThemePlistPath = [[NSBundle mainBundle] pathForResource:@"Themes"
+                                                                         ofType:@"plist"];
         
         //If the file doesn't exist, copy the default file from the bundle
         NSFileManager* fileManager = [NSFileManager defaultManager];
         if (![fileManager fileExistsAtPath:themePlistPath]) {
-            NSString* bundleThemePlistPath = [[NSBundle mainBundle] pathForResource:@"Themes"
-                                                                             ofType:@"plist"];
             [fileManager copyItemAtPath:bundleThemePlistPath
                                  toPath:themePlistPath error:nil];
+            _plistContents = [NSDictionary dictionaryWithContentsOfFile:themePlistPath];
+        } else {
+            NSDictionary *bundlePlistContent = [NSDictionary dictionaryWithContentsOfFile:bundleThemePlistPath];
+            _plistContents = [NSDictionary dictionaryWithContentsOfFile:themePlistPath];
+            NSUInteger installedVersion = [[_plistContents objectForKey:VERSION_KEY] integerValue];
+            NSUInteger bundleVersion = [[bundlePlistContent objectForKey:VERSION_KEY] integerValue];
+            
+            if (installedVersion < bundleVersion) {
+                [fileManager copyItemAtPath:bundleThemePlistPath
+                                     toPath:themePlistPath error:nil];
+                _plistContents = bundlePlistContent;
+            }
         }
-        
         //Extract Data
-        NSDictionary* plistContent = [NSDictionary dictionaryWithContentsOfFile:themePlistPath];
         
         //Get the selected Theme
-        self.selectedTheme = [[plistContent objectForKey:@"selectedTheme"] integerValue];
+        self.selectedTheme = [[_plistContents objectForKey:SELECTED_THEME_KEY] integerValue];
         
         //Get the raw themes
-        NSArray* rawThemes = [plistContent objectForKey:@"themes"];
+        NSArray* rawThemes = [_plistContents objectForKey:THEMES_KEY];
         self.themes = [[NSMutableArray alloc] initWithCapacity:[rawThemes count]];
         for (NSDictionary* dict in rawThemes) {
             [self.themes addObject:[self themeFromDictionary:dict]];
@@ -63,20 +76,21 @@
     return self;
 }
 
-- (NSString*)applicationSupportFolder
+- (NSString*)plistFilePath
 {
     NSArray<NSString*>* searchPaths = NSSearchPathForDirectoriesInDomains(NSApplicationSupportDirectory,
                                                                           NSUserDomainMask,
                                                                           YES);
     NSString* applicationSupportDir = searchPaths[0];
-    NSString* writerAppSupportDir = [applicationSupportDir stringByAppendingPathComponent:@"Writer"];
+    NSString* appName = @"Writer";
+    NSString* writerAppSupportDir = [applicationSupportDir stringByAppendingPathComponent:appName];
     
     NSFileManager *fileManager = [NSFileManager defaultManager];
     if (![fileManager fileExistsAtPath:writerAppSupportDir]) {
         [fileManager createDirectoryAtPath:writerAppSupportDir withIntermediateDirectories:YES attributes:nil error:nil];
     }
     
-    return writerAppSupportDir;
+    return [writerAppSupportDir stringByAppendingPathComponent:@"Themes.plist"];
 }
 
 - (Theme*)themeFromDictionary:(NSDictionary*)dict
@@ -181,6 +195,9 @@
         Theme *theme = self.themes[i];
         if ([theme.name isEqualToString:name]) {
             self.selectedTheme = i;
+            [self.plistContents setValue:@(i) forKey:SELECTED_THEME_KEY];
+            NSString* plistFilePath = [self plistFilePath];
+            [self.plistContents writeToFile:plistFilePath atomically:YES];
             return;
         }
     }
