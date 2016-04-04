@@ -391,7 +391,6 @@
     }];
     
     [line.ommitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        NSUInteger symbolLength = 2;
         [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
                             range:[self globalRangeFromLocalRange:&range
                                                  inLineAtPosition:line.position]];
