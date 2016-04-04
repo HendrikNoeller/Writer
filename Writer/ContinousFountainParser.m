@@ -13,6 +13,10 @@
 
 @implementation ContinousFountainParser
 
+#pragma mark - Parsing
+
+#pragma mark Bulk Parsing
+
 - (ContinousFountainParser*)initWithString:(NSString*)string
 {
     self = [super init];
@@ -25,6 +29,28 @@
     
     return self;
 }
+
+- (void)parseText:(NSString*)text
+{
+    NSArray *lines = [text componentsSeparatedByString:@"\n"];
+    
+    NSUInteger positon = 0; //To track at which position every line begins
+    
+    for (NSString *rawLine in lines) {
+        NSInteger index = [self.lines count];
+        Line* line = [[Line alloc] initWithString:rawLine type:0 position:positon];
+        [self parseTypeAndFormattingForLine:line atIndex:index];
+        
+        //Add to lines array
+        [self.lines addObject:line];
+        //Mark change in buffered changes
+        [self.changedIndices addObject:@(index)];
+        
+        positon += [rawLine length] + 1; // +1 for newline character
+    }
+}
+
+#pragma mark Contionous Parsing
 
 - (void)parseChangeInRange:(NSRange)range withString:(NSString*)string
 {
@@ -59,9 +85,10 @@
             cutOffString = @"";
         } else {
             cutOffString = [line.string substringFromIndex:indexInLine];
+            line.string = [line.string substringToIndex:indexInLine];
         }
         
-        LineType newLineType = [self parseLine:cutOffString
+        LineType newLineType = [self parseLineType:cutOffString
                                        atIndex:lineIndex+1];
         Line* newLine = [[Line alloc] initWithString:cutOffString
                                                 type:newLineType
@@ -91,7 +118,7 @@
     
     if (indexInLine == [line.string length]) {
         //Get next line an put together
-        if (lineIndex == [self.lines count] -1) {
+        if (lineIndex == [self.lines count] - 1) {
             return nil; //Removed newline at end of document without there being an empty line - should never happen but be sure...
         }
         Line* nextLine = self.lines[lineIndex+1];
@@ -160,8 +187,7 @@
     
     //Correct type on this line
     Line* currentLine = self.lines[index];
-    LineType newType = [self parseLine:currentLine.string atIndex:index];
-    currentLine.type = newType;
+    [self parseTypeAndFormattingForLine:currentLine atIndex:index];
     [self.changedIndices addObject:@(index)];
     
     //If there is a next element, check if it might need a reparse
@@ -183,27 +209,27 @@
     }
 }
 
-- (void)parseText:(NSString*)text
+#pragma mark Parsing Core
+
+#define BOLD_PATTERN @"**"
+#define ITALIC_PATTERN @"*"
+#define UNDERLINE_PATTERN @"_"
+#define NOTE_OPEN_PATTERN @"[["
+#define NOTE_CLOSE_PATTERN @"]]"
+#define OMMIT_OPEN_PATTERN @"/*"
+#define OMMIT_CLOSE_PATTERN @"*/"
+
+- (void)parseTypeAndFormattingForLine:(Line*)line atIndex:(NSUInteger)index
 {
-    NSArray *lines = [text componentsSeparatedByString:@"\n"];
-    
-    NSUInteger positon = 0; //To track at which position every line begins
-    
-    for (NSString *rawLine in lines) {
-        NSInteger index = [self.lines count];
-        LineType type = [self parseLine:rawLine atIndex:index];
-        Line* line = [[Line alloc] initWithString:rawLine type:type position:positon];
-        
-        //Add to lines array
-        [self.lines addObject:line];
-        //Mark change in buffered changes
-        [self.changedIndices addObject:@(index)];
-        
-        positon += [rawLine length] + 1; // +1 for newline character
-    }
+    line.type = [self parseLineType:line.string atIndex:index];
+    line.boldRanges = [self rangesInString:line.string between:BOLD_PATTERN and:BOLD_PATTERN];
+    line.italicRanges = [self rangesInString:line.string between:ITALIC_PATTERN and:ITALIC_PATTERN];
+    line.underlinedRanges = [self rangesInString:line.string between:UNDERLINE_PATTERN and:UNDERLINE_PATTERN];
+    line.noteRanges = [self rangesInString:line.string between:NOTE_OPEN_PATTERN and:NOTE_CLOSE_PATTERN];
+    line.ommitedRanges = [self rangesInString:line.string between:OMMIT_OPEN_PATTERN and:OMMIT_CLOSE_PATTERN];
 }
 
-- (LineType)parseLine:(NSString*)string atIndex:(NSUInteger)index
+- (LineType)parseLineType:(NSString*)string atIndex:(NSUInteger)index
 {
     NSUInteger length = [string length];
     
@@ -381,6 +407,53 @@
     
     return action;
 }
+
+- (NSMutableIndexSet*)rangesInString:(NSString*)string between:(NSString*)startString and:(NSString*)endString
+{
+    NSMutableIndexSet* indexSet = [[NSMutableIndexSet alloc] init];
+    
+    NSUInteger stringLength = [string length];
+    NSUInteger startLength = [startString length];
+    NSUInteger endLength = [endString length];
+    
+    NSInteger lastIndexClose = stringLength - startLength; //Last index to look at if we are looking for start
+    NSInteger lastIndexOpen = stringLength - endLength; //Last index to look at if we are looking for end
+    NSInteger rangeBegin = -1; //Set to -1 when no range is currently inspected, or the the index of a detected beginning
+    
+    for (int i = 0;;i++) {
+        if (rangeBegin == -1) {
+            if (i > lastIndexClose) break;
+            //Look for start string
+            if ([[string substringWithRange:NSMakeRange(i, startLength)] isEqualToString:startString]) {
+                rangeBegin = i;
+            }
+        } else {
+            if (i > lastIndexOpen) break;
+            //Lookign for end string
+            if ([[string substringWithRange:NSMakeRange(i, endLength)] isEqualToString:endString]) {
+                //Only add ranges that contian content
+                if (i - rangeBegin != startLength) {
+                    [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + endLength)];
+                }
+                rangeBegin = -1;
+            }
+        }
+    }
+//    
+//    //Terminate any open ranges at the end of the line
+//    if (rangeBegin != -1) {
+//        //Only add ranges that consist of any more than only the deliminators
+//        NSRange rangeToAdd = NSMakeRange(rangeBegin, stringLength - rangeBegin);
+//        if (!(rangeToAdd.length == startLength+endLength)) {
+//            [indexSet addIndexesInRange:rangeToAdd];
+//        }
+//    }
+    
+    return indexSet;
+}
+
+
+#pragma mark - Data access
 
 - (NSString*)stringAtLine:(NSUInteger)line
 {

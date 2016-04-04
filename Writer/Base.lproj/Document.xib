@@ -61,7 +61,7 @@
                                                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textView importsGraphics="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="6pm-Ac-n3m">
+                                                    <textView importsGraphics="NO" richText="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" usesFontPanel="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" smartInsertDelete="YES" id="6pm-Ac-n3m">
                                                         <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -298,7 +298,7 @@
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="2D1F2E2E-8F56-427B-A830-0A77A08C709F" label="Force Heading" paletteLabel="Force Heading" toolTip="Forces the currently selected line to be a heading." image="ForceHeading" id="8pb-TY-T1u">
                         <size key="minSize" width="46" height="32"/>
-                        <size key="maxSize" width="46" height="32"/>
+                        <size key="maxSize" width="60" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="4gP-Hh-L29">
                             <rect key="frame" x="19" y="14" width="46" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>

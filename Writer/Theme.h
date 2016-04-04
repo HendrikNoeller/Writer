@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) NSColor* backgroundColor;
 @property (strong, nonatomic) NSColor* textColor;
+@property (strong, nonatomic) NSColor* invisibleTextColor;
 @property (strong, nonatomic) NSColor* caretColor;
 @property (strong, nonatomic) NSColor* commentColor;
 

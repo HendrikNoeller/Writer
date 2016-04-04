@@ -178,6 +178,7 @@
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
     [self.parser parseChangeInRange:affectedCharRange withString:replacementString];
+//    NSLog(self.parser.toString);
     return YES;
 }
 
@@ -223,10 +224,10 @@
     
     NSDictionary *attributes = @{};
     
+    
+    //Formatt according to style
     if (line.type == heading || line.type == pageBreak) {
         attributes = @{NSFontAttributeName: [self boldCourier]};
-        
-        [textStorage replaceCharactersInRange:range withString:[line.string uppercaseString]];
         
     } else if (line.type == lyrics) {
         attributes = @{NSFontAttributeName: [self italicCourier]};
@@ -260,8 +261,6 @@
         
         attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
         
-        [textStorage replaceCharactersInRange:range withString:[line.string uppercaseString]];
-        
     } else if (line.type == parenthetical) {
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
         [paragraphStyle setFirstLineHeadIndent:PARENTHETICAL_INDENT];
@@ -285,8 +284,6 @@
         [paragraphStyle setTailIndent:DD_RIGHT];
         
         attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
-        
-        [textStorage replaceCharactersInRange:range withString:[line.string uppercaseString]];
         
     } else if (line.type == doubleDialogueParenthetical) {
         NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -318,6 +315,81 @@
     
     //Add selected attributes
     [textStorage addAttributes:attributes range:range];
+    
+    //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
+    [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 2;
+        NSRange effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
+                            range:[self globalRangeFromLocalRange:&effectiveRange
+                                                 inLineAtPosition:line.position]];
+        
+        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                 inLineAtPosition:line.position]];
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+    [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 1;
+        NSRange effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
+                            range:[self globalRangeFromLocalRange:&effectiveRange
+                                                 inLineAtPosition:line.position]];
+        
+        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                 inLineAtPosition:line.position]];
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+    [line.underlinedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 1;
+        NSRange effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        [textStorage addAttribute:NSUnderlineStyleAttributeName value:@1
+                            range:[self globalRangeFromLocalRange:&effectiveRange
+                                                 inLineAtPosition:line.position]];
+        
+        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                 inLineAtPosition:line.position]];
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+    [line.noteRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentCommentColor
+                            range:[self globalRangeFromLocalRange:&range
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+    [line.ommitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 2;
+        [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
+                            range:[self globalRangeFromLocalRange:&range
+                                                 inLineAtPosition:line.position]];
+        
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&range
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+}
+
+- (NSRange)globalRangeFromLocalRange:(NSRange*)range inLineAtPosition:(NSUInteger)position
+{
+    return NSMakeRange(range->location + position, range->length);
 }
 
 #define FONTSIZE 13

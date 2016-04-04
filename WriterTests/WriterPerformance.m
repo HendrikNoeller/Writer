@@ -80,25 +80,6 @@
     }];
 }
 
-- (void)testInsertBitByBitPerformance {
-    [self measureBlock:^{
-        ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:@""];
-        NSArray* strings = [longScript componentsSeparatedByString:@"\n"];
-        NSUInteger length = 0;
-        for (NSString* s in strings) {
-            [parser parseChangeInRange:NSMakeRange(length, 0) withString:s];
-            length += s.length;
-        }
-    }];
-}
-
-- (void)testInsertAllAtOncePerformance {
-    [self measureBlock:^{
-        ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:@""];
-        [parser parseChangeInRange:NSMakeRange(0, 0) withString:longScript];
-    }];
-}
-
 
 NSString* shortScript = @""
 @"Title: Script\n"

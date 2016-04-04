@@ -23,6 +23,12 @@
 				<integer>0</integer>
 				<integer>0</integer>
 			</array>
+			<key>InvisibleText</key>
+			<array>
+				<integer>170</integer>
+				<integer>170</integer>
+				<integer>170</integer>
+			</array>
 			<key>Caret</key>
 			<array>
 				<integer>50</integer>
@@ -50,6 +56,12 @@
 				<integer>255</integer>
 				<integer>255</integer>
 				<integer>255</integer>
+			</array>
+			<key>InvisibleText</key>
+			<array>
+				<integer>80</integer>
+				<integer>80</integer>
+				<integer>80</integer>
 			</array>
 			<key>Caret</key>
 			<array>
@@ -79,6 +91,12 @@
 				<integer>110</integer>
 				<integer>117</integer>
 			</array>
+			<key>InvisibleText</key>
+			<array>
+				<integer>147</integer>
+				<integer>161</integer>
+				<integer>161</integer>
+			</array>
 			<key>Caret</key>
 			<array>
 				<integer>101</integer>
@@ -87,9 +105,9 @@
 			</array>
 			<key>Comment</key>
 			<array>
-				<integer>38</integer>
-				<integer>139</integer>
-				<integer>210</integer>
+				<integer>203</integer>
+				<integer>75</integer>
+				<integer>23</integer>
 			</array>
 		</dict>
 		<dict>
@@ -106,6 +124,12 @@
 				<integer>147</integer>
 				<integer>161</integer>
 				<integer>161</integer>
+			</array>
+			<key>InvisibleText</key>
+			<array>
+				<integer>88</integer>
+				<integer>110</integer>
+				<integer>117</integer>
 			</array>
 			<key>Caret</key>
 			<array>
@@ -134,6 +158,12 @@
 				<integer>255</integer>
 				<integer>255</integer>
 				<integer>255</integer>
+			</array>
+			<key>InvisibleText</key>
+			<array>
+				<integer>100</integer>
+				<integer>100</integer>
+				<integer>100</integer>
 			</array>
 			<key>Caret</key>
 			<array>

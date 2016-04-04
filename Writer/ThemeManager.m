@@ -99,11 +99,13 @@
     theme.name = [dict objectForKey:@"Name"];
     NSArray* backgroundValues = [dict objectForKey:@"Background"];
     NSArray* textValues = [dict objectForKey:@"Text"];
+    NSArray* invisibleTextValues = [dict objectForKey:@"InvisibleText"];
     NSArray* caretValues = [dict objectForKey:@"Caret"];
     NSArray* commentValues = [dict objectForKey:@"Comment"];
     
     theme.backgroundColor = [self colorFromArray:backgroundValues];
     theme.textColor = [self colorFromArray:textValues];
+    theme.invisibleTextColor = [self colorFromArray:invisibleTextValues];
     theme.caretColor = [self colorFromArray:caretValues];
     theme.commentColor = [self colorFromArray:commentValues];
     
@@ -137,6 +139,11 @@
     return [self currentTheme].textColor;
 }
 
+- (NSColor*) currentInvisibleTextColor
+{
+    return [self currentTheme].invisibleTextColor;
+}
+
 - (NSColor*) currentCaretColor
 {
     return [self currentTheme].caretColor;
@@ -160,6 +167,7 @@
         _fallbackTheme = [[Theme alloc] init];
         _fallbackTheme.backgroundColor = [NSColor colorWithWhite:0.0 alpha:1.0];
         _fallbackTheme.textColor = [NSColor colorWithWhite:1.0 alpha:1.0];
+        _fallbackTheme.invisibleTextColor = [NSColor colorWithWhite:0.7 alpha:1.0];
         _fallbackTheme.caretColor = [NSColor colorWithWhite:0.1 alpha:1.0];
         _fallbackTheme.commentColor = [NSColor colorWithWhite:0.5 alpha:1.0];
     }
