@@ -121,11 +121,24 @@
                                     <action selector="preview:" target="-1" id="Wir-n0-gpi"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Export to PDF" keyEquivalent="p" id="ex5-Dn-HKc">
-                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
-                                <connections>
-                                    <action selector="exportPDF:" target="-1" id="2am-va-kR1"/>
-                                </connections>
+                            <menuItem title="Export" id="RGT-hK-aoo">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Export" id="o7H-J0-CK2">
+                                    <items>
+                                        <menuItem title="PDF" id="qUE-cb-x1G">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportPDF:" target="-1" id="C88-0f-QPn"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="HTML" id="gFk-1w-5jg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportHTML:" target="-1" id="uwn-TO-nla"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
                             </menuItem>
                             <menuItem title="Print…" keyEquivalent="p" id="aTl-1u-JFS">
                                 <connections>

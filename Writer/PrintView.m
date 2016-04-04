@@ -200,8 +200,6 @@
                     
                     [printOperation runOperation];
                     
-                } else {
-                    NSLog(@"Saving cancelled");
                 }
             }];
             

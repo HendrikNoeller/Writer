@@ -168,6 +168,23 @@
     self.printView = [[PrintView alloc] initWithDocument:self toPDF:YES];
 }
 
+- (IBAction)exportHTML:(id)sender
+{
+    FNScript* fnScript = [[FNScript alloc] initWithString:[self getText]];
+    FNHTMLScript* htmlScript = [[FNHTMLScript alloc] initWithScript:fnScript];
+    NSString* htmlString = [htmlScript html];
+    
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    saveDialog.parentWindow = self.windowControllers[0].window;
+    [saveDialog setAllowedFileTypes:@[@"html"]];
+    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
+    }];
+}
+
 - (void)updateWebView
 {
     FNScript *script = [[FNScript alloc] initWithString:[self getText]];
