@@ -38,42 +38,41 @@
 {
     self = [super init];
     if (self) {
-        //Get path to the plist in the applicationSupportFolder
-        NSString* themePlistPath = [self plistFilePath];
-        NSString* bundleThemePlistPath = [[NSBundle mainBundle] pathForResource:@"Themes"
-                                                                         ofType:@"plist"];
-        
-        //If the file doesn't exist, copy the default file from the bundle
+        //If the theme file doesn't exist, copy the default file from the bundle
         NSFileManager* fileManager = [NSFileManager defaultManager];
-        if (![fileManager fileExistsAtPath:themePlistPath]) {
-            [fileManager copyItemAtPath:bundleThemePlistPath
-                                 toPath:themePlistPath error:nil];
-            _plistContents = [NSDictionary dictionaryWithContentsOfFile:themePlistPath];
+        if (![fileManager fileExistsAtPath:[self plistFilePath]]) {
+            [self copyAndLoadOriginalThemeFile];
         } else {
-            NSDictionary *bundlePlistContent = [NSDictionary dictionaryWithContentsOfFile:bundleThemePlistPath];
-            _plistContents = [NSDictionary dictionaryWithContentsOfFile:themePlistPath];
+            //If the file exists, but is an older version, copy the default file from the bundle
+            NSDictionary *bundlePlistContent = [NSDictionary dictionaryWithContentsOfFile:[self bundlePlistFilePath]];
+            _plistContents = [NSDictionary dictionaryWithContentsOfFile:[self plistFilePath]];
             NSUInteger installedVersion = [[_plistContents objectForKey:VERSION_KEY] integerValue];
             NSUInteger bundleVersion = [[bundlePlistContent objectForKey:VERSION_KEY] integerValue];
             
             if (installedVersion < bundleVersion) {
-                [fileManager copyItemAtPath:bundleThemePlistPath
-                                     toPath:themePlistPath error:nil];
-                _plistContents = bundlePlistContent;
+                [self copyAndLoadOriginalThemeFile];
             }
         }
-        //Extract Data
-        
-        //Get the selected Theme
-        self.selectedTheme = [[_plistContents objectForKey:SELECTED_THEME_KEY] integerValue];
-        
-        //Get the raw themes
-        NSArray* rawThemes = [_plistContents objectForKey:THEMES_KEY];
-        self.themes = [[NSMutableArray alloc] initWithCapacity:[rawThemes count]];
-        for (NSDictionary* dict in rawThemes) {
-            [self.themes addObject:[self themeFromDictionary:dict]];
+        //Try to load the theme file. if it is corrupted, load the original and try again, but this time try to load as much as possible
+        if (![self readThemeFile:NO]) {
+            [self copyAndLoadOriginalThemeFile];
+            [self readThemeFile:YES];
         }
+        
     }
     return self;
+}
+
+- (void)copyAndLoadOriginalThemeFile
+{
+    //Remove any file that might exists
+    [[NSFileManager defaultManager] removeItemAtPath:[self plistFilePath]
+                                               error:nil];
+    //Copy file from bundle
+    [[NSFileManager defaultManager] copyItemAtPath:[self bundlePlistFilePath]
+                                            toPath:[self plistFilePath]
+                                             error:nil];
+    _plistContents = [NSDictionary dictionaryWithContentsOfFile:[self plistFilePath]];
 }
 
 - (NSString*)plistFilePath
@@ -93,10 +92,50 @@
     return [writerAppSupportDir stringByAppendingPathComponent:@"Themes.plist"];
 }
 
+- (NSString*)bundlePlistFilePath
+{
+    return [[NSBundle mainBundle] pathForResource:@"Themes"
+                                    ofType:@"plist"];
+}
+
+- (BOOL)readThemeFile:(BOOL)continueOnError
+{
+    //Get the themes
+    NSArray* rawThemes = [_plistContents objectForKey:THEMES_KEY];
+    if (!rawThemes && !continueOnError) {
+        return NO;
+    }
+    
+    self.themes = [[NSMutableArray alloc] initWithCapacity:[rawThemes count]];
+    
+    for (NSDictionary* dict in rawThemes) {
+        Theme* newTheme = [self themeFromDictionary:dict];
+        if (newTheme) {
+            [self.themes addObject:newTheme];
+        } else if (!continueOnError) {
+            return NO;
+        }
+    }
+    
+    //Get the selected Theme
+    self.selectedTheme = [[_plistContents objectForKey:SELECTED_THEME_KEY] integerValue];
+    if (self.selectedTheme >= [self numberOfThemes]) {
+        if (continueOnError) {
+            self.selectedTheme = [self numberOfThemes] == 0 ? 0 : [self numberOfThemes] - 1;
+        } else {
+            return NO;
+        }
+    }
+    return YES;
+}
+
 - (Theme*)themeFromDictionary:(NSDictionary*)dict
 {
     Theme* theme = [[Theme alloc] init];
     theme.name = [dict objectForKey:@"Name"];
+    if (!theme.name) {
+        return nil;
+    }
     NSArray* backgroundValues = [dict objectForKey:@"Background"];
     NSArray* selectionValues = [dict objectForKey:@"Selection"];
     NSArray* textValues = [dict objectForKey:@"Text"];
@@ -111,12 +150,21 @@
     theme.caretColor = [self colorFromArray:caretValues];
     theme.commentColor = [self colorFromArray:commentValues];
     
+    if (!theme.backgroundColor ||
+        !theme.textColor ||
+        !theme.selectionColor ||
+        !theme.invisibleTextColor ||
+        !theme.caretColor ||
+        !theme.commentColor) {
+        return nil;
+    }
+    
     return theme;
 }
 
 - (NSColor*)colorFromArray:(NSArray*)array
 {
-    if ([array count] != 3) {
+    if (!array || [array count] != 3) {
         return nil;
     }
     NSNumber* redValue = array[0];

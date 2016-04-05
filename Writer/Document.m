@@ -59,7 +59,6 @@
 @property (weak) IBOutlet NSButton *pagebreakToolbarButton;
 @property (weak) IBOutlet NSButton *previewToolbarButton;
 @property (weak) IBOutlet NSButton *printToolbarButton;
-@property (weak) IBOutlet NSButton *pdfToolbarButton;
 
 @property (strong) NSArray *toolbarButtons;
 
@@ -95,7 +94,7 @@
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
 //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
-    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton, _pdfToolbarButton];
+    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
     self.textView.textContainerInset = NSMakeSize(TEXT_INSET, TEXT_INSET);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
@@ -335,7 +334,13 @@
     //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
     [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
         NSUInteger symbolLength = 2;
-        NSRange effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        NSRange effectiveRange;
+        if (range.length >= 2*symbolLength) {
+            effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        } else {
+            effectiveRange = NSMakeRange(range.location + symbolLength, 0);
+        }
+        
         [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
                             range:[self globalRangeFromLocalRange:&effectiveRange
                                                  inLineAtPosition:line.position]];
@@ -352,7 +357,12 @@
     
     [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
         NSUInteger symbolLength = 1;
-        NSRange effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        NSRange effectiveRange;
+        if (range.length >= 2*symbolLength) {
+            effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        } else {
+            effectiveRange = NSMakeRange(range.location + symbolLength, 0);
+        }
         [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
                             range:[self globalRangeFromLocalRange:&effectiveRange
                                                  inLineAtPosition:line.position]];
@@ -369,9 +379,9 @@
     
     [line.underlinedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
         NSUInteger symbolLength = 1;
-        NSRange effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        
         [textStorage addAttribute:NSUnderlineStyleAttributeName value:@1
-                            range:[self globalRangeFromLocalRange:&effectiveRange
+                            range:[self globalRangeFromLocalRange:&range
                                                  inLineAtPosition:line.position]];
         
         NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
@@ -840,7 +850,7 @@ static NSString *forceLyricsSymbol = @"~";
         
         //Disable everything in the toolbar except print and preview and pdf
         for (NSButton *button in self.toolbarButtons) {
-            if (button != _printToolbarButton && button != _previewToolbarButton && button != _pdfToolbarButton) {
+            if (button != _printToolbarButton && button != _previewToolbarButton) {
                 button.enabled = NO;
             }
         }
@@ -850,7 +860,7 @@ static NSString *forceLyricsSymbol = @"~";
         
         //Enable everything in the toolbar except print and preview and pdf
         for (NSButton *button in self.toolbarButtons) {
-            if (button != _printToolbarButton && button != _previewToolbarButton && button != _pdfToolbarButton) {
+            if (button != _printToolbarButton && button != _previewToolbarButton) {
                 button.enabled = YES;
             }
         }

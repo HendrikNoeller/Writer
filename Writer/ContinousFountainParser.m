@@ -289,7 +289,7 @@
         }
     }
     
-    //Check for scene headings (lines beginning with "INT", "EXT", "EST", "INT./EXT", "INT/EXT", "I/E"
+    //Check for scene headings (lines beginning with "INT", "EXT", "EST",  "I/E"). "INT./EXT" and "INT/EXT" are also inside the spec, but already covered by "INT".
     
     if (length >= 3) {
         NSString* firstChars = [string substringToIndex:3];
@@ -299,20 +299,20 @@
             [firstChars isEqualToString:@"I/E"]) {
             return heading;
         }
-        
-        if (length >= 7) {
-            firstChars = [string substringToIndex:7];
-            if ([firstChars isEqualToString:@"INT/EXT"]) {
-                return heading;
-            }
-            
-            if (length >= 8) {
-                firstChars = [string substringToIndex:8];
-                if ([firstChars isEqualToString:@"INT./EXT"]) {
-                    return heading;
-                }
-            }
-        }
+//        
+//        if (length >= 7) {
+//            firstChars = [string substringToIndex:7];
+//            if ([firstChars isEqualToString:@"INT/EXT"]) {
+//                return heading;
+//            }
+//            
+//            if (length >= 8) {
+//                firstChars = [string substringToIndex:8];
+//                if ([firstChars isEqualToString:@"INT./EXT"]) {
+//                    return heading;
+//                }
+//            }
+//        }
     }
     
     
@@ -374,7 +374,7 @@
         }
     }
 
-    //If it's just usual text, see if it might be (double) dialogue or a parenthetical
+    //If it's just usual text, see if it might be (double) dialogue or a parenthetical.
     if (preceedingLine) {
         if (preceedingLine.type == dialogue) {
             //Regular text after a dialogue line is another line of dialogue
@@ -468,7 +468,7 @@
 - (LineType)typeAtLine:(NSUInteger)line
 {
     if (line >= [self.lines count]) {
-        return -1;
+        return NSNotFound;
     } else {
         Line* l = self.lines[line];
         return l.type;
@@ -478,7 +478,7 @@
 - (NSUInteger)positionAtLine:(NSUInteger)line
 {
     if (line >= [self.lines count]) {
-        return -1;
+        return NSNotFound;
     } else {
         Line* l = self.lines[line];
         return l.position;
@@ -490,9 +490,17 @@
     NSString *result = @"";
     NSUInteger index = 0;
     for (Line *l in self.lines) {
-        result = [[[result stringByAppendingFormat:@"%lu ", (unsigned long) index] stringByAppendingString:[l toString]] stringByAppendingString:@"\n"];
+        //For whatever reason, %lu doesn't work with a zero
+        if (index == 0) {
+            result = [result stringByAppendingString:@"0 "];
+        } else {
+            result = [result stringByAppendingFormat:@"%lu ", (unsigned long) index];
+        }
+        result = [[result stringByAppendingString:[l toString]] stringByAppendingString:@"\n"];
         index++;
     }
+    //Cut off the last newline
+    result = [result substringToIndex:result.length - 1];
     return result;
 }
 
