@@ -323,6 +323,101 @@
     XCTAssertFalse([line.underlinedRanges containsIndexesInRange:NSMakeRange(15, 15)]);
     XCTAssertFalse([line.noteRanges containsIndexesInRange:NSMakeRange(26, 4)]);
     XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 30)]);
+    
+    parser = [[ContinousFountainParser alloc] initWithString:@"/* test\ntest*/ *italic*"];
+    line = parser.lines[0];
+    XCTAssertFalse([line.boldRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    XCTAssertFalse([line.italicRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    XCTAssertFalse([line.underlinedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    XCTAssertFalse([line.noteRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    line = parser.lines[1];
+    XCTAssertFalse([line.boldRanges containsIndexesInRange:NSMakeRange(0, 15)]);
+    XCTAssertFalse([line.italicRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    XCTAssertTrue([line.italicRanges containsIndexesInRange:NSMakeRange(7, 8)]);
+    XCTAssertFalse([line.underlinedRanges containsIndexesInRange:NSMakeRange(0, 15)]);
+    XCTAssertFalse([line.noteRanges containsIndexesInRange:NSMakeRange(0, 15)]);
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(6, 9)]);
+}
+
+- (void)testOmmitParsing
+{
+    ContinousFountainParser *parser;
+    Line* line;
+    
+    parser = [[ContinousFountainParser alloc] initWithString:@"/*test*/"];
+    line = parser.lines[0];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 8)]);
+    
+    parser = [[ContinousFountainParser alloc] initWithString:@"/* test\n test*/"];
+    line = parser.lines[0];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    line = parser.lines[1];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    
+    parser = [[ContinousFountainParser alloc] initWithString:@"/* test\nstuff\nstuff\nstuff\ntest*/"];
+    line = parser.lines[0];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    line = parser.lines[1];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[2];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[3];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[4];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    
+    [parser parseChangeInRange:NSMakeRange(0, 2) withString:@""];
+    line = parser.lines[0];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[1];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[2];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[3];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[4];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    
+    [parser parseChangeInRange:NSMakeRange(0, 0) withString:@"*"];
+    line = parser.lines[0];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    line = parser.lines[1];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[2];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[3];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[4];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    
+    [parser parseChangeInRange:NSMakeRange(0, 0) withString:@"/"];
+    line = parser.lines[0];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    line = parser.lines[1];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[2];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[3];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[4];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    
+    [parser parseChangeInRange:NSMakeRange(0, 0) withString:@"test\n"];
+    line = parser.lines[0];
+    XCTAssertFalse([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 4)]);
+    line = parser.lines[1];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 7)]);
+    line = parser.lines[2];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[3];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[4];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 5)]);
+    line = parser.lines[5];
+    XCTAssertTrue([line.ommitedRanges containsIndexesInRange:NSMakeRange(0, 6)]);
+    
 }
 
 NSString* miniScript = @"INT. DAY - APPARTMENT\n"
