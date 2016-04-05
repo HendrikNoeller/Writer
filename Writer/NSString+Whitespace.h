@@ -11,5 +11,5 @@
 @interface NSString (Whitespace)
 
 - (bool)containsOnlyWhitespace;
-
+- (bool)containsOnlyUppercase;
 @end

@@ -76,6 +76,13 @@
     XCTAssertEqualObjects([manager nameForThemeAtIndex:5], @"");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:-1], @"");
     
+    XCTAssertNotNil([manager currentBackgroundColor]);
+    XCTAssertNotNil([manager currentSelectionColor]);
+    XCTAssertNotNil([manager currentTextColor]);
+    XCTAssertNotNil([manager currentInvisibleTextColor]);
+    XCTAssertNotNil([manager currentCommentColor]);
+    XCTAssertNotNil([manager currentCaretColor]);
+    
     XCTAssertEqual([manager selectedTheme], 0);
     
     [manager selectThemeWithName:@"Dark"];
@@ -94,6 +101,13 @@
     [manager selectThemeWithName:@"Dark"];
     [manager selectThemeWithName:@"blabediblup"];
     XCTAssertEqual([manager selectedTheme], 1);
+    
+    XCTAssertNotNil([manager currentBackgroundColor]);
+    XCTAssertNotNil([manager currentSelectionColor]);
+    XCTAssertNotNil([manager currentTextColor]);
+    XCTAssertNotNil([manager currentInvisibleTextColor]);
+    XCTAssertNotNil([manager currentCommentColor]);
+    XCTAssertNotNil([manager currentCaretColor]);
 }
 
 - (void)testInvalidFile
@@ -122,6 +136,13 @@
     XCTAssertEqualObjects([manager nameForThemeAtIndex:5], @"");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:-1], @"");
     
+    XCTAssertNotNil([manager currentBackgroundColor]);
+    XCTAssertNotNil([manager currentSelectionColor]);
+    XCTAssertNotNil([manager currentTextColor]);
+    XCTAssertNotNil([manager currentInvisibleTextColor]);
+    XCTAssertNotNil([manager currentCommentColor]);
+    XCTAssertNotNil([manager currentCaretColor]);
+    
     XCTAssertEqual([manager selectedTheme], 0);
     
     [manager selectThemeWithName:@"Dark"];
@@ -140,6 +161,13 @@
     [manager selectThemeWithName:@"Dark"];
     [manager selectThemeWithName:@"blabediblup"];
     XCTAssertEqual([manager selectedTheme], 1);
+    
+    XCTAssertNotNil([manager currentBackgroundColor]);
+    XCTAssertNotNil([manager currentSelectionColor]);
+    XCTAssertNotNil([manager currentTextColor]);
+    XCTAssertNotNil([manager currentInvisibleTextColor]);
+    XCTAssertNotNil([manager currentCommentColor]);
+    XCTAssertNotNil([manager currentCaretColor]);
 }
 
 - (void)testCorruptFile
@@ -167,6 +195,13 @@
     XCTAssertEqualObjects([manager nameForThemeAtIndex:5], @"");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:-1], @"");
     
+    XCTAssertNotNil([manager currentBackgroundColor]);
+    XCTAssertNotNil([manager currentSelectionColor]);
+    XCTAssertNotNil([manager currentTextColor]);
+    XCTAssertNotNil([manager currentInvisibleTextColor]);
+    XCTAssertNotNil([manager currentCommentColor]);
+    XCTAssertNotNil([manager currentCaretColor]);
+    
     XCTAssertEqual([manager selectedTheme], 0);
     
     [manager selectThemeWithName:@"Dark"];
@@ -185,6 +220,13 @@
     [manager selectThemeWithName:@"Dark"];
     [manager selectThemeWithName:@"blabediblup"];
     XCTAssertEqual([manager selectedTheme], 1);
+    
+    XCTAssertNotNil([manager currentBackgroundColor]);
+    XCTAssertNotNil([manager currentSelectionColor]);
+    XCTAssertNotNil([manager currentTextColor]);
+    XCTAssertNotNil([manager currentInvisibleTextColor]);
+    XCTAssertNotNil([manager currentCommentColor]);
+    XCTAssertNotNil([manager currentCaretColor]);
     
 }
 

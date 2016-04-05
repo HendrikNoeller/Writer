@@ -234,7 +234,7 @@
     NSUInteger length = [string length];
     
     //Check if empty
-    if (length == 0 ) {
+    if (length == 0) {
         return empty;
     }
     
@@ -299,20 +299,6 @@
             [firstChars isEqualToString:@"I/E"]) {
             return heading;
         }
-//        
-//        if (length >= 7) {
-//            firstChars = [string substringToIndex:7];
-//            if ([firstChars isEqualToString:@"INT/EXT"]) {
-//                return heading;
-//            }
-//            
-//            if (length >= 8) {
-//                firstChars = [string substringToIndex:8];
-//                if ([firstChars isEqualToString:@"INT./EXT"]) {
-//                    return heading;
-//                }
-//            }
-//        }
     }
     
     
@@ -322,7 +308,7 @@
     }
     
     //Check if all uppercase (and at least 3 characters to not indent every capital leter before anything else follows) = character name.
-    if (length >= 3 && [[string uppercaseString] isEqualToString:string] && !containsOnlyWhitespace) {
+    if (length >= 3 && [string containsOnlyUppercase] && !containsOnlyWhitespace) {
         // A character line ending in ^ is a double dialogue character
         if (lastChar == '^') {
             return doubleDialogueCharacter;

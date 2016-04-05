@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		B12DA7811CB3E09C00EB17DB /* InvalidThemes.plist in Resources */ = {isa = PBXBuildFile; fileRef = B12DA7801CB3E09C00EB17DB /* InvalidThemes.plist */; };
 		B13111841CB2885200D07A0C /* ThemeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111831CB2885200D07A0C /* ThemeManager.m */; };
 		B13111881CB289ED00D07A0C /* Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111871CB289ED00D07A0C /* Theme.m */; };
 		B131118A1CB2917000D07A0C /* Themes.plist in Resources */ = {isa = PBXBuildFile; fileRef = B13111891CB2917000D07A0C /* Themes.plist */; };
@@ -56,7 +55,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		B12DA7801CB3E09C00EB17DB /* InvalidThemes.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = InvalidThemes.plist; sourceTree = "<group>"; };
 		B13111821CB2885200D07A0C /* ThemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeManager.h; sourceTree = "<group>"; };
 		B13111831CB2885200D07A0C /* ThemeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeManager.m; sourceTree = "<group>"; };
 		B13111861CB289ED00D07A0C /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
@@ -146,7 +144,6 @@
 				B13111861CB289ED00D07A0C /* Theme.h */,
 				B13111871CB289ED00D07A0C /* Theme.m */,
 				B13111891CB2917000D07A0C /* Themes.plist */,
-				B12DA7801CB3E09C00EB17DB /* InvalidThemes.plist */,
 			);
 			name = Themes;
 			sourceTree = "<group>";
@@ -382,7 +379,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B12DA7811CB3E09C00EB17DB /* InvalidThemes.plist in Resources */,
 				B131118A1CB2917000D07A0C /* Themes.plist in Resources */,
 				B1F04ED81C88ACAD001C4D27 /* Courier Prime Bold Italic.ttf in Resources */,
 				B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */,

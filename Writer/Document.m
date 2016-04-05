@@ -474,6 +474,7 @@ static NSString *forceLyricsSymbol = @"~";
     if ([self selectedTabViewTab] == 0) {
         if ([[self getText] length] < 6) {
             [self addString:[self titlePage] atIndex:0];
+            self.textView.selectedRange = NSMakeRange(7, 0);
         } else if (![[[self getText] substringWithRange:NSMakeRange(0, 6)] isEqualToString:@"Title:"]) {
             [self addString:[self titlePage] atIndex:0];
         }
@@ -787,7 +788,7 @@ static NSString *forceLyricsSymbol = @"~";
             [menuItem.submenu addItem:noThingPleaseSaveItem];
         }
         return YES;
-    } else if ([menuItem.title isEqualToString:@"Print…"] || [menuItem.title isEqualToString:@"Export to PDF"]) {
+    } else if ([menuItem.title isEqualToString:@"Print…"] || [menuItem.title isEqualToString:@"PDF"] || [menuItem.title isEqualToString:@"HTML"]) {
         NSArray* words = [[self getText] componentsSeparatedByCharactersInSet :[NSCharacterSet whitespaceAndNewlineCharacterSet]];
         NSString* visibleCharacters = [words componentsJoinedByString:@""];
         if ([visibleCharacters length] == 0) {

@@ -23,4 +23,22 @@
     return true;
 }
 
+- (bool)containsCharacters
+{
+    NSUInteger length = [self length];
+    NSCharacterSet* characters = [NSCharacterSet letterCharacterSet];
+    for (int i = 0; i < length; i++) {
+        char c = [self characterAtIndex:i];
+        if ([characters characterIsMember:c]) {
+            return true;
+        }
+    };
+    return false;
+}
+
+- (bool)containsOnlyUppercase
+{
+    return [[self uppercaseString] isEqualToString:self] && [self containsCharacters];
+}
+
 @end
