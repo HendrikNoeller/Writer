@@ -17,10 +17,10 @@
     for (int i = 0; i < length; i++) {
         char c = [self characterAtIndex:i];
         if (![whitespaceSet characterIsMember:c]) {
-            return false;
+            return NO;
         }
     }
-    return true;
+    return YES;
 }
 
 - (bool)containsUppercaseLetters
@@ -30,10 +30,10 @@
     for (int i = 0; i < length; i++) {
         char c = [self characterAtIndex:i];
         if ([characters characterIsMember:c]) {
-            return true;
+            return YES;
         }
     }
-    return false;
+    return NO;
 }
 
 - (bool)containsOnlyUppercase

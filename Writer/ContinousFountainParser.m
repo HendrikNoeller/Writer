@@ -11,6 +11,10 @@
 #import "NSString+Whitespace.h"
 #import "NSMutableIndexSet+Lowest.h"
 
+@interface ContinousFountainParser ()
+@property (nonatomic) bool ommitOpen;
+@end
+
 @implementation ContinousFountainParser
 
 #pragma mark - Parsing
@@ -74,7 +78,7 @@
     [self correctParsesInLines:changedIndices];
 }
 
-- (NSMutableIndexSet*)parseCharacterAdded:(NSString*)character atPosition:(NSUInteger)position
+- (NSIndexSet*)parseCharacterAdded:(NSString*)character atPosition:(NSUInteger)position
 {
     NSUInteger lineIndex = [self lineIndexAtPosition:position];
     Line* line = self.lines[lineIndex];
@@ -97,7 +101,7 @@
         
         [self incrementLinePositionsFromIndex:lineIndex+2 amount:1];
         
-        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 2)];
+        return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(lineIndex, 2)];
     } else {
         NSArray* pieces = @[[line.string substringToIndex:indexInLine],
                             character,
@@ -106,11 +110,35 @@
         line.string = [pieces componentsJoinedByString:@""];
         [self incrementLinePositionsFromIndex:lineIndex+1 amount:1];
         
-        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 1)];
+        /* Handling Ommits */
+        char nextChar = indexInLine < line.string.length - 1 ? [line.string characterAtIndex:indexInLine + 1]: 0;
+        char prevChar = indexInLine != 0 ? [line.string characterAtIndex:indexInLine - 1]: 0;
+        if ([character isEqualToString:@"*"]) {
+            if (nextChar == '/') {
+                [self reparseOmmitsBackwarsFromLine:line inIndex:lineIndex];
+            } else if (prevChar == '/') {
+                [self reparseOmmitsForwardFromLine:line inIndex:lineIndex];
+            }
+        } else if ([character isEqualToString:@"/"]) {
+            if (nextChar == '*') {
+                [self reparseOmmitsForwardFromLine:line inIndex:lineIndex];
+            } else if (prevChar == '*') {
+                [self reparseOmmitsBackwarsFromLine:line inIndex:lineIndex];
+            }
+        } else {
+            if (prevChar == '*' && nextChar == '/') {
+                [self reparseOmmitsBackwarsFromLine:line inIndex:lineIndex];
+            } else if (prevChar == '/' && nextChar == '*') {
+                [self reparseOmmitsForwardFromLine:line inIndex:lineIndex];
+            }
+        }
+        
+        return [[NSIndexSet alloc] initWithIndex:lineIndex];
+        
     }
 }
 
-- (NSMutableIndexSet*)parseCharacterRemovedAtPosition:(NSUInteger)position
+- (NSIndexSet*)parseCharacterRemovedAtPosition:(NSUInteger)position
 {
     NSUInteger lineIndex = [self lineIndexAtPosition:position];
     Line* line = self.lines[lineIndex];
@@ -126,15 +154,40 @@
         [self.lines removeObjectAtIndex:lineIndex+1];
         [self decrementLinePositionsFromIndex:lineIndex+1 amount:1];
         
-        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 1)];
+        return [[NSIndexSet alloc] initWithIndex:lineIndex];
     } else {
+        char removedChar = [line.string characterAtIndex:indexInLine];
         NSArray* pieces = @[[line.string substringToIndex:indexInLine],
                             [line.string substringFromIndex:indexInLine+1]];
         
         line.string = [pieces componentsJoinedByString:@""];
         [self decrementLinePositionsFromIndex:lineIndex+1 amount:1];
         
-        return [[NSMutableIndexSet alloc] initWithIndexesInRange:NSMakeRange(lineIndex, 1)];
+        /* Handling Ommits */
+        char nextChar = indexInLine < line.string.length ? [line.string characterAtIndex:indexInLine]: 0;
+        char prevChar = indexInLine != 0 ? [line.string characterAtIndex:indexInLine - 1]: 0;
+        if (removedChar == '*') {
+            if (nextChar == '/') {
+                //parse back
+                [self reparseOmmitsBackwarsFromLine:line inIndex:lineIndex];
+            } else if (prevChar == '/') {
+                [self reparseOmmitsForwardFromLine:line inIndex:lineIndex];
+            }
+        } else if (removedChar == '/') {
+            if (nextChar == '*') {
+                [self reparseOmmitsForwardFromLine:line inIndex:lineIndex];
+            } else if (prevChar == '*') {
+                [self reparseOmmitsBackwarsFromLine:line inIndex:lineIndex];
+            }
+        } else {
+            if (prevChar == '*' && nextChar == '/') {
+                [self reparseOmmitsBackwarsFromLine:line inIndex:lineIndex];
+            } else if (prevChar == '/' && nextChar == '*') {
+                [self reparseOmmitsForwardFromLine:line inIndex:lineIndex];
+            }
+        }
+        
+        return [[NSIndexSet alloc] initWithIndex:lineIndex];
     }
 }
 
@@ -209,6 +262,51 @@
     }
 }
 
+- (void)reparseOmmitsForwardFromLine:(Line*)line inIndex:(NSUInteger)index
+{
+    line.ommitedRanges = [self rangesOfOmmitInString:line.string ignoreOrphanClose:YES];
+    while (self.ommitOpen) {
+        index++;
+        if (index >= [self.lines count]) {
+            break;
+        }
+        line = self.lines[index];
+        line.ommitedRanges = [self rangesOfOmmitInString:line.string ignoreOrphanClose:YES];
+    }
+}
+
+- (void)reparseOmmitsBackwarsFromLine:(Line*)line inIndex:(NSUInteger)index
+{
+    NSMutableIndexSet* ommitRangesForLine = [self rangesOfOmmitInString:line.string ignoreOrphanClose:NO];
+    if (!ommitRangesForLine && index > 0) {
+        NSUInteger backwardsIndex = index - 1;
+        for (;;) {
+            line = self.lines[backwardsIndex];
+            ommitRangesForLine = [self rangesOfOmmitInString:line.string ignoreOrphanClose:NO];
+            if (ommitRangesForLine) {
+                line.ommitedRanges = ommitRangesForLine;
+                //Go forward from here
+                backwardsIndex++;
+                for (; backwardsIndex <= index; backwardsIndex++) {
+                    line = self.lines[backwardsIndex];
+                    line.ommitedRanges = [self rangesOfOmmitInString:line.string ignoreOrphanClose:YES];
+                }
+                break;
+            } else if (backwardsIndex == 0) {
+                //Go forward from here
+                for (; backwardsIndex <= index; backwardsIndex++) {
+                    line = self.lines[backwardsIndex];
+                    line.ommitedRanges = [self rangesOfOmmitInString:line.string ignoreOrphanClose:YES];
+                }
+                break;
+            }
+            backwardsIndex--;
+        }
+    } else {
+        line.ommitedRanges = ommitRangesForLine;
+    }
+}
+
 #pragma mark Parsing Core
 
 #define BOLD_PATTERN @"**"
@@ -226,7 +324,7 @@
     line.italicRanges = [self rangesInString:line.string between:ITALIC_PATTERN and:ITALIC_PATTERN];
     line.underlinedRanges = [self rangesInString:line.string between:UNDERLINE_PATTERN and:UNDERLINE_PATTERN];
     line.noteRanges = [self rangesInString:line.string between:NOTE_OPEN_PATTERN and:NOTE_CLOSE_PATTERN];
-    line.ommitedRanges = [self rangesInString:line.string between:OMMIT_OPEN_PATTERN and:OMMIT_CLOSE_PATTERN];
+    line.ommitedRanges = [self rangesOfOmmitInString:line.string ignoreOrphanClose:YES]; //even parse this with incremental, as open ommits change when line is shortened, even if no ommit symbol was affected!
 }
 
 - (LineType)parseLineType:(NSString*)string atIndex:(NSUInteger)index
@@ -427,15 +525,67 @@
             }
         }
     }
-//    
-//    //Terminate any open ranges at the end of the line
-//    if (rangeBegin != -1) {
-//        //Only add ranges that consist of any more than only the deliminators
-//        NSRange rangeToAdd = NSMakeRange(rangeBegin, stringLength - rangeBegin);
-//        if (!(rangeToAdd.length == startLength+endLength)) {
-//            [indexSet addIndexesInRange:rangeToAdd];
-//        }
-//    }
+    return indexSet;
+}
+
+//Searches for ommited sections in string. returns nil if an orphan close was found and ignore is false
+- (NSMutableIndexSet*)rangesOfOmmitInString:(NSString*)string ignoreOrphanClose:(bool)ignore
+{
+    NSMutableIndexSet* indexSet = [[NSMutableIndexSet alloc] init];
+    
+    NSUInteger stringLength = [string length];
+    NSUInteger startLength = [OMMIT_OPEN_PATTERN length];
+    NSUInteger endLength = [OMMIT_CLOSE_PATTERN length];
+    
+    NSInteger lastIndexClose = stringLength - startLength; //Last index to look at if we are looking for start
+    NSInteger lastIndexOpen = stringLength - endLength; //Last index to look at if we are looking for end
+    NSInteger rangeBegin = self.ommitOpen ? 0 : -1; //Set to -1 when no range is currently inspected, or the the index of a detected beginning
+    
+    for (int i = 0;;i++) {
+        if (rangeBegin == -1) {
+            if (i <= lastIndexClose) {
+                //Look for start string
+                if ([[string substringWithRange:NSMakeRange(i, startLength)] isEqualToString:OMMIT_OPEN_PATTERN]) {
+                    rangeBegin = i;
+                    self.ommitOpen = YES;
+                }
+            }
+            if (i <= lastIndexOpen) {
+                //Lookign for end string
+                if ([[string substringWithRange:NSMakeRange(i, endLength)] isEqualToString:OMMIT_CLOSE_PATTERN]) {
+                    if (!ignore) {
+                        self.ommitOpen = NO;
+                        return nil;
+                    }
+                }
+            }
+        } else {
+            if (i <= lastIndexOpen) {
+                //Lookign for end string
+                if ([[string substringWithRange:NSMakeRange(i, endLength)] isEqualToString:OMMIT_CLOSE_PATTERN]) {
+                    //Only add ranges that contain content
+                    if (i - rangeBegin != startLength) {
+                        [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + endLength)];
+                    }
+                    rangeBegin = -1;
+                    self.ommitOpen = NO;
+                }
+            }
+        }
+        if (i > lastIndexOpen && i > lastIndexClose) {
+            break;
+        }
+    }
+    
+    
+    //Terminate any open ranges at the end of the line so that this line is ommited untill the end
+    if (rangeBegin != -1) {
+        //Only add ranges that consist of any more than only the deliminators
+        NSRange rangeToAdd = NSMakeRange(rangeBegin, stringLength - rangeBegin);
+        if (!(rangeToAdd.length == startLength+endLength)) {
+            [indexSet addIndexesInRange:rangeToAdd];
+        }
+    }
     
     return indexSet;
 }
