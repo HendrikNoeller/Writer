@@ -19,26 +19,26 @@
         if (![whitespaceSet characterIsMember:c]) {
             return false;
         }
-    };
+    }
     return true;
 }
 
-- (bool)containsCharacters
+- (bool)containsUppercaseLetters
 {
     NSUInteger length = [self length];
-    NSCharacterSet* characters = [NSCharacterSet letterCharacterSet];
+    NSCharacterSet* characters = [NSCharacterSet uppercaseLetterCharacterSet];
     for (int i = 0; i < length; i++) {
         char c = [self characterAtIndex:i];
         if ([characters characterIsMember:c]) {
             return true;
         }
-    };
+    }
     return false;
 }
 
 - (bool)containsOnlyUppercase
 {
-    return [[self uppercaseString] isEqualToString:self] && [self containsCharacters];
+    return [[self uppercaseString] isEqualToString:self] && [self containsUppercaseLetters];
 }
 
 @end

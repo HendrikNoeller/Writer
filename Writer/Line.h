@@ -17,6 +17,7 @@ typedef enum : NSUInteger {
     titlePageSource,
     titlePageContact,
     titlePageDraftDate,
+    titlePageUnknown,
     heading,
     action,
     character,

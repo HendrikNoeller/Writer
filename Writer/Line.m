@@ -40,6 +40,8 @@
             return [[@"Title Page Contact: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
         case titlePageDraftDate:
             return [[@"Title Page Draft Date: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+        case titlePageUnknown:
+            return [[@"Title Page Unknown: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
         case heading:
             return [[@"Heading: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
         case action:

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B12DA7831CB44A4600EB17DB /* Big-Fish.fountain in Resources */ = {isa = PBXBuildFile; fileRef = B12DA7821CB44A4600EB17DB /* Big-Fish.fountain */; };
 		B13111841CB2885200D07A0C /* ThemeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111831CB2885200D07A0C /* ThemeManager.m */; };
 		B13111881CB289ED00D07A0C /* Theme.m in Sources */ = {isa = PBXBuildFile; fileRef = B13111871CB289ED00D07A0C /* Theme.m */; };
 		B131118A1CB2917000D07A0C /* Themes.plist in Resources */ = {isa = PBXBuildFile; fileRef = B13111891CB2917000D07A0C /* Themes.plist */; };
@@ -55,6 +56,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B12DA7821CB44A4600EB17DB /* Big-Fish.fountain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Big-Fish.fountain"; sourceTree = "<group>"; };
 		B13111821CB2885200D07A0C /* ThemeManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThemeManager.h; sourceTree = "<group>"; };
 		B13111831CB2885200D07A0C /* ThemeManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThemeManager.m; sourceTree = "<group>"; };
 		B13111861CB289ED00D07A0C /* Theme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Theme.h; sourceTree = "<group>"; };
@@ -191,14 +193,14 @@
 				B1E7FF511BC4555B008E2B99 /* Writer.entitlements */,
 				B138B57A19E1C973000489C4 /* Document.h */,
 				B138B57B19E1C973000489C4 /* Document.m */,
+				B138B58219E1C973000489C4 /* MainMenu.xib */,
+				B138B57D19E1C973000489C4 /* Document.xib */,
 				B1B62A3819E3402F009F6E23 /* ColorView.h */,
 				B1B62A3919E3402F009F6E23 /* ColorView.m */,
 				B13111851CB2893F00D07A0C /* Themes */,
 				B13111911CB2A41B00D07A0C /* Parsing */,
 				B1D0B84919E31B86005252E4 /* PrintView.h */,
 				B1D0B84A19E31B86005252E4 /* PrintView.m */,
-				B138B57D19E1C973000489C4 /* Document.xib */,
-				B138B58219E1C973000489C4 /* MainMenu.xib */,
 				B138B58019E1C973000489C4 /* Images.xcassets */,
 				B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */,
 				B138B57619E1C973000489C4 /* Supporting Files */,
@@ -209,6 +211,7 @@
 		B138B57619E1C973000489C4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				B12DA7821CB44A4600EB17DB /* Big-Fish.fountain */,
 				B138B57719E1C973000489C4 /* Info.plist */,
 				B138B57819E1C973000489C4 /* main.m */,
 				B1E7FF521BC45969008E2B99 /* Credits.rtf */,
@@ -381,6 +384,7 @@
 			files = (
 				B131118A1CB2917000D07A0C /* Themes.plist in Resources */,
 				B1F04ED81C88ACAD001C4D27 /* Courier Prime Bold Italic.ttf in Resources */,
+				B12DA7831CB44A4600EB17DB /* Big-Fish.fountain in Resources */,
 				B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */,
 				B1F04EDA1C88ACAD001C4D27 /* Courier Prime Italic.ttf in Resources */,
 				B1F04EDB1C88ACAD001C4D27 /* Courier Prime.ttf in Resources */,

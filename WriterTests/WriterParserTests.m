@@ -59,6 +59,9 @@
     XCTAssertEqual([parser typeAtLine:i], titlePageSource); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageDraftDate); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageUnknown); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
@@ -82,6 +85,7 @@
     XCTAssertEqual([parser typeAtLine:i], doubleDialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], doubleDialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
+    XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], transition); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
@@ -192,6 +196,9 @@
     XCTAssertEqual([parser typeAtLine:i], titlePageSource); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageDraftDate); i++;
     XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageContact); i++;
+    XCTAssertEqual([parser typeAtLine:i], titlePageUnknown); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
@@ -215,6 +222,7 @@
     XCTAssertEqual([parser typeAtLine:i], doubleDialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], doubleDialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
+    XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], transition); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
@@ -340,6 +348,9 @@ NSString* script = @""
 @"source: somewhere\n"
 @"DrAft Date: 42.23.23\n"
 @"Contact: florian@maier.de\n"
+@"   noeller@me.com\n"
+@"\ttest@abc.\nde"
+@"Key: value\n"
 @"\n"
 @"INT. DAY - LIVING ROOM\n"
 @"EXT. DAY - LIVING ROOM\n"
@@ -363,6 +374,7 @@ NSString* script = @""
 @"  \n"
 @"And I have holes in my text!\n"
 @"\n"
+@"§$!%\n"
 @"He indeed looks very happy\n"
 @"fade to:\n"
 @".thisisaheading\n"

@@ -268,6 +268,64 @@
         return section;
     }
     
+    
+    //Check for title page elements. A title page element starts with "Title:", "Credit:", "Author:", "Draft date:" or "Contact:"
+    //it has to be either the first line or only be preceeded by title page elements.
+    Line* preceedingLine = (index == 0) ? nil : (Line*) self.lines[index-1];
+    if (!preceedingLine ||
+        preceedingLine.type == titlePageTitle ||
+        preceedingLine.type == titlePageAuthor ||
+        preceedingLine.type == titlePageCredit ||
+        preceedingLine.type == titlePageSource ||
+        preceedingLine.type == titlePageContact ||
+        preceedingLine.type == titlePageDraftDate ||
+        preceedingLine.type == titlePageUnknown) {
+        
+        //Check for title page key: value pairs
+        // - search for ":"
+        // - extract key
+        NSRange firstColonRange = [string rangeOfString:@":"];
+        if (firstColonRange.length != 0) {
+            NSUInteger firstColonIndex = firstColonRange.location;
+            
+            NSString* key = [[string substringToIndex:firstColonIndex] lowercaseString];
+            
+            if ([key isEqualToString:@"title"]) {
+                return titlePageTitle;
+            } else if ([key isEqualToString:@"author"] || [key isEqualToString:@"authors"]) {
+                return titlePageAuthor;
+            } else if ([key isEqualToString:@"credit"]) {
+                return titlePageCredit;
+            } else if ([key isEqualToString:@"source"]) {
+                return titlePageSource;
+            } else if ([key isEqualToString:@"contact"]) {
+                return titlePageContact;
+            } else if ([key isEqualToString:@"draft date"]) {
+                return titlePageDraftDate;
+            } else {
+                return titlePageUnknown;
+            }
+        } else if (length >= 2 &&
+                   ([[string substringToIndex:2] isEqualToString:@"  "] ||
+                    [[string substringToIndex:1] isEqualToString:@"\t"])) {
+                       
+            return preceedingLine.type;
+        }
+        
+    }
+    
+    //Check for scene headings (lines beginning with "INT", "EXT", "EST",  "I/E"). "INT./EXT" and "INT/EXT" are also inside the spec, but already covered by "INT".
+    
+    if (length >= 3) {
+        NSString* firstChars = [string substringToIndex:3];
+        if ([firstChars isEqualToString:@"INT"] ||
+            [firstChars isEqualToString:@"EXT"] ||
+            [firstChars isEqualToString:@"EST"] ||
+            [firstChars isEqualToString:@"I/E"]) {
+            return heading;
+        }
+    }
+    
     //Check for transitions and page breaks
     if (length >= 3) {
         //Transition happens if the last three chars are "TO:"
@@ -289,24 +347,6 @@
         }
     }
     
-    //Check for scene headings (lines beginning with "INT", "EXT", "EST",  "I/E"). "INT./EXT" and "INT/EXT" are also inside the spec, but already covered by "INT".
-    
-    if (length >= 3) {
-        NSString* firstChars = [string substringToIndex:3];
-        if ([firstChars isEqualToString:@"INT"] ||
-            [firstChars isEqualToString:@"EXT"] ||
-            [firstChars isEqualToString:@"EST"] ||
-            [firstChars isEqualToString:@"I/E"]) {
-            return heading;
-        }
-    }
-    
-    
-    //Check for centered text
-    if (firstChar == '>' && lastChar == '<') {
-        return centered;
-    }
-    
     //Check if all uppercase (and at least 3 characters to not indent every capital leter before anything else follows) = character name.
     if (length >= 3 && [string containsOnlyUppercase] && !containsOnlyWhitespace) {
         // A character line ending in ^ is a double dialogue character
@@ -317,47 +357,9 @@
         }
     }
     
-    //Check for title page elements. A title page element starts with "Title:", "Credit:", "Author:", "Draft date:" or "Contact:"
-    //it has to be either the first line or only be preceeded by title page elements.
-    Line* preceedingLine = (index == 0) ? nil : (Line*) self.lines[index-1];
-    if (!preceedingLine ||
-        preceedingLine.type == titlePageTitle ||
-        preceedingLine.type == titlePageAuthor ||
-        preceedingLine.type == titlePageCredit ||
-        preceedingLine.type == titlePageSource ||
-        preceedingLine.type == titlePageContact ||
-        preceedingLine.type == titlePageDraftDate) {
-        
-        if (length >= 6) {
-            NSString *firstChars = [[string substringToIndex:6] lowercaseString];
-            if ([firstChars isEqualToString:@"title:"]) {
-                return titlePageTitle;
-            }
-            if (length >= 7) {
-                NSString *firstChars = [[string substringToIndex:7] lowercaseString];
-                if ([firstChars isEqualToString:@"credit:"]) {
-                    return titlePageCredit;
-                }
-                if ([firstChars isEqualToString:@"author:"]) {
-                    return titlePageAuthor;
-                }
-                if ([firstChars isEqualToString:@"source:"]) {
-                    return titlePageSource;
-                }
-                if (length >= 8) {
-                    NSString *firstChars = [[string substringToIndex:8] lowercaseString];
-                    if ([firstChars isEqualToString:@"contact:"]) {
-                        return titlePageContact;
-                    }
-                    if (length >= 11) {
-                        NSString *firstChars = [[string substringToIndex:11] lowercaseString];
-                        if ([firstChars isEqualToString:@"draft date:"]) {
-                            return titlePageDraftDate;
-                        }
-                    }
-                }
-            }
-        }
+    //Check for centered text
+    if (firstChar == '>' && lastChar == '<') {
+        return centered;
     }
 
     //If it's just usual text, see if it might be (double) dialogue or a parenthetical.
