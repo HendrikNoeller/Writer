@@ -43,6 +43,8 @@ typedef enum : NSUInteger {
 @property NSMutableIndexSet* underlinedRanges;
 @property NSMutableIndexSet* noteRanges;
 @property NSMutableIndexSet* ommitedRanges;
+@property bool ommitIn; //wether the line terminates an unfinished ommit
+@property bool ommitOut; //Wether the line starts an ommit and doesn't finish it
 
 - (Line*)initWithString:(NSString*)string type:(LineType)type position:(NSUInteger)position;
 - (NSString*)toString;
