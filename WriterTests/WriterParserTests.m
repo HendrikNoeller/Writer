@@ -256,8 +256,6 @@
     range = NSMakeRange(0, 8);
     XCTAssertTrue([line.boldRanges containsIndexesInRange:range]);
     XCTAssertFalse([line.italicRanges containsIndexesInRange:range]);
-    XCTAssertFalse([line.italicRanges containsIndexesInRange:NSMakeRange(0, 2)]);
-    XCTAssertFalse([line.italicRanges containsIndexesInRange:NSMakeRange(6, 2)]);
     XCTAssertFalse([line.underlinedRanges containsIndexesInRange:range]);
     XCTAssertFalse([line.noteRanges containsIndexesInRange:range]);
     XCTAssertFalse([line.ommitedRanges containsIndexesInRange:range]);
