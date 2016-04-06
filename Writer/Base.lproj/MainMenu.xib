@@ -453,6 +453,28 @@ DQ
                                     <action selector="themes:" target="-1" id="fv6-OV-M7K"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Zoom" id="2bU-pu-Jv0">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Zoom" id="xgR-jy-OLL">
+                                    <items>
+                                        <menuItem title="Zoom In" keyEquivalent="+" id="Vt3-Oc-Iy3">
+                                            <connections>
+                                                <action selector="increaseFontSize:" target="-1" id="lZE-WX-ntU"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Zoom Out" keyEquivalent="-" id="LBq-PQ-NGT">
+                                            <connections>
+                                                <action selector="decreaseFontSize:" target="-1" id="jGK-5e-gzd"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Reset Zoom" keyEquivalent="." id="iVC-v6-5CT">
+                                            <connections>
+                                                <action selector="resetFontSize:" target="-1" id="Ike-5t-niu"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </menuItem>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="VwT-WD-YPe"/>
