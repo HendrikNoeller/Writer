@@ -315,9 +315,6 @@
     if (firstChar == '@') {
         return character;
     }
-    if (firstChar == '.') {
-        return heading;
-    }
     if (firstChar == '~') {
         return lyrics;
     }
@@ -326,6 +323,9 @@
     }
     if (firstChar == '#') {
         return section;
+    }
+    if (firstChar == '.' && length >= 2 && [string characterAtIndex:1] != '.') {
+        return heading;
     }
     
     
@@ -365,10 +365,8 @@
             } else {
                 return titlePageUnknown;
             }
-        } else if (length >= 2 &&
-                   ([[string substringToIndex:2] isEqualToString:@"  "] ||
-                    [[string substringToIndex:1] isEqualToString:@"\t"])) {
-                       
+        } else if ((length >= 2 && [[string substringToIndex:2] isEqualToString:@"  "]) ||
+                   (length >= 1 && [[string substringToIndex:1] isEqualToString:@"\t"])) {
             return preceedingLine.type;
         }
         

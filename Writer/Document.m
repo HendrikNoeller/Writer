@@ -105,6 +105,10 @@
                                                                blue:0.5
                                                               alpha:1.0];
     [self.textView setFont:[self courier]];
+    [self.textView setAutomaticQuoteSubstitutionEnabled:NO];
+    [self.textView setAutomaticDataDetectionEnabled:NO];
+    [self.textView setAutomaticDashSubstitutionEnabled:NO];
+    
     NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
     [typingAttributes setObject:[self courier] forKey:@"Font"];
     
@@ -339,6 +343,7 @@
     if (!fontOnly) {
         [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
         [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentTextColor range:range];
+        [textStorage addAttribute:NSUnderlineStyleAttributeName value:@0 range:range];
     }
     [textStorage addAttribute:NSFontAttributeName value:[self courier] range:range];
     
