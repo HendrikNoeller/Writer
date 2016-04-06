@@ -18,7 +18,7 @@
 
 @implementation WriterParserPerformance
 
-- (void)testOwnPerformance {
+- (void)testOwnPerformance { //Baseline is FastFountainParser
     NSString* bigFish = [self bigFish];
     [self measureBlock:^{
         (void) [[ContinousFountainParser alloc] initWithString:bigFish];
@@ -45,16 +45,16 @@
     NSString* bigFish = [self bigFish];
     ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:bigFish];
     [self measureBlock:^{
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
-        [parser parseChangeInRange:NSMakeRange(3, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3545, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(10, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3340, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(330, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3230, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(340, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3650, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(3000, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(300, 2) withString:@""];
+        [parser parseChangeInRange:NSMakeRange(30, 2) withString:@""];
     }];
 }
 
@@ -62,16 +62,7 @@
     NSString* bigFish = [self bigFish];
     ContinousFountainParser *parser = [[ContinousFountainParser alloc] initWithString:bigFish];
     [self measureBlock:^{
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
-        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"ba"];
+        [parser parseChangeInRange:NSMakeRange(30, 0) withString:@"baadsfasd/* sdfsdf _under_ **BOLD** */\nCHARACTER /*"];
     }];
 }
 
