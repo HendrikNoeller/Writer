@@ -88,15 +88,17 @@
     return self;
 }
 
-#define TEXT_INSET 20
+#define TEXT_INSET_SIDE 100
+#define TEXT_INSET_TOP 20
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
 //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
+    
     self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
-    self.textView.textContainerInset = NSMakeSize(TEXT_INSET, TEXT_INSET);
+    self.textView.textContainerInset = NSMakeSize(TEXT_INSET_SIDE, TEXT_INSET_TOP);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
                                                               green:0.5
                                                                blue:0.5
@@ -224,10 +226,10 @@
 #define DIALOGUE_INDENT 150
 #define DIALOGUE_RIGHT 450
 
-#define DD_CHARACTER_INDENT 570
-#define DD_PARENTHETICAL_INDENT 510
-#define DOUBLE_DIALOGUE_INDENT 450
-#define DD_RIGHT 750
+#define DD_CHARACTER_INDENT 370
+#define DD_PARENTHETICAL_INDENT 310
+#define DOUBLE_DIALOGUE_INDENT 250
+#define DD_RIGHT 550
 
 - (void)formatLineOfScreenplay:(Line*)line
 {

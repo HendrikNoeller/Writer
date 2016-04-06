@@ -236,16 +236,18 @@
 - (void)parseTypeAndFormattingForLine:(Line*)line atIndex:(NSUInteger)index
 {
     line.type = [self parseLineType:line.string atIndex:index];
-    line.boldRanges = [self rangesInString:line.string between:BOLD_PATTERN and:BOLD_PATTERN];
-    line.italicRanges = [self rangesInString:line.string between:ITALIC_PATTERN and:ITALIC_PATTERN];
-    line.underlinedRanges = [self rangesInString:line.string between:UNDERLINE_PATTERN and:UNDERLINE_PATTERN];
-    line.noteRanges = [self rangesInString:line.string between:NOTE_OPEN_PATTERN and:NOTE_CLOSE_PATTERN];
+    
+    NSMutableIndexSet* starsInOmmit = [[NSMutableIndexSet alloc] init];
     if (index == 0) {
-        line.ommitedRanges = [self rangesOfOmmitInLine:line lastLineOmmitOut:NO];
+        line.ommitedRanges = [self rangesOfOmmitInLine:line lastLineOmmitOut:NO saveStarsIn:starsInOmmit];
     } else {
         Line* previousLine = self.lines[index-1];
-        line.ommitedRanges = [self rangesOfOmmitInLine:line lastLineOmmitOut:previousLine.ommitOut];
+        line.ommitedRanges = [self rangesOfOmmitInLine:line lastLineOmmitOut:previousLine.ommitOut saveStarsIn:starsInOmmit];
     }
+    line.boldRanges = [self rangesInString:line.string between:BOLD_PATTERN and:BOLD_PATTERN excludingIndices:starsInOmmit];
+    line.italicRanges = [self rangesInString:line.string between:ITALIC_PATTERN and:ITALIC_PATTERN excludingIndices:starsInOmmit];
+    line.underlinedRanges = [self rangesInString:line.string between:UNDERLINE_PATTERN and:UNDERLINE_PATTERN excludingIndices:nil];
+    line.noteRanges = [self rangesInString:line.string between:NOTE_OPEN_PATTERN and:NOTE_CLOSE_PATTERN excludingIndices:nil];
 }
 
 - (LineType)parseLineType:(NSString*)string atIndex:(NSUInteger)index
@@ -415,7 +417,7 @@
     return action;
 }
 
-- (NSMutableIndexSet*)rangesInString:(NSString*)string between:(NSString*)startString and:(NSString*)endString
+- (NSMutableIndexSet*)rangesInString:(NSString*)string between:(NSString*)startString and:(NSString*)endString excludingIndices:(NSIndexSet*)excludes
 {
     NSMutableIndexSet* indexSet = [[NSMutableIndexSet alloc] init];
     
@@ -428,6 +430,7 @@
     NSInteger rangeBegin = -1; //Set to -1 when no range is currently inspected, or the the index of a detected beginning
     
     for (int i = 0;;i++) {
+        if ([excludes containsIndex:i]) continue;
         if (rangeBegin == -1) {
             if (i > lastIndexClose) break;
             //Look for start string
@@ -450,7 +453,7 @@
 }
 
 //Searches for ommited sections in string, and marks ommit in/ommit out
-- (NSMutableIndexSet*)rangesOfOmmitInLine:(Line*)line lastLineOmmitOut:(bool)lastLineOut
+- (NSMutableIndexSet*)rangesOfOmmitInLine:(Line*)line lastLineOmmitOut:(bool)lastLineOut saveStarsIn:(NSMutableIndexSet*)stars
 {
     NSMutableIndexSet* indexSet = [[NSMutableIndexSet alloc] init];
     
@@ -469,16 +472,15 @@
             //Look for start string
             if ([[line.string substringWithRange:NSMakeRange(i, startLength)] isEqualToString:OMMIT_OPEN_PATTERN]) {
                 rangeBegin = i;
+                [stars addIndex:i+1];
             }
         } else {
             if (i > lastIndexOpen) break;
             //Lookign for end string
             if ([[line.string substringWithRange:NSMakeRange(i, endLength)] isEqualToString:OMMIT_CLOSE_PATTERN]) {
-                //Only add ranges that contain content
-                if (i - rangeBegin != startLength) {
-                    [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + endLength)];
-                }
+                [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + endLength)];
                 rangeBegin = -1;
+                [stars addIndex:i];
             }
         }
     }
