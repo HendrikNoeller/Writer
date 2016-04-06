@@ -10,12 +10,12 @@
 
 @implementation Line
 
-- (Line*)initWithString:(NSString*)string type:(LineType)type position:(NSUInteger)position
+- (Line*)initWithString:(NSString*)string position:(NSUInteger)position
 {
     self = [super init];
     if (self) {
         _string = string;
-        _type = type;
+        _type = 0;
         _position = position;
     }
     return self;
@@ -23,49 +23,56 @@
 
 - (NSString *)toString
 {
+    return [[[[self typeAsString] stringByAppendingString:@": \"" ] stringByAppendingString:self.string] stringByAppendingString:@"\""];
+}
+
+- (NSString*)typeAsString
+{
     switch (self.type) {
         case empty:
-            return [[@"Empty: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Empty";
         case section:
-            return [[@"Section: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Section";
+        case synopse:
+            return @"Synopse";
         case titlePageTitle:
-            return [[@"Title Page Title: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Title";
         case titlePageAuthor:
-            return [[@"Title Page Author: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Author";
         case titlePageCredit:
-            return [[@"Title Page Credit: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Credit";
         case titlePageSource:
-            return [[@"Title Page Source: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Source";
         case titlePageContact:
-            return [[@"Title Page Contact: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Contact";
         case titlePageDraftDate:
-            return [[@"Title Page Draft Date: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Draft Date";
         case titlePageUnknown:
-            return [[@"Title Page Unknown: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Title Page Unknown";
         case heading:
-            return [[@"Heading: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Heading";
         case action:
-            return [[@"Action: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Action";
         case character:
-            return [[@"Character: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Character";
         case parenthetical:
-            return [[@"Parenthetical: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Parenthetical";
         case dialogue:
-            return [[@"Dialogue: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Dialogue";
         case doubleDialogueCharacter:
-            return [[@"DD Character: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"DD Character";
         case doubleDialogueParenthetical:
-            return [[@"DD Parenthetical: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"DD Parenthetical";
         case doubleDialogue:
-            return [[@"Double Dialogue: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Double Dialogue";
         case transition:
-            return [[@"Transition: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Transition";
         case lyrics:
-            return [[@"Lyrics: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Lyrics";
         case pageBreak:
-            return [[@"Page Break: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Page Break";
         case centered:
-            return [[@"Centered: \"" stringByAppendingString:self.string] stringByAppendingString:@"\""];
+            return @"Centered";
     }
 }
 

@@ -11,6 +11,7 @@
 typedef enum : NSUInteger {
     empty = 0,
     section,
+    synopse,
     titlePageTitle,
     titlePageAuthor,
     titlePageCredit,
@@ -46,7 +47,8 @@ typedef enum : NSUInteger {
 @property bool ommitIn; //wether the line terminates an unfinished ommit
 @property bool ommitOut; //Wether the line starts an ommit and doesn't finish it
 
-- (Line*)initWithString:(NSString*)string type:(LineType)type position:(NSUInteger)position;
+- (Line*)initWithString:(NSString*)string position:(NSUInteger)position;
 - (NSString*)toString;
+- (NSString*)typeAsString;
 
 @end

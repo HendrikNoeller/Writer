@@ -38,7 +38,7 @@
     
     for (NSString *rawLine in lines) {
         NSInteger index = [self.lines count];
-        Line* line = [[Line alloc] initWithString:rawLine type:0 position:positon];
+        Line* line = [[Line alloc] initWithString:rawLine position:positon];
         [self parseTypeAndFormattingForLine:line atIndex:index];
         
         //Add to lines array
@@ -98,11 +98,10 @@
             line.string = [line.string substringToIndex:indexInLine];
         }
         
-        LineType newLineType = [self parseLineType:cutOffString
-                                       atIndex:lineIndex+1];
         Line* newLine = [[Line alloc] initWithString:cutOffString
-                                                type:newLineType
                                             position:position+1];
+        newLine.type = [self parseLineType:newLine
+                                   atIndex:lineIndex+1];
         [self.lines insertObject:newLine atIndex:lineIndex+1];
         
         [self incrementLinePositionsFromIndex:lineIndex+2 amount:1];
@@ -241,7 +240,7 @@
 
 - (void)parseTypeAndFormattingForLine:(Line*)line atIndex:(NSUInteger)index
 {
-    line.type = [self parseLineType:line.string atIndex:index];
+    line.type = [self parseLineType:line atIndex:index];
     
     NSUInteger length = line.string.length;
     unichar charArray[length];
@@ -289,8 +288,9 @@
                          excludingIndices:nil];
 }
 
-- (LineType)parseLineType:(NSString*)string atIndex:(NSUInteger)index
+- (LineType)parseLineType:(Line*)line atIndex:(NSUInteger)index
 {
+    NSString* string = line.string;
     NSUInteger length = [string length];
     
     //Check if empty
@@ -323,6 +323,9 @@
     }
     if (firstChar == '#') {
         return section;
+    }
+    if (firstChar == '=' && (length >= 2 ? [string characterAtIndex:1] != '=' : true)) {
+        return synopse;
     }
     if (firstChar == '.' && length >= 2 && [string characterAtIndex:1] != '.') {
         return heading;
@@ -375,11 +378,11 @@
     //Check for scene headings (lines beginning with "INT", "EXT", "EST",  "I/E"). "INT./EXT" and "INT/EXT" are also inside the spec, but already covered by "INT".
     
     if (length >= 3) {
-        NSString* firstChars = [string substringToIndex:3];
-        if ([firstChars isEqualToString:@"INT"] ||
-            [firstChars isEqualToString:@"EXT"] ||
-            [firstChars isEqualToString:@"EST"] ||
-            [firstChars isEqualToString:@"I/E"]) {
+        NSString* firstChars = [[string substringToIndex:3] lowercaseString];
+        if ([firstChars isEqualToString:@"int"] ||
+            [firstChars isEqualToString:@"ext"] ||
+            [firstChars isEqualToString:@"est"] ||
+            [firstChars isEqualToString:@"i/e"]) {
             return heading;
         }
     }

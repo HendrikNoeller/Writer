@@ -331,7 +331,7 @@
             
             attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
             
-        } else if (line.type == section || line.type == titlePageUnknown) {
+        } else if (line.type == section || line.type == synopse || line.type == titlePageUnknown) {
             if (self.themeManager) {
                 NSColor* commentColor = [self.themeManager currentCommentColor];
                 attributes = @{NSForegroundColorAttributeName: commentColor};

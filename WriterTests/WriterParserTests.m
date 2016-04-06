@@ -100,6 +100,7 @@
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], section); i++;
     XCTAssertEqual([parser typeAtLine:i], section); i++;
+    XCTAssertEqual([parser typeAtLine:i], synopse); i++;
     XCTAssertEqual([parser typeAtLine:i], character); i++;
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
@@ -237,6 +238,7 @@
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], section); i++;
     XCTAssertEqual([parser typeAtLine:i], section); i++;
+    XCTAssertEqual([parser typeAtLine:i], synopse); i++;
     XCTAssertEqual([parser typeAtLine:i], character); i++;
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
@@ -482,6 +484,7 @@ NSString* script = @""
 @"This is on a new page\n"
 @"#section a\n"
 @"###section c\n"
+@"=synopse\n"
 @"@tom\n"
 @"dialogue\n"
 @"INT./EXT stuff\n"
