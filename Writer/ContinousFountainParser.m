@@ -310,24 +310,31 @@
     
     //Check for forces (the first character can force a line type)
     if (firstChar == '!') {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return action;
     }
     if (firstChar == '@') {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return character;
     }
     if (firstChar == '~') {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return lyrics;
     }
     if (firstChar == '>' && lastChar != '<') {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return transition;
     }
     if (firstChar == '#') {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return section;
     }
     if (firstChar == '=' && (length >= 2 ? [string characterAtIndex:1] != '=' : true)) {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return synopse;
     }
     if (firstChar == '.' && length >= 2 && [string characterAtIndex:1] != '.') {
+        line.numberOfPreceedingFormattingCharacters = 1;
         return heading;
     }
     
@@ -368,9 +375,14 @@
             } else {
                 return titlePageUnknown;
             }
-        } else if ((length >= 2 && [[string substringToIndex:2] isEqualToString:@"  "]) ||
-                   (length >= 1 && [[string substringToIndex:1] isEqualToString:@"\t"])) {
-            return preceedingLine.type;
+        } else {
+            if (length >= 2 && [[string substringToIndex:2] isEqualToString:@"  "]) {
+                line.numberOfPreceedingFormattingCharacters = 2;
+                return preceedingLine.type;
+            } else if (length >= 1 && [[string substringToIndex:1] isEqualToString:@"\t"]) {
+                line.numberOfPreceedingFormattingCharacters = 1;
+                return preceedingLine.type;
+            }
         }
         
     }

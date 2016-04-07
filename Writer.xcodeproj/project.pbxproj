@@ -34,6 +34,7 @@
 		B138B66D19E1E8CA000489C4 /* ScriptCSS.css in Resources */ = {isa = PBXBuildFile; fileRef = B138B66019E1E8CA000489C4 /* ScriptCSS.css */; };
 		B138B66E19E1E8CA000489C4 /* License.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B138B66219E1E8CA000489C4 /* License.rtf */; };
 		B138B66F19E1E8CA000489C4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = B138B66419E1E8CA000489C4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		B1509A401CB5C0C500884918 /* FDXInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = B1509A3F1CB5C0C500884918 /* FDXInterface.m */; };
 		B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B62A3919E3402F009F6E23 /* ColorView.m */; };
 		B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */; };
 		B1D0B84B19E31B86005252E4 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D0B84A19E31B86005252E4 /* PrintView.m */; };
@@ -105,6 +106,8 @@
 		B138B66219E1E8CA000489C4 /* License.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = License.rtf; sourceTree = "<group>"; };
 		B138B66319E1E8CA000489C4 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		B138B66419E1E8CA000489C4 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		B1509A3E1CB5C0C500884918 /* FDXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FDXInterface.h; sourceTree = "<group>"; };
+		B1509A3F1CB5C0C500884918 /* FDXInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FDXInterface.m; sourceTree = "<group>"; };
 		B1B62A3819E3402F009F6E23 /* ColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorView.h; sourceTree = "<group>"; };
 		B1B62A3919E3402F009F6E23 /* ColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorView.m; sourceTree = "<group>"; };
 		B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DocumentIcon.icns; path = ../DocumentIcon.icns; sourceTree = "<group>"; };
@@ -199,8 +202,7 @@
 				B1B62A3919E3402F009F6E23 /* ColorView.m */,
 				B13111851CB2893F00D07A0C /* Themes */,
 				B13111911CB2A41B00D07A0C /* Parsing */,
-				B1D0B84919E31B86005252E4 /* PrintView.h */,
-				B1D0B84A19E31B86005252E4 /* PrintView.m */,
+				B1509A3D1CB5C0B400884918 /* Export */,
 				B138B58019E1C973000489C4 /* Images.xcassets */,
 				B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */,
 				B138B57619E1C973000489C4 /* Supporting Files */,
@@ -280,6 +282,17 @@
 				B138B66419E1E8CA000489C4 /* RegexKitLite.m */,
 			);
 			path = RegexKitLite;
+			sourceTree = "<group>";
+		};
+		B1509A3D1CB5C0B400884918 /* Export */ = {
+			isa = PBXGroup;
+			children = (
+				B1D0B84919E31B86005252E4 /* PrintView.h */,
+				B1D0B84A19E31B86005252E4 /* PrintView.m */,
+				B1509A3E1CB5C0C500884918 /* FDXInterface.h */,
+				B1509A3F1CB5C0C500884918 /* FDXInterface.m */,
+			);
+			name = Export;
 			sourceTree = "<group>";
 		};
 		B1F04ED31C88AC99001C4D27 /* CourierPrime */ = {
@@ -415,6 +428,7 @@
 				B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */,
 				B13111941CB2A42300D07A0C /* Line.m in Sources */,
 				B138B66619E1E8CA000489C4 /* FNElement.m in Sources */,
+				B1509A401CB5C0C500884918 /* FDXInterface.m in Sources */,
 				B13111841CB2885200D07A0C /* ThemeManager.m in Sources */,
 				B13111881CB289ED00D07A0C /* Theme.m in Sources */,
 				B138B66819E1E8CA000489C4 /* FNPaginator.m in Sources */,

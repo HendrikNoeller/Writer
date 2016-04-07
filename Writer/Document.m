@@ -31,6 +31,7 @@
 #import "Document.h"
 #import "FNScript.h"
 #import "FNHTMLScript.h"
+#import "FDXInterface.h"
 #import "PrintView.h"
 #import "ColorView.h"
 #import "ContinousFountainParser.h"
@@ -187,6 +188,21 @@
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
             [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
+    }];
+}
+
+- (IBAction)exportFDX:(id)sender
+{
+    NSString* fdxString = [FDXInterface fdxFromLines:self.parser.lines];
+    
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    saveDialog.parentWindow = self.windowControllers[0].window;
+    [saveDialog setAllowedFileTypes:@[@"fdx"]];
+    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
 }
