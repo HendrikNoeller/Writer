@@ -51,11 +51,15 @@
     XCTAssertEqualObjects(lines[i], @"      <Text>MARSHALL ^</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
+    XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Parenthetical\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"      <Text>(happy)</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
+    
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Dialogue\">"); i++;
     XCTAssertEqualObjects(lines[i], @"      <Text>Sure, let&#x27;s go!</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
-    XCTAssertEqualObjects(lines[i], @"    <Paragraph Alignment=\"Right\" Type=\"Action\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Transition\">"); i++;
     XCTAssertEqualObjects(lines[i], @"      <Text>FADE TO:</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
@@ -67,8 +71,12 @@
     XCTAssertEqualObjects(lines[i], @"      <Text>The jukebox is playing</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
-    XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Action\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Lyrics\">"); i++;
     XCTAssertEqualObjects(lines[i], @"      <Text>1 o&#x27;clock, 2 o&#x27;clock, 3&#x27;o clock rock!</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"    <Paragraph Alignment=\"Center\" Type=\"Action\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"      <Text> The song is the bomb! </Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"  </Content>"); i++;
@@ -79,7 +87,7 @@
 
 - (void)testFormattingExport
 {
-    NSString* fdxString = [FDXInterface fdxFromString:@"**bold**\n**bold** normal *italic* _underline_ _**boldline**_ _*underitalic*_ ***boldit***\na\n*i*\n*"];
+    NSString* fdxString = [FDXInterface fdxFromString:@"**bold**\n**bold** normal *italic* _underline_ _**boldline**_ _*underitalic*_ ***boldit***\na\n*i*\n**"];
     NSArray* lines = [fdxString componentsSeparatedByString:@"\n"];
     
     int i = 0;
@@ -115,7 +123,6 @@
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Action\">"); i++;
-    XCTAssertEqualObjects(lines[i], @"      <Text>*</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"  </Content>"); i++;
@@ -170,7 +177,18 @@
     XCTAssertEqualObjects(mutableTestString, [@"&amp;&quot;&#x27;&lt;&gt;" mutableCopy]);
 }
 
-NSString* fdxScript = @"INT. DAY - APPARTMENT\n"
+NSString* fdxScript = @"Title: Any generic HIMYM Script\n"
+@"Author: Carter Thomas and Craig Bays\n"
+@"Credit: 40$\n"
+@"Source: The top of my mind\n"
+@"Draft date: some day in the future\n"
+@"Contact: mail@internet.cat\n"
+@"Legen-waitforit: dairy!\n"
+@"\n"
+@"#in the appartment \n"
+@"= a bar going is initiiated\n"
+@"\n"
+@"INT. DAY - APPARTMENT\n"
 @"\n"
 @"Ted, Marshall and Lilly are sitting on the couch\n"
 @"\n"
@@ -179,12 +197,15 @@ NSString* fdxScript = @"INT. DAY - APPARTMENT\n"
 @"Wanna head down to the bar?\n"
 @"\n"
 @"MARSHALL ^\n"
+@"(happy)\n"
 @"Sure, let's go!\n"
 @"FADE TO:\n"
+@"===\n"
 @"\n"
 @"INT. DAY - THE BAR\n"
 @"The jukebox is playing\n"
-@"~1 o'clock, 2 o'clock, 3'o clock rock!\n";
+@"~1 o'clock, 2 o'clock, 3'o clock rock!\n"
+@"> The song is the bomb! <";
 
 
 @end

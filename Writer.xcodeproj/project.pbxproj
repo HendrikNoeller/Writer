@@ -174,11 +174,11 @@
 			isa = PBXGroup;
 			children = (
 				B138B57519E1C973000489C4 /* Writer */,
+				B138B58C19E1C974000489C4 /* WriterTests */,
 				B138B64E19E1E8CA000489C4 /* Fountain */,
 				B138B66119E1E8CA000489C4 /* RegexKitLite */,
 				B1F04ED31C88AC99001C4D27 /* CourierPrime */,
 				B138B62419E1D8A4000489C4 /* Frameworks */,
-				B138B58C19E1C974000489C4 /* WriterTests */,
 				B138B57419E1C973000489C4 /* Products */,
 			);
 			sourceTree = "<group>";

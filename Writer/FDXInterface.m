@@ -140,6 +140,14 @@
 
     }];
     
+    //Remove the > < from centered text
+    if (line.type == centered) {
+        [string replaceCharactersInRange:NSMakeRange(0, 1) withString:@""];
+        [string replaceCharactersInRange:NSMakeRange(string.length - 1, 1) withString:@""];
+        [boldRanges shiftIndexesStartingAtIndex:1 by:-1];
+        [italicRanges shiftIndexesStartingAtIndex:1 by:-1];
+        [underlinedRanges shiftIndexesStartingAtIndex:1 by:-1];
+    }
     
     NSUInteger length = string.length;
     NSUInteger appendFromIndex = line.numberOfPreceedingFormattingCharacters;
