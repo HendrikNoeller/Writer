@@ -10,6 +10,7 @@
 
 @interface FDXInterface : NSObject
 
-+ (NSString*)fdxFromLines:(NSArray*)lines;
++ (NSString*)fdxFromString:(NSString*)string;
++ (void)escapeString:(NSMutableString*)string;
 
 @end

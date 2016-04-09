@@ -8,18 +8,22 @@
 //  Greatly copied from: https://github.com/vilcans/screenplain/blob/master/screenplain/export/fdx.py
 
 #import "FDXInterface.h"
+#import "ContinousFountainParser.h"
 #import "Line.h"
 
 @implementation FDXInterface
 
-+ (NSString*)fdxFromLines:(NSArray*)lines
++ (NSString*)fdxFromString:(NSString*)string
 {
+    
+    
+    ContinousFountainParser* parser = [[ContinousFountainParser alloc] initWithString:string];
     NSMutableString* result = [@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n"
                                @"<FinalDraft DocumentType=\"Script\" Template=\"No\" Version=\"1\">\n"
                                @"\n"
                                @"  <Content>\n" mutableCopy];
     
-    for (Line *line in lines) {
+    for (Line *line in parser.lines) {
         [self appendLine:line toString:result];
     }
     
@@ -38,8 +42,6 @@
     }
     if (line.type == centered) {
         [result appendFormat:@"    <Paragraph Alignment=\"Center\" Type=\"%@\">\n", paragraphType];
-    } else if (line.type == transition) {
-        [result appendFormat:@"    <Paragraph Alignment=\"Right\" Type=\"%@\">\n", paragraphType];
     } else {
         [result appendFormat:@"    <Paragraph Type=\"%@\">\n", paragraphType];
     }
@@ -47,40 +49,132 @@
     [result appendString:@"    </Paragraph>\n"];
 }
 
+#define BOLD_PATTERN_LENGTH 2
+#define ITALIC_UNDERLINE_PATTERN_LENGTH 1
+
 + (void)appendLineContents:(Line*)line toString:(NSMutableString*)result //In python: write_text
 {
+    //Remove all formatting symbols from the line and the ranges
+    NSMutableString* string = [line.string mutableCopy];
     
-    NSUInteger length = line.string.length;
+    NSMutableIndexSet* boldRanges = [line.boldRanges mutableCopy];
+    NSMutableIndexSet* italicRanges = [line.italicRanges mutableCopy];
+    NSMutableIndexSet* underlinedRanges = [line.underlinedRanges mutableCopy];
+    int __block removedChars = 0;
+    
+    NSMutableIndexSet* currentRanges = [boldRanges mutableCopy];
+    
+    [currentRanges enumerateRangesWithOptions:0 usingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSRange beginSymbolRange = NSMakeRange(range.location - removedChars, BOLD_PATTERN_LENGTH);
+        NSRange endSymbolRange = NSMakeRange(range.location + range.length - 2*BOLD_PATTERN_LENGTH - removedChars, BOLD_PATTERN_LENGTH); //after deleting begin symboL!
+        
+        [string replaceCharactersInRange:beginSymbolRange withString:@""];
+        [string replaceCharactersInRange:endSymbolRange withString:@""];
+        
+        [boldRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                             by:-beginSymbolRange.length];
+        [boldRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                             by:-endSymbolRange.length];
+        [italicRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                               by:-beginSymbolRange.length];
+        [italicRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                               by:-endSymbolRange.length];
+        [underlinedRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                                   by:-beginSymbolRange.length];
+        [underlinedRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                                   by:-endSymbolRange.length];
+        
+        removedChars += BOLD_PATTERN_LENGTH*2;
+    }];
+    removedChars = 0;
+    
+    currentRanges = [italicRanges mutableCopy];
+    
+    [currentRanges enumerateRangesWithOptions:0 usingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSRange beginSymbolRange = NSMakeRange(range.location - removedChars, ITALIC_UNDERLINE_PATTERN_LENGTH);
+        NSRange endSymbolRange = NSMakeRange(range.location + range.length - 2*ITALIC_UNDERLINE_PATTERN_LENGTH - removedChars, ITALIC_UNDERLINE_PATTERN_LENGTH);
+        
+        [string replaceCharactersInRange:beginSymbolRange withString:@""];
+        [string replaceCharactersInRange:endSymbolRange withString:@""];
+        
+        [boldRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                             by:-beginSymbolRange.length];
+        [boldRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                             by:-endSymbolRange.length];
+        [italicRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                               by:-beginSymbolRange.length];
+        [italicRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                               by:-endSymbolRange.length];
+        [underlinedRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                                   by:-beginSymbolRange.length];
+        [underlinedRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                                   by:-endSymbolRange.length];
+        
+        removedChars += ITALIC_UNDERLINE_PATTERN_LENGTH*2;
+    }];
+    removedChars = 0;
+    
+    currentRanges = [underlinedRanges mutableCopy];
+    
+    [currentRanges enumerateRangesWithOptions:0 usingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSRange beginSymbolRange = NSMakeRange(range.location - removedChars, ITALIC_UNDERLINE_PATTERN_LENGTH);
+        NSRange endSymbolRange = NSMakeRange(range.location + range.length - 2*ITALIC_UNDERLINE_PATTERN_LENGTH - removedChars, ITALIC_UNDERLINE_PATTERN_LENGTH);
+        
+        [string replaceCharactersInRange:beginSymbolRange withString:@""];
+        [string replaceCharactersInRange:endSymbolRange withString:@""];
+        
+        [boldRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                             by:-beginSymbolRange.length];
+        [boldRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                             by:-endSymbolRange.length];
+        [italicRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                               by:-beginSymbolRange.length];
+        [italicRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                               by:-endSymbolRange.length];
+        [underlinedRanges shiftIndexesStartingAtIndex:beginSymbolRange.location+beginSymbolRange.length
+                                                   by:-beginSymbolRange.length];
+        [underlinedRanges shiftIndexesStartingAtIndex:endSymbolRange.location+endSymbolRange.length
+                                                   by:-endSymbolRange.length];
+        
+        removedChars += ITALIC_UNDERLINE_PATTERN_LENGTH*2;
+
+    }];
+    
+    
+    NSUInteger length = string.length;
     NSUInteger appendFromIndex = line.numberOfPreceedingFormattingCharacters;
+    
+    bool lastBold = [boldRanges containsIndex:appendFromIndex];
+    bool lastItalic = [italicRanges containsIndex:appendFromIndex];
+    bool lastUnderlined = [underlinedRanges containsIndex:appendFromIndex];
     
     if (length == 0) {
         return;
-    }
-    bool lastBold = [line.boldRanges containsIndex:0];
-    bool lastItalic = [line.italicRanges containsIndex:0];
-    bool lastUnderlined = [line.underlinedRanges containsIndex:0];
-    
-    if (length == 1) {
-        [self appendText:line.string  bold:lastBold italic:lastItalic underlined:lastUnderlined toString:result];
+    } else if (length == 1) {
+        [self appendText:string  bold:lastBold italic:lastItalic underlined:lastUnderlined toString:result];
+        return;
     }
     
     for (NSUInteger i = 1+appendFromIndex; i < length; i++) {
-        bool bold = [line.boldRanges containsIndex:i];
-        bool italic = [line.italicRanges containsIndex:i];
-        bool underlined = [line.underlinedRanges containsIndex:i];
+        bool bold = [boldRanges containsIndex:i];
+        bool italic = [italicRanges containsIndex:i];
+        bool underlined = [underlinedRanges containsIndex:i];
         if (bold != lastBold || italic != lastItalic || underlined != lastUnderlined) {
-            NSRange apendRange = NSMakeRange(appendFromIndex, i-1-appendFromIndex);
-            [self appendText:[line.string substringWithRange:apendRange] bold:bold italic:italic underlined:underlined toString:result];
+            NSRange appendRange = NSMakeRange(appendFromIndex, i-appendFromIndex);
+            
+            if (length > 0 && appendRange.location + appendRange.length <= length) {
+                [self appendText:[string substringWithRange:appendRange] bold:lastBold italic:lastItalic underlined:lastUnderlined toString:result];
+            }
             
             appendFromIndex = i;
+            lastBold = bold;
+            lastItalic = italic;
+            lastUnderlined = underlined;
         }
-        lastBold = bold;
-        lastItalic = italic;
-        lastUnderlined = underlined;
     }
-    //Apend last range
-    NSRange apendRange = NSMakeRange(appendFromIndex, length-appendFromIndex);
-    [self appendText:[line.string substringWithRange:apendRange] bold:lastBold italic:lastItalic underlined:lastUnderlined toString:result];
+    //append last range
+    NSRange appendRange = NSMakeRange(appendFromIndex, length-appendFromIndex);
+    [self appendText:[string substringWithRange:appendRange] bold:lastBold italic:lastItalic underlined:lastUnderlined toString:result];
     
 }
 
@@ -90,18 +184,23 @@
 
 + (void)appendText:(NSString*)string bold:(bool)bold italic:(bool)italic underlined:(bool)underlined toString:(NSMutableString*)result //In python: _write_text_element
 {
-    NSString* styleString = @"";
+    NSMutableString* styleString = [[NSMutableString alloc] init];
     if (bold) {
-        styleString = [styleString stringByAppendingString:BOLD_STYLE];
+        [styleString appendString:BOLD_STYLE];
     }
     if (italic) {
-        if (!bold) {
-            styleString = [styleString stringByAppendingString:ITALIC_STYLE];
-        } else {
-            styleString = [styleString stringByAppendingString:UNDERLINE_STYLE];
+        if (bold) {
+            [styleString appendString:@"+"];
         }
+        [styleString appendString:ITALIC_STYLE];
     }
-    
+    if (underlined) {
+        if (bold || italic) {
+            [styleString appendString:@"+"];
+        }
+        [styleString appendString:UNDERLINE_STYLE];
+    }
+
     NSMutableString* escapedString = [string mutableCopy];
     [self escapeString:escapedString];
     
@@ -161,9 +260,9 @@
         case doubleDialogue:
             return @"Dialogue";
         case transition:
-            return @"Action";
+            return @"Transition";
         case lyrics:
-            return @"Action";
+            return @"Lyrics";
         case pageBreak:
             return @"";
         case centered:

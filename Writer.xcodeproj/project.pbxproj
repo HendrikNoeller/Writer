@@ -35,6 +35,7 @@
 		B138B66E19E1E8CA000489C4 /* License.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B138B66219E1E8CA000489C4 /* License.rtf */; };
 		B138B66F19E1E8CA000489C4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = B138B66419E1E8CA000489C4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		B1509A401CB5C0C500884918 /* FDXInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = B1509A3F1CB5C0C500884918 /* FDXInterface.m */; };
+		B1509A421CB6EBBC00884918 /* WriterFDXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B1509A411CB6EBBC00884918 /* WriterFDXTests.m */; };
 		B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B62A3919E3402F009F6E23 /* ColorView.m */; };
 		B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */; };
 		B1D0B84B19E31B86005252E4 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D0B84A19E31B86005252E4 /* PrintView.m */; };
@@ -108,6 +109,7 @@
 		B138B66419E1E8CA000489C4 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
 		B1509A3E1CB5C0C500884918 /* FDXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FDXInterface.h; sourceTree = "<group>"; };
 		B1509A3F1CB5C0C500884918 /* FDXInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FDXInterface.m; sourceTree = "<group>"; };
+		B1509A411CB6EBBC00884918 /* WriterFDXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WriterFDXTests.m; sourceTree = "<group>"; };
 		B1B62A3819E3402F009F6E23 /* ColorView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ColorView.h; sourceTree = "<group>"; };
 		B1B62A3919E3402F009F6E23 /* ColorView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ColorView.m; sourceTree = "<group>"; };
 		B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DocumentIcon.icns; path = ../DocumentIcon.icns; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 		B138B58C19E1C974000489C4 /* WriterTests */ = {
 			isa = PBXGroup;
 			children = (
+				B1509A411CB6EBBC00884918 /* WriterFDXTests.m */,
 				B1DCC4621CB32C5200438E7F /* WriterThemeManagerTests.m */,
 				B13111991CB2BA7900D07A0C /* WriterParserPerformance.m */,
 				B138B58F19E1C974000489C4 /* WriterParserTests.m */,
@@ -453,6 +456,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B138B59019E1C974000489C4 /* WriterParserTests.m in Sources */,
+				B1509A421CB6EBBC00884918 /* WriterFDXTests.m in Sources */,
 				B131119A1CB2BA7900D07A0C /* WriterParserPerformance.m in Sources */,
 				B1DCC4631CB32C5200438E7F /* WriterThemeManagerTests.m in Sources */,
 			);

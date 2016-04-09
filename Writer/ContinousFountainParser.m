@@ -489,6 +489,7 @@
             }
             if (match) {
                 rangeBegin = i;
+                i += delimLength - 1;
             }
         } else {
             bool match = true;
@@ -501,6 +502,7 @@
             if (match) {
                 [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + delimLength)];
                 rangeBegin = -1;
+                i += delimLength - 1;
             }
         }
     }

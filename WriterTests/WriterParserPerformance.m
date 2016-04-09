@@ -18,7 +18,7 @@
 
 @implementation WriterParserPerformance
 
-- (void)testOwnPerformance { //Baseline is FastFountainParser
+- (void)testOwnPerformance {
     NSString* bigFish = [self bigFish];
     [self measureBlock:^{
         (void) [[ContinousFountainParser alloc] initWithString:bigFish];
