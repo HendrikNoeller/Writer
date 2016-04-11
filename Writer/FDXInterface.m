@@ -99,14 +99,18 @@
     //If a double dialogue is currently in action, check wether it needs to be closed after this
     if (inDoubleDialogue) {
         if (index < [lines count] - 1) {
-            //If the line is double dialogue, and the next one isn't, it's time to close the dual dialogue tag
-            if (line.type == doubleDialogue) {
-                Line* nextLine = lines[index+1];
-                if (nextLine.type != doubleDialogue) {
-                    inDoubleDialogue = false;
-                    [result appendString:@"      </DualDialogue>\n"];
-                    [result appendString:@"    </Paragraph>\n"];
-                }
+            //If the following line doesn't have anything to do with dialogue, end double dialogue
+            Line* nextLine = lines[index+1];
+            if (nextLine.type != empty &&
+                nextLine.type != character &&
+                nextLine.type != parenthetical &&
+                nextLine.type != dialogue &&
+                nextLine.type != doubleDialogueCharacter &&
+                nextLine.type != doubleDialogueParenthetical &
+                nextLine.type != doubleDialogue) {
+                inDoubleDialogue = false;
+                [result appendString:@"      </DualDialogue>\n"];
+                [result appendString:@"    </Paragraph>\n"];
             }
         } else {
             //If the line is the last line, it's also time to close the dual dialogue tag

@@ -90,7 +90,7 @@
     return self;
 }
 
-#define TEXT_INSET_SIDE 100
+#define TEXT_INSET_SIDE 50
 #define TEXT_INSET_TOP 20
 
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
@@ -249,15 +249,15 @@
     [self.parser.changedIndices removeAllObjects];
 }
 
-#define CHARACTER_INDENT 270
-#define PARENTHETICAL_INDENT 210
+#define CHARACTER_INDENT 220
+#define PARENTHETICAL_INDENT 185
 #define DIALOGUE_INDENT 150
 #define DIALOGUE_RIGHT 450
 
-#define DD_CHARACTER_INDENT 370
-#define DD_PARENTHETICAL_INDENT 310
-#define DOUBLE_DIALOGUE_INDENT 250
-#define DD_RIGHT 550
+#define DD_CHARACTER_INDENT 420
+#define DD_PARENTHETICAL_INDENT 385
+#define DOUBLE_DIALOGUE_INDENT 350
+#define DD_RIGHT 650
 
 - (void)formatLineOfScreenplay:(Line*)line onlyFormatFont:(bool)fontOnly
 {
