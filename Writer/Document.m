@@ -31,6 +31,7 @@
 #import "Document.h"
 #import "FNScript.h"
 #import "FNHTMLScript.h"
+#import "FDXInterface.h"
 #import "PrintView.h"
 #import "ColorView.h"
 #import "ContinousFountainParser.h"
@@ -187,6 +188,21 @@
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
             [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
+    }];
+}
+
+- (IBAction)exportFDX:(id)sender
+{
+    NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
+    
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    saveDialog.parentWindow = self.windowControllers[0].window;
+    [saveDialog setAllowedFileTypes:@[@"fdx"]];
+    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
 }
@@ -352,16 +368,16 @@
     
     //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
     
-    [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        NSUInteger symbolLength = 2;
+    
+    [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 1;
         NSRange effectiveRange;
         if (range.length >= 2*symbolLength) {
             effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
         } else {
             effectiveRange = NSMakeRange(range.location + symbolLength, 0);
         }
-        
-        [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
+        [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
                             range:[self globalRangeFromLocalRange:&effectiveRange
                                                  inLineAtPosition:line.position]];
         
@@ -375,15 +391,16 @@
                                                  inLineAtPosition:line.position]];
     }];
     
-    [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        NSUInteger symbolLength = 1;
+    [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 2;
         NSRange effectiveRange;
         if (range.length >= 2*symbolLength) {
             effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
         } else {
             effectiveRange = NSMakeRange(range.location + symbolLength, 0);
         }
-        [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
+        
+        [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
                             range:[self globalRangeFromLocalRange:&effectiveRange
                                                  inLineAtPosition:line.position]];
         

@@ -125,16 +125,22 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="Export" id="o7H-J0-CK2">
                                     <items>
-                                        <menuItem title="PDF" id="qUE-cb-x1G">
+                                        <menuItem title="PDF…" id="qUE-cb-x1G">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="exportPDF:" target="-1" id="C88-0f-QPn"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="HTML" id="gFk-1w-5jg">
+                                        <menuItem title="HTML…" id="gFk-1w-5jg">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="exportHTML:" target="-1" id="uwn-TO-nla"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="FXD…" id="C9z-84-Cmq">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportFDX:" target="-1" id="F6e-vG-CJO"/>
                                             </connections>
                                         </menuItem>
                                     </items>

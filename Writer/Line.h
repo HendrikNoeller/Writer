@@ -39,6 +39,7 @@ typedef enum : NSUInteger {
 @property LineType type;
 @property (strong, nonatomic) NSString* string;
 @property NSUInteger position;
+@property NSUInteger numberOfPreceedingFormattingCharacters;
 @property NSMutableIndexSet* boldRanges;
 @property NSMutableIndexSet* italicRanges;
 @property NSMutableIndexSet* underlinedRanges;
