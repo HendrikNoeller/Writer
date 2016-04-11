@@ -16,6 +16,19 @@
 
 @implementation WriterFDXTests
 
+- (void)testEmptyFile
+{
+    NSString* fdxString = [FDXInterface fdxFromString:@""];
+    NSArray* lines = [fdxString componentsSeparatedByString:@"\n"];
+    int i = 0;
+    XCTAssertEqualObjects(lines[i], @"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>"); i++;
+    XCTAssertEqualObjects(lines[i], @"<FinalDraft DocumentType=\"Script\" Template=\"No\" Version=\"1\">"); i++;
+    XCTAssertEqualObjects(lines[i], @""); i++;
+    XCTAssertEqualObjects(lines[i], @"  <Content>"); i++;
+    XCTAssertEqualObjects(lines[i], @"  </Content>"); i++;
+    XCTAssertEqualObjects(lines[i], @"</FinalDraft>"); i++;
+}
+
 - (void)testFDXExport
 {
     NSString* fdxString = [FDXInterface fdxFromString:fdxScript];
@@ -86,6 +99,70 @@
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"  </Content>"); i++;
+    
+    
+    XCTAssertEqualObjects(lines[i], @"  <TitlePage>"); i++;
+    XCTAssertEqualObjects(lines[i], @"    <Content>"); i++;
+    
+    for (int j = 0; j < 18; j++) {
+        XCTAssertEqualObjects(lines[i], @"      <Paragraph>"); i++;
+        XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+        XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    }
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text>Any generic HIMYM Script</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text>40$</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text>Carter Thomas and Craig Bays</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph Alignment=\"Center\">"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text>The top of my mind</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    for (int j = 0; j < 20; j++) {
+        XCTAssertEqualObjects(lines[i], @"      <Paragraph>"); i++;
+        XCTAssertEqualObjects(lines[i], @"        <Text></Text>"); i++;
+        XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    }
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph>"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text>some day in the future</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      <Paragraph>"); i++;
+    XCTAssertEqualObjects(lines[i], @"        <Text>mail@internet.cat</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"    </Content>"); i++;
+    XCTAssertEqualObjects(lines[i], @"  </TitlePage>"); i++;
+    
     XCTAssertEqualObjects(lines[i], @"</FinalDraft>"); i++;
 }
 

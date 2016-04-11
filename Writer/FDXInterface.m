@@ -18,6 +18,9 @@
     
     
     ContinousFountainParser* parser = [[ContinousFountainParser alloc] initWithString:string];
+    if ([parser.lines count] == 0) {
+        return @"";
+    }
     NSMutableString* result = [@"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\n"
                                @"<FinalDraft DocumentType=\"Script\" Template=\"No\" Version=\"1\">\n"
                                @"\n"
@@ -28,8 +31,19 @@
         inDoubleDialogue = [self appendLineAtIndex:i fromLines:parser.lines toString:result inDoubleDialogue:inDoubleDialogue];
     }
     
-    [result appendString:@"  </Content>\n"
-                         @"</FinalDraft>\n" ];
+    [result appendString:@"  </Content>\n"];
+    
+    Line* firstLine = parser.lines[0];
+    if (firstLine.type == titlePageTitle ||
+        firstLine.type == titlePageAuthor ||
+        firstLine.type == titlePageCredit ||
+        firstLine.type == titlePageSource ||
+        firstLine.type == titlePageDraftDate ||
+        firstLine.type == titlePageContact) {
+        [self appendTitlePageFromLines:parser.lines toString:result];
+    }
+    
+    [result appendString:@"</FinalDraft>\n"];
     
     return result;
 }
@@ -340,6 +354,113 @@
         case centered:
             return @"Action";
     }
+}
+
+#define LINES_PER_PAGE 46
+#define LINES_BEFORE_CENTER 18
+#define LINES_BEFORE_CREDIT 2
+#define LINES_BEFORE_AUTHOR 1
+#define LINES_BEFORE_SOURCE 2
+
++ (void)appendTitlePageFromLines:(NSArray*)lines toString:(NSMutableString*)result
+{
+    NSString* title = [self stringByRemovingKey:@"title:" fromString:[self firstStringForLineType:titlePageTitle fromLines:lines]];
+    NSString* credit = [self stringByRemovingKey:@"credit:" fromString:[self firstStringForLineType:titlePageCredit fromLines:lines]];
+    NSString* author = [self stringByRemovingKey:@"author:" fromString:[self firstStringForLineType:titlePageAuthor fromLines:lines]];
+    NSString* source = [self stringByRemovingKey:@"source:" fromString:[self firstStringForLineType:titlePageSource fromLines:lines]];
+    NSString* draftDate = [self stringByRemovingKey:@"draft date:" fromString:[self firstStringForLineType:titlePageDraftDate fromLines:lines]];
+    NSString* contact = [self stringByRemovingKey:@"contact:" fromString:[self firstStringForLineType:titlePageContact fromLines:lines]];
+    
+    [result appendString:@"  <TitlePage>\n"];
+    [result appendString:@"    <Content>\n"];
+    
+    NSUInteger lineCount = 0;
+    
+    for (int i = 0; i < LINES_BEFORE_CENTER; i++) {
+        [self appendTitlePageLineWithString:@"" center:NO toString:result];
+        lineCount++;
+    }
+    
+    if (title) {
+        [self appendTitlePageLineWithString:title center:YES toString:result];
+        lineCount++;
+    }
+    
+    if (credit) {
+        for (int i = 0; i < LINES_BEFORE_CREDIT; i++) {
+            [self appendTitlePageLineWithString:@"" center:YES toString:result];
+            lineCount++;
+        }
+        [self appendTitlePageLineWithString:credit center:YES toString:result];
+    }
+    
+    if (author) {
+        for (int i = 0; i < LINES_BEFORE_AUTHOR; i++) {
+            [self appendTitlePageLineWithString:@"" center:YES toString:result];
+            lineCount++;
+        }
+        [self appendTitlePageLineWithString:author center:YES toString:result];
+    }
+    
+    if (source) {
+        for (int i = 0; i < LINES_BEFORE_SOURCE; i++) {
+            [self appendTitlePageLineWithString:@"" center:YES toString:result];
+            lineCount++;
+        }
+        [self appendTitlePageLineWithString:source center:YES toString:result];
+    }
+    
+    while (lineCount < LINES_PER_PAGE - 2) {
+        [self appendTitlePageLineWithString:@"" center:NO toString:result];
+        lineCount++;
+    }
+    
+    if (draftDate) {
+        [self appendTitlePageLineWithString:draftDate center:NO toString:result];
+    }
+    
+    if (contact) {
+        [self appendTitlePageLineWithString:contact center:NO toString:result];
+    }
+    
+    [result appendString:@"    </Content>\n"];
+    [result appendString:@"  </TitlePage>\n"];
+}
+
++ (void)appendTitlePageLineWithString:(NSString*)string center:(bool)center toString:(NSMutableString*)result
+{
+    if (center) {
+        [result appendString:@"      <Paragraph Alignment=\"Center\">\n"];
+    } else {
+        [result appendString:@"      <Paragraph>\n"];
+    }
+    
+    [result appendFormat:@"        <Text>%@</Text>\n", string];
+    
+    [result appendString:@"      </Paragraph>\n"];
+}
+
++ (NSString*)firstStringForLineType:(LineType)type fromLines:(NSArray*)lines
+{
+    for (Line* line in lines) {
+        if (line.type == type) {
+            return line.string;
+        }
+    }
+    return nil;
+}
+
++ (NSString*)stringByRemovingKey:(NSString*)key fromString:(NSString*)string
+{
+    if (string) {
+        if ([[[string substringToIndex:key.length] lowercaseString] isEqualToString:key]) {
+            string = [string stringByReplacingCharactersInRange:NSMakeRange(0, key.length) withString:@""];
+        }
+        while (string.length > 0 && [string characterAtIndex:0] == ' ') {
+            string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+        }
+    }
+    return string;
 }
 
 @end
