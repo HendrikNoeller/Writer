@@ -23,8 +23,9 @@
                                @"\n"
                                @"  <Content>\n" mutableCopy];
     
-    for (Line *line in parser.lines) {
-        [self appendLine:line toString:result];
+    bool inDoubleDialogue = false;
+    for (int i = 0; i < [parser.lines count]; i++) {
+        inDoubleDialogue = [self appendLineAtIndex:i fromLines:parser.lines toString:result inDoubleDialogue:inDoubleDialogue];
     }
     
     [result appendString:@"  </Content>\n"
@@ -33,20 +34,75 @@
     return result;
 }
 
-+ (void)appendLine:(Line*)line toString:(NSMutableString*)result //In python: like write_paragraph but also calcualtes caller arguments
++ (bool)appendLineAtIndex:(NSUInteger)index fromLines:(NSArray*)lines toString:(NSMutableString*)result inDoubleDialogue:(bool)inDoubleDialogue//In python: like write_paragraph but also calcualtes caller arguments
 {
+    Line* line = lines[index];
     NSString* paragraphType = [self typeAsFDXString:line.type];
     if (paragraphType.length == 0) {
         //Ignore if no type is known
-        return;
+        return inDoubleDialogue;
     }
+    
+    
+    
+    //If no double dialogue is currently in action, and a dialogue should be printed, check if it is followed by double dialogue so both can be wrapped in a double dialogue
+    if (!inDoubleDialogue && line.type == character) {
+        for (NSUInteger i = index + 1; i < [lines count]; i++) {
+            Line* futureLine = lines[i];
+            if (futureLine.type == parenthetical ||
+                futureLine.type == dialogue ||
+                futureLine.type == empty) {
+                continue;
+            }
+            if (futureLine.type == doubleDialogueCharacter) {
+                inDoubleDialogue = true;
+            }
+            break;
+        }
+        if (inDoubleDialogue) {
+            [result appendString:@"    <Paragraph>\n"];
+            [result appendString:@"      <DualDialogue>\n"];
+        }
+    }
+    
+    
+    
+    //Append Open Paragraph Tag
     if (line.type == centered) {
         [result appendFormat:@"    <Paragraph Alignment=\"Center\" Type=\"%@\">\n", paragraphType];
     } else {
         [result appendFormat:@"    <Paragraph Type=\"%@\">\n", paragraphType];
     }
+    
+    //Append content
     [self appendLineContents:line toString:result];
+    
+    //Apend close paragraph
     [result appendString:@"    </Paragraph>\n"];
+    
+    
+    
+    //If a double dialogue is currently in action, check wether it needs to be closed after this
+    if (inDoubleDialogue) {
+        if (index < [lines count] - 1) {
+            //If the line is double dialogue, and the next one isn't, it's time to close the dual dialogue tag
+            if (line.type == doubleDialogue) {
+                Line* nextLine = lines[index+1];
+                if (nextLine.type != doubleDialogue) {
+                    inDoubleDialogue = false;
+                    [result appendString:@"      </DualDialogue>\n"];
+                    [result appendString:@"    </Paragraph>\n"];
+                }
+            }
+        } else {
+            //If the line is the last line, it's also time to close the dual dialogue tag
+            inDoubleDialogue = false;
+            [result appendString:@"      </DualDialogue>\n"];
+            [result appendString:@"    </Paragraph>\n"];
+        }
+    }
+    
+    return inDoubleDialogue;
 }
 
 #define BOLD_PATTERN_LENGTH 2
@@ -147,6 +203,14 @@
         [boldRanges shiftIndexesStartingAtIndex:1 by:-1];
         [italicRanges shiftIndexesStartingAtIndex:1 by:-1];
         [underlinedRanges shiftIndexesStartingAtIndex:1 by:-1];
+    }
+    
+    //Remove the " ^" from double dialogue character
+    if (line.type == doubleDialogueCharacter) {
+        [string replaceCharactersInRange:NSMakeRange(string.length - 1, 1) withString:@""];
+        while ([string characterAtIndex:string.length - 1] == ' ') {
+            [string replaceCharactersInRange:NSMakeRange(string.length - 1, 1) withString:@""];
+        }
     }
     
     NSUInteger length = string.length;

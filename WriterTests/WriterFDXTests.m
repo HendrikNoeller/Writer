@@ -35,6 +35,9 @@
     XCTAssertEqualObjects(lines[i], @"      <Text>Ted, Marshall and Lilly are sitting on the couch</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
+    XCTAssertEqualObjects(lines[i], @"    <Paragraph>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      <DualDialogue>"); i++;
+    
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Character\">"); i++;
     XCTAssertEqualObjects(lines[i], @"      <Text>TED</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
@@ -48,7 +51,7 @@
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Character\">"); i++;
-    XCTAssertEqualObjects(lines[i], @"      <Text>MARSHALL ^</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"      <Text>MARSHALL</Text>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Parenthetical\">"); i++;
@@ -57,6 +60,9 @@
     
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Dialogue\">"); i++;
     XCTAssertEqualObjects(lines[i], @"      <Text>Sure, let&#x27;s go!</Text>"); i++;
+    XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
+    
+    XCTAssertEqualObjects(lines[i], @"      </DualDialogue>"); i++;
     XCTAssertEqualObjects(lines[i], @"    </Paragraph>"); i++;
     
     XCTAssertEqualObjects(lines[i], @"    <Paragraph Type=\"Transition\">"); i++;
@@ -81,8 +87,6 @@
     
     XCTAssertEqualObjects(lines[i], @"  </Content>"); i++;
     XCTAssertEqualObjects(lines[i], @"</FinalDraft>"); i++;
-    
-    
 }
 
 - (void)testFormattingExport
