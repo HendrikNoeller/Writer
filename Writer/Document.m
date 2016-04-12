@@ -196,7 +196,8 @@
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
     saveDialog.parentWindow = self.windowControllers[0].window;
     [saveDialog setAllowedFileTypes:@[@"html"]];
-    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog setRepresentedFilename:[self lastComponentOfFileName]];
+    [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
             [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
@@ -211,12 +212,22 @@
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
     saveDialog.parentWindow = self.windowControllers[0].window;
     [saveDialog setAllowedFileTypes:@[@"fdx"]];
-    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
             [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
+}
+
+- (NSString*)fileNameString
+{
+    NSString* fileName = [self lastComponentOfFileName];
+    NSUInteger lastDotIndex = [fileName rangeOfString:@"." options:NSBackwardsSearch].location;
+    if (lastDotIndex != NSNotFound) {
+        fileName = [fileName substringToIndex:lastDotIndex];
+    }
+    return fileName;
 }
 
 - (void)updateWebView
