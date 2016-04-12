@@ -69,6 +69,7 @@
 @property (strong, nonatomic) NSFont *boldCourier;
 @property (strong, nonatomic) NSFont *italicCourier;
 @property (nonatomic) NSUInteger fontSize;
+@property (nonatomic) bool matchParentheses;
 
 @property (strong, nonatomic) PrintView *printView; //To keep the asynchronously working print data generator in memory
 
@@ -76,6 +77,11 @@
 
 @property (strong, nonatomic) ThemeManager* themeManager;
 @end
+
+
+#define MATCH_PARENTHESES_KEY @"Match Parentheses"
+#define FONTSIZE_KEY @"Fontsize"
+#define DEFAULT_FONTSIZE 13
 
 @implementation Document
 
@@ -109,6 +115,12 @@
     [self.textView setAutomaticQuoteSubstitutionEnabled:NO];
     [self.textView setAutomaticDataDetectionEnabled:NO];
     [self.textView setAutomaticDashSubstitutionEnabled:NO];
+    
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:MATCH_PARENTHESES_KEY]) {
+        self.matchParentheses = YES;
+    } else {
+        self.matchParentheses = [[NSUserDefaults standardUserDefaults] boolForKey:MATCH_PARENTHESES_KEY];
+    }
     
     NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
     [typingAttributes setObject:[self courier] forKey:@"Font"];
@@ -217,27 +229,29 @@
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
     //If something is being inserted, check wether it is a "(" or a "[[" and auto close it
-    if (affectedCharRange.length == 0) {
-        if ([replacementString isEqualToString:@"("]) {
-            [self addString:@")" atIndex:affectedCharRange.location];
-            [self.textView setSelectedRange:affectedCharRange];
-            
-        } else if ([replacementString isEqualToString:@"["]) {
-            if (affectedCharRange.location != 0) {
-                unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+    if (self.matchParentheses) {
+        if (affectedCharRange.length == 0) {
+            if ([replacementString isEqualToString:@"("]) {
+                [self addString:@")" atIndex:affectedCharRange.location];
+                [self.textView setSelectedRange:affectedCharRange];
                 
-                if (characterBefore == '[') {
-                    [self addString:@"]]" atIndex:affectedCharRange.location];
-                    [self.textView setSelectedRange:affectedCharRange];
+            } else if ([replacementString isEqualToString:@"["]) {
+                if (affectedCharRange.location != 0) {
+                    unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+                    
+                    if (characterBefore == '[') {
+                        [self addString:@"]]" atIndex:affectedCharRange.location];
+                        [self.textView setSelectedRange:affectedCharRange];
+                    }
                 }
-            }
-        } else if ([replacementString isEqualToString:@"*"]) {
-            if (affectedCharRange.location != 0) {
-                unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
-                
-                if (characterBefore == '/') {
-                    [self addString:@"*/" atIndex:affectedCharRange.location];
-                    [self.textView setSelectedRange:affectedCharRange];
+            } else if ([replacementString isEqualToString:@"*"]) {
+                if (affectedCharRange.location != 0) {
+                    unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+                    
+                    if (characterBefore == '/') {
+                        [self addString:@"*/" atIndex:affectedCharRange.location];
+                        [self.textView setSelectedRange:affectedCharRange];
+                    }
                 }
             }
         }
@@ -502,8 +516,6 @@
     return _italicCourier;
 }
 
-#define FONTSIZE_KEY @"Fontsize"
-#define DEFAULT_FONTSIZE 13
 
 - (NSUInteger)fontSize
 {
@@ -931,6 +943,12 @@ static NSString *forceLyricsSymbol = @"~";
             [menuItem.submenu addItem:item];
         }
         return YES;
+    } else if ([menuItem.title isEqualToString:@"Automatically Match Parentheses"]) {
+        if (self.matchParentheses) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
     }
     
     return YES;
@@ -948,6 +966,17 @@ static NSString *forceLyricsSymbol = @"~";
         NSString* itemName = menuItem.title;
         [self.themeManager selectThemeWithName:itemName];
         [self loadSelectedTheme];
+    }
+}
+
+
+- (IBAction)toggleMatchParentheses:(id)sender
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        doc.matchParentheses = !doc.matchParentheses;
+        [[NSUserDefaults standardUserDefaults] setBool:doc.matchParentheses forKey:MATCH_PARENTHESES_KEY];
     }
 }
 

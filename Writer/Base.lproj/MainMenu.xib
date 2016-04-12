@@ -445,6 +445,13 @@ DQ
                                     <action selector="addTitlePage:" target="-1" id="s6K-xU-xbT"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="NmP-5j-KWS"/>
+                            <menuItem title="Automatically Match Parentheses" state="on" id="s7C-kV-oq3">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleMatchParentheses:" target="-1" id="Bhq-on-LD2"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
