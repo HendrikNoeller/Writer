@@ -194,7 +194,6 @@
     NSString* htmlString = [htmlScript html];
     
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
-    saveDialog.parentWindow = self.windowControllers[0].window;
     [saveDialog setAllowedFileTypes:@[@"html"]];
     [saveDialog setRepresentedFilename:[self lastComponentOfFileName]];
     [saveDialog setNameFieldStringValue:[self fileNameString]];
@@ -210,7 +209,6 @@
     NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
     
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
-    saveDialog.parentWindow = self.windowControllers[0].window;
     [saveDialog setAllowedFileTypes:@[@"fdx"]];
     [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
@@ -218,6 +216,7 @@
             [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
+    
 }
 
 - (NSString*)fileNameString
@@ -226,7 +225,7 @@
     NSUInteger lastDotIndex = [fileName rangeOfString:@"." options:NSBackwardsSearch].location;
     if (lastDotIndex != NSNotFound) {
         fileName = [fileName substringToIndex:lastDotIndex];
-    }
+    } 
     return fileName;
 }
 

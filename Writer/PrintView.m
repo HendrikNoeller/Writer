@@ -184,7 +184,6 @@
         [self display];
         if (self.pdf) {
             NSSavePanel *saveDialog = [NSSavePanel savePanel];
-            saveDialog.parentWindow = self.document.windowControllers[0].window;
             [saveDialog setAllowedFileTypes:@[@"pdf"]];
             [saveDialog setNameFieldStringValue:[self.document fileNameString]];
             [saveDialog beginSheetModalForWindow:self.document.windowControllers[0].window completionHandler:^(NSInteger result) {
