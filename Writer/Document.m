@@ -216,6 +216,32 @@
 
 - (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
+    //If something is being inserted, check wether it is a "(" or a "[[" and auto close it
+    if (affectedCharRange.length == 0) {
+        if ([replacementString isEqualToString:@"("]) {
+            [self addString:@")" atIndex:affectedCharRange.location];
+            [self.textView setSelectedRange:affectedCharRange];
+            
+        } else if ([replacementString isEqualToString:@"["]) {
+            if (affectedCharRange.location != 0) {
+                unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+                
+                if (characterBefore == '[') {
+                    [self addString:@"]]" atIndex:affectedCharRange.location];
+                    [self.textView setSelectedRange:affectedCharRange];
+                }
+            }
+        } else if ([replacementString isEqualToString:@"*"]) {
+            if (affectedCharRange.location != 0) {
+                unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+                
+                if (characterBefore == '/') {
+                    [self addString:@"*/" atIndex:affectedCharRange.location];
+                    [self.textView setSelectedRange:affectedCharRange];
+                }
+            }
+        }
+    }
     [self.parser parseChangeInRange:affectedCharRange withString:replacementString];
     return YES;
 }
