@@ -189,9 +189,6 @@
 
 - (IBAction)exportHTML:(id)sender
 {
-    FNScript* fnScript = [[FNScript alloc] initWithString:[self getText]];
-    FNHTMLScript* htmlScript = [[FNHTMLScript alloc] initWithScript:fnScript];
-    NSString* htmlString = [htmlScript html];
     
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
     [saveDialog setAllowedFileTypes:@[@"html"]];
@@ -199,6 +196,9 @@
     [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
+            FNScript* fnScript = [[FNScript alloc] initWithString:[self getText]];
+            FNHTMLScript* htmlScript = [[FNHTMLScript alloc] initWithScript:fnScript];
+            NSString* htmlString = [htmlScript html];
             [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
@@ -206,13 +206,12 @@
 
 - (IBAction)exportFDX:(id)sender
 {
-    NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
-    
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
     [saveDialog setAllowedFileTypes:@[@"fdx"]];
     [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
+            NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
             [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
