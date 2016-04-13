@@ -26,7 +26,7 @@
                                @"\n"
                                @"  <Content>\n" mutableCopy];
     
-    bool inDoubleDialogue = false;
+    bool inDoubleDialogue = NO;
     for (int i = 0; i < [parser.lines count]; i++) {
         inDoubleDialogue = [self appendLineAtIndex:i fromLines:parser.lines toString:result inDoubleDialogue:inDoubleDialogue];
     }
@@ -69,7 +69,7 @@
                 continue;
             }
             if (futureLine.type == doubleDialogueCharacter) {
-                inDoubleDialogue = true;
+                inDoubleDialogue = YES;
             }
             break;
         }
@@ -108,13 +108,13 @@
                 nextLine.type != doubleDialogueCharacter &&
                 nextLine.type != doubleDialogueParenthetical &
                 nextLine.type != doubleDialogue) {
-                inDoubleDialogue = false;
+                inDoubleDialogue = NO;
                 [result appendString:@"      </DualDialogue>\n"];
                 [result appendString:@"    </Paragraph>\n"];
             }
         } else {
             //If the line is the last line, it's also time to close the dual dialogue tag
-            inDoubleDialogue = false;
+            inDoubleDialogue = NO;
             [result appendString:@"      </DualDialogue>\n"];
             [result appendString:@"    </Paragraph>\n"];
         }

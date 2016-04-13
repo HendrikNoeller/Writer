@@ -68,7 +68,7 @@
     
     XCTAssertEqual([manager numberOfThemes], 5);
     
-    XCTAssertEqualObjects([manager nameForThemeAtIndex:0], @"Light");
+    XCTAssertEqualObjects([manager nameForThemeAtIndex:0], @"Light (Default)");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:1], @"Dark");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:2], @"Solarized Light");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:3], @"Solarized Dark");
@@ -93,7 +93,7 @@
     XCTAssertEqual([manager selectedTheme], 3);
     [manager selectThemeWithName:@"Monokai"];
     XCTAssertEqual([manager selectedTheme], 4);
-    [manager selectThemeWithName:@"Light"];
+    [manager selectThemeWithName:@"Light (Default)"];
     XCTAssertEqual([manager selectedTheme], 0);
     
     [manager selectThemeWithName:@"blabediblup"];
@@ -128,7 +128,7 @@
     
     XCTAssertEqual([manager numberOfThemes], 5);
     
-    XCTAssertEqualObjects([manager nameForThemeAtIndex:0], @"Light");
+    XCTAssertEqualObjects([manager nameForThemeAtIndex:0], @"Light (Default)");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:1], @"Dark");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:2], @"Solarized Light");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:3], @"Solarized Dark");
@@ -153,7 +153,7 @@
     XCTAssertEqual([manager selectedTheme], 3);
     [manager selectThemeWithName:@"Monokai"];
     XCTAssertEqual([manager selectedTheme], 4);
-    [manager selectThemeWithName:@"Light"];
+    [manager selectThemeWithName:@"Light (Default)"];
     XCTAssertEqual([manager selectedTheme], 0);
     
     [manager selectThemeWithName:@"blabediblup"];
@@ -187,7 +187,7 @@
     
     XCTAssertEqual([manager numberOfThemes], 5);
     
-    XCTAssertEqualObjects([manager nameForThemeAtIndex:0], @"Light");
+    XCTAssertEqualObjects([manager nameForThemeAtIndex:0], @"Light (Default)");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:1], @"Dark");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:2], @"Solarized Light");
     XCTAssertEqualObjects([manager nameForThemeAtIndex:3], @"Solarized Dark");
@@ -212,7 +212,7 @@
     XCTAssertEqual([manager selectedTheme], 3);
     [manager selectThemeWithName:@"Monokai"];
     XCTAssertEqual([manager selectedTheme], 4);
-    [manager selectThemeWithName:@"Light"];
+    [manager selectThemeWithName:@"Light (Default)"];
     XCTAssertEqual([manager selectedTheme], 0);
     
     [manager selectThemeWithName:@"blabediblup"];

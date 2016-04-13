@@ -166,7 +166,7 @@
                         <button key="view" verticalHuggingPriority="750" id="YZl-B1-yyf">
                             <rect key="frame" x="0.0" y="14" width="46" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Italic" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXK-96-jf3">
+                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Italic" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXK-96-jf3">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
