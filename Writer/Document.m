@@ -918,6 +918,10 @@ static NSString *forceLyricsSymbol = @"~";
 
 - (IBAction)themes:(id)sender {}
 
+- (IBAction)zoom:(id)sender {}
+
+- (IBAction)export:(id)sender {}
+
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     if ([menuItem.title isEqualToString:@"Share"]) {
