@@ -179,7 +179,15 @@
 
 - (IBAction)printDocument:(id)sender
 {
-    self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
+    if ([[self getText] length] == 0) {
+        NSAlert* alert = [[NSAlert alloc] init];
+        alert.messageText = @"Can not print an empty document";
+        alert.informativeText = @"Please enter some text before printing, or obtain white paper directly by accessing you printers paper tray.";
+        alert.alertStyle = NSWarningAlertStyle;
+        [alert beginSheetModalForWindow:self.windowControllers[0].window completionHandler:nil];
+    } else {
+        self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
+    }
 }
 
 - (IBAction)exportPDF:(id)sender
