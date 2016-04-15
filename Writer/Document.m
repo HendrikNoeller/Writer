@@ -31,10 +31,14 @@
 #import "Document.h"
 #import "FNScript.h"
 #import "FNHTMLScript.h"
+#import "FDXInterface.h"
 #import "PrintView.h"
 #import "ColorView.h"
+#import "ContinousFountainParser.h"
+#import "ThemeManager.h"
 
 @interface Document ()
+
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
 @property (unsafe_unretained) IBOutlet WebView *webView;
@@ -59,11 +63,25 @@
 
 @property (strong) NSArray *toolbarButtons;
 
+@property (strong, nonatomic) NSString *contentBuffer; //Keeps the text until the text view is initialized
 
 @property (strong, nonatomic) NSFont *courier;
+@property (strong, nonatomic) NSFont *boldCourier;
+@property (strong, nonatomic) NSFont *italicCourier;
+@property (nonatomic) NSUInteger fontSize;
+@property (nonatomic) bool matchParentheses;
 
-@property (strong, nonatomic) PrintView *printView;
+@property (strong, nonatomic) PrintView *printView; //To keep the asynchronously working print data generator in memory
+
+@property (strong, nonatomic) ContinousFountainParser* parser;
+
+@property (strong, nonatomic) ThemeManager* themeManager;
 @end
+
+
+#define MATCH_PARENTHESES_KEY @"Match Parentheses"
+#define FONTSIZE_KEY @"Fontsize"
+#define DEFAULT_FONTSIZE 13
 
 @implementation Document
 
@@ -72,28 +90,53 @@
 - (instancetype)init {
     self = [super init];
     if (self) {
-        self.documentContent = [[NSMutableString alloc] init];
         self.printInfo.topMargin = 25;
         self.printInfo.bottomMargin = 50;
     }
     return self;
 }
 
+#define TEXT_INSET_SIDE 50
+#define TEXT_INSET_TOP 20
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
-//    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
+    //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
+    
     self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
-    [self updateTextView];
-    self.textView.textContainerInset = NSMakeSize(20, 20);
+    self.textView.textContainerInset = NSMakeSize(TEXT_INSET_SIDE, TEXT_INSET_TOP);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
                                                               green:0.5
                                                                blue:0.5
                                                               alpha:1.0];
     [self.textView setFont:[self courier]];
+    [self.textView setAutomaticQuoteSubstitutionEnabled:NO];
+    [self.textView setAutomaticDataDetectionEnabled:NO];
+    [self.textView setAutomaticDashSubstitutionEnabled:NO];
+    
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:MATCH_PARENTHESES_KEY]) {
+        self.matchParentheses = YES;
+    } else {
+        self.matchParentheses = [[NSUserDefaults standardUserDefaults] boolForKey:MATCH_PARENTHESES_KEY];
+    }
+    
     NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
     [typingAttributes setObject:[self courier] forKey:@"Font"];
+    
+    //Put any previously loaded data into the text view
+    if (self.contentBuffer) {
+        [self setText:self.contentBuffer];
+    } else {
+        [self setText:@""];
+    }
+    //Initialize Theme Manager (before the formatting, because we need the colors for formatting!)
+    self.themeManager = [ThemeManager sharedManager];
+    [self loadSelectedTheme];
+    
+    self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
+    [self applyFormatChanges];
 }
 
 + (BOOL)autosavesInPlace {
@@ -107,7 +150,7 @@
 - (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
     // Insert code here to write your document to data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning nil.
     // You can also choose to override -fileWrapperOfType:error:, -writeToURL:ofType:error:, or -writeToURL:ofType:forSaveOperation:originalContentsURL:error: instead.
-    NSData *dataRepresentation = [self.documentContent dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *dataRepresentation = [[self getText] dataUsingEncoding:NSUTF8StringEncoding];
     return dataRepresentation;
 }
 
@@ -115,57 +158,392 @@
     // Insert code here to read your document from the given data of the specified type. If outError != NULL, ensure that you create and set an appropriate error when returning NO.
     // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
     // If you override either of these, you should also override -isEntireFileLoaded to return NO if the contents are lazily loaded.
-    self.documentContent = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] mutableCopy];
+    [self setText:[[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] stringByReplacingOccurrencesOfString:@"\r" withString:@"\n"]];
     return YES;
+}
+
+- (NSString *)getText
+{
+    return [self.textView string];
+}
+
+- (void)setText:(NSString *)text
+{
+    if (!self.textView) {
+        self.contentBuffer = text;
+    } else {
+        [self.textView setString:text];
+        [self updateWebView];
+    }
 }
 
 - (IBAction)printDocument:(id)sender
 {
-    self.printView = [[PrintView alloc] initWithDocument:self];
+    if ([[self getText] length] == 0) {
+        NSAlert* alert = [[NSAlert alloc] init];
+        alert.messageText = @"Can not print an empty document";
+        alert.informativeText = @"Please enter some text before printing, or obtain white paper directly by accessing you printers paper tray.";
+        alert.alertStyle = NSWarningAlertStyle;
+        [alert beginSheetModalForWindow:self.windowControllers[0].window completionHandler:nil];
+    } else {
+        self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
+    }
 }
 
-
-
-#pragma mark - View and Model Syncing
-
-- (void)updateDocumentContent
+- (IBAction)exportPDF:(id)sender
 {
-    _documentContent = [[self.textView string] mutableCopy];
+    self.printView = [[PrintView alloc] initWithDocument:self toPDF:YES];
 }
 
-- (void)updateTextView
+- (IBAction)exportHTML:(id)sender
 {
-    [self.textView setString:[self.documentContent copy]];
+    
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    [saveDialog setAllowedFileTypes:@[@"html"]];
+    [saveDialog setRepresentedFilename:[self lastComponentOfFileName]];
+    [saveDialog setNameFieldStringValue:[self fileNameString]];
+    [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            FNScript* fnScript = [[FNScript alloc] initWithString:[self getText]];
+            FNHTMLScript* htmlScript = [[FNHTMLScript alloc] initWithScript:fnScript];
+            NSString* htmlString = [htmlScript html];
+            [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
+    }];
+}
+
+- (IBAction)exportFDX:(id)sender
+{
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    [saveDialog setAllowedFileTypes:@[@"fdx"]];
+    [saveDialog setNameFieldStringValue:[self fileNameString]];
+    [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
+            [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
+    }];
+    
+}
+
+- (NSString*)fileNameString
+{
+    NSString* fileName = [self lastComponentOfFileName];
+    NSUInteger lastDotIndex = [fileName rangeOfString:@"." options:NSBackwardsSearch].location;
+    if (lastDotIndex != NSNotFound) {
+        fileName = [fileName substringToIndex:lastDotIndex];
+    } 
+    return fileName;
 }
 
 - (void)updateWebView
 {
-    FNScript *script = [[FNScript alloc] initWithString:_documentContent];
+    FNScript *script = [[FNScript alloc] initWithString:[self getText]];
     FNHTMLScript *htmpScript = [[FNHTMLScript alloc] initWithScript:script document:self];
     [[self.webView mainFrame] loadHTMLString:[htmpScript html] baseURL:nil];
 }
 
-
-- (void)setDocumentContent:(NSMutableString *)documentContent
+- (BOOL)textView:(NSTextView *)textView shouldChangeTextInRange:(NSRange)affectedCharRange replacementString:(NSString *)replacementString
 {
-    _documentContent = documentContent;
-    [self updateTextView];
-    [self updateWebView];
+    //If something is being inserted, check wether it is a "(" or a "[[" and auto close it
+    if (self.matchParentheses) {
+        if (affectedCharRange.length == 0) {
+            if ([replacementString isEqualToString:@"("]) {
+                [self addString:@")" atIndex:affectedCharRange.location];
+                [self.textView setSelectedRange:affectedCharRange];
+                
+            } else if ([replacementString isEqualToString:@"["]) {
+                if (affectedCharRange.location != 0) {
+                    unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+                    
+                    if (characterBefore == '[') {
+                        [self addString:@"]]" atIndex:affectedCharRange.location];
+                        [self.textView setSelectedRange:affectedCharRange];
+                    }
+                }
+            } else if ([replacementString isEqualToString:@"*"]) {
+                if (affectedCharRange.location != 0) {
+                    unichar characterBefore = [[self.textView string] characterAtIndex:affectedCharRange.location-1];
+                    
+                    if (characterBefore == '/') {
+                        [self addString:@"*/" atIndex:affectedCharRange.location];
+                        [self.textView setSelectedRange:affectedCharRange];
+                    }
+                }
+            }
+        }
+    }
+    [self.parser parseChangeInRange:affectedCharRange withString:replacementString];
+    return YES;
 }
 
 - (void)textDidChange:(NSNotification *)notification
 {
-    [self updateDocumentContent];
+    [self applyFormatChanges];
 }
+
+- (void)formattAllLines
+{
+    for (Line* line in self.parser.lines) {
+        [self formatLineOfScreenplay:line onlyFormatFont:NO];
+    }
+    
+}
+
+- (void)refontAllLines
+{
+    for (Line* line in self.parser.lines) {
+        [self formatLineOfScreenplay:line onlyFormatFont:YES];
+    }
+}
+
+- (void)applyFormatChanges
+{
+    for (NSNumber* index in self.parser.changedIndices) {
+        Line* line = self.parser.lines[index.integerValue];
+        [self formatLineOfScreenplay:line onlyFormatFont:NO];
+    }
+    [self.parser.changedIndices removeAllObjects];
+}
+
+#define CHARACTER_INDENT 220
+#define PARENTHETICAL_INDENT 185
+#define DIALOGUE_INDENT 150
+#define DIALOGUE_RIGHT 450
+
+#define DD_CHARACTER_INDENT 420
+#define DD_PARENTHETICAL_INDENT 385
+#define DOUBLE_DIALOGUE_INDENT 350
+#define DD_RIGHT 650
+
+- (void)formatLineOfScreenplay:(Line*)line onlyFormatFont:(bool)fontOnly
+{
+    NSTextStorage *textStorage = [self.textView textStorage];
+    
+    NSUInteger begin = line.position;
+    NSUInteger length = [line.string length];
+    NSRange range = NSMakeRange(begin, length);
+    
+    NSDictionary *attributes = @{};
+    
+    
+    //Formatt according to style
+    if (line.type == heading || line.type == pageBreak) {
+        attributes = @{NSFontAttributeName: [self boldCourier]};
+        
+    } else if (line.type == lyrics) {
+        attributes = @{NSFontAttributeName: [self italicCourier]};
+        
+    } else if (!fontOnly) {
+        if (line.type == titlePageTitle  ||
+            line.type == titlePageAuthor ||
+            line.type == titlePageCredit ||
+            line.type == titlePageSource) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setAlignment:NSTextAlignmentCenter];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == transition) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setAlignment:NSTextAlignmentRight];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == centered) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setAlignment:NSTextAlignmentCenter];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == character) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setFirstLineHeadIndent:CHARACTER_INDENT];
+            [paragraphStyle setHeadIndent:CHARACTER_INDENT];
+            [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == parenthetical) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setFirstLineHeadIndent:PARENTHETICAL_INDENT];
+            [paragraphStyle setHeadIndent:PARENTHETICAL_INDENT];
+            [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == dialogue) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setFirstLineHeadIndent:DIALOGUE_INDENT];
+            [paragraphStyle setHeadIndent:DIALOGUE_INDENT];
+            [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == doubleDialogueCharacter) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setFirstLineHeadIndent:DD_CHARACTER_INDENT];
+            [paragraphStyle setHeadIndent:DD_CHARACTER_INDENT];
+            [paragraphStyle setTailIndent:DD_RIGHT];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == doubleDialogueParenthetical) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setFirstLineHeadIndent:DD_PARENTHETICAL_INDENT];
+            [paragraphStyle setHeadIndent:DD_PARENTHETICAL_INDENT];
+            [paragraphStyle setTailIndent:DD_RIGHT];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == doubleDialogue) {
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            [paragraphStyle setFirstLineHeadIndent:DOUBLE_DIALOGUE_INDENT];
+            [paragraphStyle setHeadIndent:DOUBLE_DIALOGUE_INDENT];
+            [paragraphStyle setTailIndent:DD_RIGHT];
+            
+            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            
+        } else if (line.type == section || line.type == synopse || line.type == titlePageUnknown) {
+            if (self.themeManager) {
+                NSColor* commentColor = [self.themeManager currentCommentColor];
+                attributes = @{NSForegroundColorAttributeName: commentColor};
+            }
+        }
+    }
+    
+    //Remove all former paragraph styles and overwrite fonts
+    if (!fontOnly) {
+        [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentTextColor range:range];
+        [textStorage addAttribute:NSUnderlineStyleAttributeName value:@0 range:range];
+    }
+    [textStorage addAttribute:NSFontAttributeName value:[self courier] range:range];
+    
+    //Add selected attributes
+    [textStorage addAttributes:attributes range:range];
+    
+    //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
+    
+    
+    [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 1;
+        NSRange effectiveRange;
+        if (range.length >= 2*symbolLength) {
+            effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        } else {
+            effectiveRange = NSMakeRange(range.location + symbolLength, 0);
+        }
+        [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
+                            range:[self globalRangeFromLocalRange:&effectiveRange
+                                                 inLineAtPosition:line.position]];
+        
+        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                 inLineAtPosition:line.position]];
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+    [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        NSUInteger symbolLength = 2;
+        NSRange effectiveRange;
+        if (range.length >= 2*symbolLength) {
+            effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+        } else {
+            effectiveRange = NSMakeRange(range.location + symbolLength, 0);
+        }
+        
+        [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
+                            range:[self globalRangeFromLocalRange:&effectiveRange
+                                                 inLineAtPosition:line.position]];
+        
+        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                 inLineAtPosition:line.position]];
+        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                            range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                 inLineAtPosition:line.position]];
+    }];
+    
+    if (!fontOnly) {
+        [line.underlinedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+            NSUInteger symbolLength = 1;
+            
+            [textStorage addAttribute:NSUnderlineStyleAttributeName value:@1
+                                range:[self globalRangeFromLocalRange:&range
+                                                     inLineAtPosition:line.position]];
+            
+            NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+            NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                     inLineAtPosition:line.position]];
+            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                     inLineAtPosition:line.position]];
+        }];
+        
+        [line.noteRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentCommentColor
+                                range:[self globalRangeFromLocalRange:&range
+                                                     inLineAtPosition:line.position]];
+        }];
+        
+        [line.ommitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                range:[self globalRangeFromLocalRange:&range
+                                                     inLineAtPosition:line.position]];
+        }];
+    }
+}
+
+- (NSRange)globalRangeFromLocalRange:(NSRange*)range inLineAtPosition:(NSUInteger)position
+{
+    return NSMakeRange(range->location + position, range->length);
+}
+
 
 - (NSFont*)courier
 {
     if (!_courier) {
-        _courier = [NSFont fontWithName:@"Courier Prime" size:13];
+        _courier = [NSFont fontWithName:@"Courier Prime" size:[self fontSize]];
     }
     return _courier;
 }
 
+- (NSFont*)boldCourier
+{
+    if (!_boldCourier) {
+        _boldCourier = [NSFont fontWithName:@"Courier Prime Bold" size:[self fontSize]];
+    }
+    return _boldCourier;
+}
+
+- (NSFont*)italicCourier
+{
+    if (!_italicCourier) {
+        _italicCourier = [NSFont fontWithName:@"Courier Prime Italic" size:[self fontSize]];
+    }
+    return _italicCourier;
+}
+
+
+- (NSUInteger)fontSize
+{
+    if (_fontSize == 0) {
+        _fontSize = [[NSUserDefaults standardUserDefaults] integerForKey:FONTSIZE_KEY];
+        if (_fontSize == 0) {
+            _fontSize = DEFAULT_FONTSIZE;
+        }
+    }
+    return _fontSize;
+}
 
 
 #pragma mark - Formatting Buttons
@@ -195,9 +573,10 @@ static NSString *forceLyricsSymbol = @"~";
 - (IBAction)addTitlePage:(id)sender
 {
     if ([self selectedTabViewTab] == 0) {
-        if ([self.documentContent length] < 6) {
+        if ([[self getText] length] < 6) {
             [self addString:[self titlePage] atIndex:0];
-        } else if (![[self.documentContent substringWithRange:NSMakeRange(0, 6)] isEqualToString:@"Title:"]) {
+            self.textView.selectedRange = NSMakeRange(7, 0);
+        } else if (![[[self getText] substringWithRange:NSMakeRange(0, 6)] isEqualToString:@"Title:"]) {
             [self addString:[self titlePage] atIndex:0];
         }
     }
@@ -210,12 +589,12 @@ static NSString *forceLyricsSymbol = @"~";
         if (cursorLocation.location != NSNotFound) {
             //Step forward to end of line
             NSUInteger location = cursorLocation.location + cursorLocation.length;
-            NSUInteger length = [[self.textView string] length];
+            NSUInteger length = [[self getText] length];
             while (true) {
                 if (location == length) {
                     break;
                 }
-                NSString *nextChar = [[self.textView string] substringWithRange:NSMakeRange(location, 1)];
+                NSString *nextChar = [[self getText] substringWithRange:NSMakeRange(location, 1)];
                 if ([nextChar isEqualToString:@"\n"]) {
                     break;
                 }
@@ -230,16 +609,14 @@ static NSString *forceLyricsSymbol = @"~";
 
 - (void)addString:(NSString*)string atIndex:(NSUInteger)index
 {
-    [self.textView replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
+    [self replaceCharactersInRange:NSMakeRange(index, 0) withString:string];
     [[[self undoManager] prepareWithInvocationTarget:self] removeString:string atIndex:index];
-    [self updateDocumentContent];
 }
 
 - (void)removeString:(NSString*)string atIndex:(NSUInteger)index
 {
-    [self.textView replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
+    [self replaceCharactersInRange:NSMakeRange(index, [string length]) withString:@""];
     [[[self undoManager] prepareWithInvocationTarget:self] addString:string atIndex:index];
-    [self updateDocumentContent];
 }
 
 
@@ -303,40 +680,73 @@ static NSString *forceLyricsSymbol = @"~";
 - (void)format:(NSRange)cursorLocation beginningSymbol:(NSString*)beginningSymbol endSymbol:(NSString*)endSymbol
 {
     //Checking if the cursor location is vaild
-    if (cursorLocation.location  + cursorLocation.length <= [[self.textView string] length]) {
+    if (cursorLocation.location  + cursorLocation.length <= [[self getText] length]) {
         //Checking if the selected text is allready formated in the specified way
         NSString *selectedString = [self.textView.string substringWithRange:cursorLocation];
-
-        NSUInteger addedCharacters = 0;
+        NSInteger selectedLength = [selectedString length];
+        NSInteger symbolLength = [beginningSymbol length] + [endSymbol length];
         
-        if ([selectedString length] >= [beginningSymbol length] + [endSymbol length] && [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[selectedString substringFromIndex:[selectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
-            //The Text is formated, remove!!!
-            [self.textView replaceCharactersInRange:cursorLocation withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length], [selectedString length] - [beginningSymbol length] - [endSymbol length])]];
-            [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
+        NSInteger addedCharactersBeforeRange;
+        NSInteger addedCharactersInRange;
+        
+        if (selectedLength >= symbolLength &&
+            [[selectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] &&
+            [[selectedString substringFromIndex:selectedLength - [endSymbol length]] isEqualToString:endSymbol]) {
+            
+            //The Text is formated, remove the formatting
+            [self replaceCharactersInRange:cursorLocation
+                                withString:[selectedString substringWithRange:NSMakeRange([beginningSymbol length],
+                                                                                          selectedLength - [beginningSymbol length] - [endSymbol length])]];
+            //Put a corresponding undo action
+            [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location,
+                                                                                      cursorLocation.length - [beginningSymbol length] - [endSymbol length])
+                                                          beginningSymbol:beginningSymbol
+                                                                endSymbol:endSymbol];
+            addedCharactersBeforeRange = 0;
+            addedCharactersInRange = -([beginningSymbol length] + [endSymbol length]);
         } else {
             //The Text isn't formated, but let's alter the cursor range and check again because there might be formatting right outside the selected area
             NSRange modifiedCursorLocation = cursorLocation;
-            if (cursorLocation.location >= [beginningSymbol length] && (cursorLocation.location + cursorLocation.length) <= ([[self.textView string] length] - [endSymbol length])) {
-                if (modifiedCursorLocation.location + modifiedCursorLocation.length + [endSymbol length] - 1 <= [[self.textView string] length]) {
-                    modifiedCursorLocation = NSMakeRange(modifiedCursorLocation.location - [beginningSymbol length], modifiedCursorLocation.length + [beginningSymbol length]  + [endSymbol length]);
+            
+            if (cursorLocation.location >= [beginningSymbol length] &&
+                (cursorLocation.location + cursorLocation.length) <= ([[self getText] length] - [endSymbol length])) {
+                
+                if (modifiedCursorLocation.location + modifiedCursorLocation.length + [endSymbol length] - 1 <= [[self getText] length]) {
+                    modifiedCursorLocation = NSMakeRange(modifiedCursorLocation.location - [beginningSymbol length],
+                                                         modifiedCursorLocation.length + [beginningSymbol length]  + [endSymbol length]);
                 }
             }
             NSString *newSelectedString = [self.textView.string substringWithRange:modifiedCursorLocation];
             //Repeating the check from above
-            if ([newSelectedString length] >= [beginningSymbol length] + [endSymbol length] && [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] && [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
+            if ([newSelectedString length] >= symbolLength &&
+                [[newSelectedString substringToIndex:[beginningSymbol length]] isEqualToString:beginningSymbol] &&
+                [[newSelectedString substringFromIndex:[newSelectedString length] - [endSymbol length]] isEqualToString:endSymbol]) {
+                
                 //The Text is formated outside of the original selection, remove!!!
-                [self.textView replaceCharactersInRange:modifiedCursorLocation withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length], [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
-                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(modifiedCursorLocation.location, modifiedCursorLocation.length - [beginningSymbol length] - [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
+                [self replaceCharactersInRange:modifiedCursorLocation
+                                    withString:[newSelectedString substringWithRange:NSMakeRange([beginningSymbol length],
+                                                                                                 [newSelectedString length] - [beginningSymbol length] - [endSymbol length])]];
+                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(modifiedCursorLocation.location,
+                                                                                          modifiedCursorLocation.length - [beginningSymbol length] - [endSymbol length])
+                                                              beginningSymbol:beginningSymbol
+                                                                    endSymbol:endSymbol];
+                addedCharactersBeforeRange = - [beginningSymbol length];
+                addedCharactersInRange = 0;
             } else {
                 //The text really isn't formatted. Just add the formatting using the original data.
-                [self.textView replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0) withString:endSymbol];
-                [self.textView replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0) withString:beginningSymbol];
-                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location, cursorLocation.length + [beginningSymbol length] + [endSymbol length]) beginningSymbol:beginningSymbol endSymbol:endSymbol];
-                addedCharacters = [endSymbol length];
+                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location + cursorLocation.length, 0)
+                                    withString:endSymbol];
+                [self replaceCharactersInRange:NSMakeRange(cursorLocation.location, 0)
+                                    withString:beginningSymbol];
+                [[[self undoManager] prepareWithInvocationTarget:self] format:NSMakeRange(cursorLocation.location,
+                                                                                          cursorLocation.length + [beginningSymbol length] + [endSymbol length])
+                                                              beginningSymbol:beginningSymbol
+                                                                    endSymbol:endSymbol];
+                addedCharactersBeforeRange = [beginningSymbol length];
+                addedCharactersInRange = 0;
             }
         }
-        [self updateDocumentContent];
-        self.textView.selectedRange = NSMakeRange(cursorLocation.location+cursorLocation.length+addedCharacters, 0);
+        self.textView.selectedRange = NSMakeRange(cursorLocation.location+addedCharactersBeforeRange, cursorLocation.length+addedCharactersInRange);
     }
 }
 
@@ -399,7 +809,7 @@ static NSString *forceLyricsSymbol = @"~";
         if (indexOfLineBeginning == 0) {
             break;
         }
-        NSString *characterBefore = [[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning - 1, 1)];
+        NSString *characterBefore = [[self getText] substringWithRange:NSMakeRange(indexOfLineBeginning - 1, 1)];
         if ([characterBefore isEqualToString:@"\n"]) {
             break;
         }
@@ -411,18 +821,18 @@ static NSString *forceLyricsSymbol = @"~";
     //Which either happens because the beginning of the line is the end of the document
     //Or is indicated by the next character being a newline
     //The range for the first charate in line needs to be an empty string
-    if (indexOfLineBeginning == [[self.textView string] length]) {
+    if (indexOfLineBeginning == [[self getText] length]) {
         firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
-    } else if ([[[self.textView string] substringWithRange:NSMakeRange(indexOfLineBeginning, 1)] isEqualToString:@"\n"]){
+    } else if ([[[self getText] substringWithRange:NSMakeRange(indexOfLineBeginning, 1)] isEqualToString:@"\n"]){
         firstCharacterRange = NSMakeRange(indexOfLineBeginning, 0);
     } else {
         firstCharacterRange = NSMakeRange(indexOfLineBeginning, 1);
     }
-    NSString *firstCharacter = [[self.textView string] substringWithRange:firstCharacterRange];
+    NSString *firstCharacter = [[self getText] substringWithRange:firstCharacterRange];
     
     //If the line is already forced to the desired type, remove the force
     if ([firstCharacter isEqualToString:symbol]) {
-        [self.textView replaceCharactersInRange:firstCharacterRange withString:@""];
+        [self replaceCharactersInRange:firstCharacterRange withString:@""];
     } else {
         //If the line is not forced to the desirey type, check if it is forced to be something else
         BOOL otherForce = NO;
@@ -439,20 +849,78 @@ static NSString *forceLyricsSymbol = @"~";
         //If the line is forced to be something else, replace that force with the new force
         //If not, insert the new character before the first one
         if (otherForce) {
-            [self.textView replaceCharactersInRange:firstCharacterRange withString:symbol];
+            [self replaceCharactersInRange:firstCharacterRange withString:symbol];
         } else {
-            [self.textView replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
+            [self replaceCharactersInRange:firstCharacterRange withString:[symbol stringByAppendingString:firstCharacter]];
         }
     }
-    [self updateDocumentContent];
+}
+
+- (void)replaceCharactersInRange:(NSRange)range withString:(NSString*)string
+{
+    if ([self textView:self.textView shouldChangeTextInRange:range replacementString:string]) {
+        [self.textView replaceCharactersInRange:range withString:string];
+        [self textDidChange:[NSNotification notificationWithName:@"" object:nil]];
+    }
+}
+
+- (IBAction)increaseFontSize:(id)sender
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    for (Document* doc in openDocuments) {
+        doc.fontSize++;
+        doc.courier = nil;
+        doc.boldCourier = nil;
+        doc.italicCourier = nil;
+        [doc refontAllLines];
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:self.fontSize forKey:FONTSIZE_KEY];
+}
+
+- (IBAction)decreaseFontSize:(id)sender
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    for (Document* doc in openDocuments) {
+        if (doc.fontSize > 0) {
+            doc.fontSize--;
+            doc.courier = nil;
+            doc.boldCourier = nil;
+            doc.italicCourier = nil;
+            [doc refontAllLines];
+        }
+    }
+    
+    [[NSUserDefaults standardUserDefaults] setInteger:self.fontSize forKey:FONTSIZE_KEY];
+}
+
+- (IBAction)resetFontSize:(id)sender
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    for (Document* doc in openDocuments) {
+        if (doc.fontSize != DEFAULT_FONTSIZE) {
+            doc.fontSize = DEFAULT_FONTSIZE;
+            doc.courier = nil;
+            doc.boldCourier = nil;
+            doc.italicCourier = nil;
+            [doc refontAllLines];
+        }
+    }
+    
+    [[NSUserDefaults standardUserDefaults] removeObjectForKey:FONTSIZE_KEY];
 }
 
 
+#pragma mark - User Interaction
 
-#pragma mark - Sharing Menu
-
-//Empty function, which needs to exists to make the share button work.
+//Empty function, which needs to exists to make the share access the validateMenuItems function
 - (IBAction)share:(id)sender {}
+
+- (IBAction)themes:(id)sender {}
+
+- (IBAction)zoom:(id)sender {}
+
+- (IBAction)export:(id)sender {}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
@@ -476,7 +944,34 @@ static NSString *forceLyricsSymbol = @"~";
             [menuItem.submenu addItem:noThingPleaseSaveItem];
         }
         return YES;
+    } else if ([menuItem.title isEqualToString:@"Print…"] || [menuItem.title isEqualToString:@"PDF"] || [menuItem.title isEqualToString:@"HTML"]) {
+        NSArray* words = [[self getText] componentsSeparatedByCharactersInSet :[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        NSString* visibleCharacters = [words componentsJoinedByString:@""];
+        if ([visibleCharacters length] == 0) {
+            return NO;
+        }
+    } else if ([menuItem.title isEqualToString:@"Theme"]) {
+        [menuItem.submenu removeAllItems];
+        
+        NSUInteger selectedTheme = [self.themeManager selectedTheme];
+        NSUInteger count = [self.themeManager numberOfThemes];
+        for (int i = 0; i < count; i++) {
+            NSString *themeName = [self.themeManager nameForThemeAtIndex:i];
+            NSMenuItem *item = [[NSMenuItem alloc] initWithTitle:themeName action:@selector(selectTheme:) keyEquivalent:@""];
+            if (i == selectedTheme) {
+                [item setState:NSOnState];
+            }
+            [menuItem.submenu addItem:item];
+        }
+        return YES;
+    } else if ([menuItem.title isEqualToString:@"Automatically Match Parentheses"]) {
+        if (self.matchParentheses) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
     }
+    
     return YES;
 }
 
@@ -485,7 +980,40 @@ static NSString *forceLyricsSymbol = @"~";
     [[sender representedObject] performWithItems:@[self.fileURL]];
 }
 
-#pragma mark - User Interaction
+- (IBAction)selectTheme:(id)sender
+{
+    if ([sender isKindOfClass:[NSMenuItem class]]) {
+        NSMenuItem* menuItem = sender;
+        NSString* itemName = menuItem.title;
+        [self.themeManager selectThemeWithName:itemName];
+        [self loadSelectedTheme];
+    }
+}
+
+
+- (IBAction)toggleMatchParentheses:(id)sender
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        doc.matchParentheses = !doc.matchParentheses;
+        [[NSUserDefaults standardUserDefaults] setBool:doc.matchParentheses forKey:MATCH_PARENTHESES_KEY];
+    }
+}
+
+- (void)loadSelectedTheme
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        NSTextView *textView = doc.textView;
+        [textView setBackgroundColor:[self.themeManager currentBackgroundColor]];
+        [textView setSelectedTextAttributes:@{NSBackgroundColorAttributeName: [self.themeManager currentSelectionColor]}];
+        [textView setTextColor:[self.themeManager currentTextColor]];
+        [textView setInsertionPointColor:[self.themeManager currentCaretColor]];
+        [doc formattAllLines];
+    }
+}
 
 - (IBAction)preview:(id)sender
 {
@@ -494,7 +1022,7 @@ static NSString *forceLyricsSymbol = @"~";
         
         [self setSelectedTabViewTab:1];
         
-        //Disable everything in the toolbar except print and preview
+        //Disable everything in the toolbar except print and preview and pdf
         for (NSButton *button in self.toolbarButtons) {
             if (button != _printToolbarButton && button != _previewToolbarButton) {
                 button.enabled = NO;
@@ -504,7 +1032,7 @@ static NSString *forceLyricsSymbol = @"~";
     } else {
         [self setSelectedTabViewTab:0];
         
-        //Enable everything in the toolbar except print and preview
+        //Enable everything in the toolbar except print and preview and pdf
         for (NSButton *button in self.toolbarButtons) {
             if (button != _printToolbarButton && button != _previewToolbarButton) {
                 button.enabled = YES;
@@ -522,7 +1050,6 @@ static NSString *forceLyricsSymbol = @"~";
 {
     [self.tabView selectTabViewItem:[self.tabView tabViewItemAtIndex:index]];
 }
-
 
 #pragma mark - Help
 

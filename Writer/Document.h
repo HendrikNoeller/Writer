@@ -32,6 +32,7 @@ THE SOFTWARE.
 
 @interface Document : NSDocument <NSTextViewDelegate>
 
-@property (strong, nonatomic) NSMutableString *documentContent;
+- (NSString*)getText;
+- (NSString*)fileNameString;
 
 @end

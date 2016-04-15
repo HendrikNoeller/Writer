@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9532"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
@@ -119,6 +119,34 @@
                                 <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                 <connections>
                                     <action selector="preview:" target="-1" id="Wir-n0-gpi"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Export" id="RGT-hK-aoo">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Export" id="o7H-J0-CK2">
+                                    <items>
+                                        <menuItem title="PDF…" id="qUE-cb-x1G">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportPDF:" target="-1" id="C88-0f-QPn"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="HTML…" id="gFk-1w-5jg">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportHTML:" target="-1" id="uwn-TO-nla"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="FXD…" id="C9z-84-Cmq">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportFDX:" target="-1" id="F6e-vG-CJO"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                                <connections>
+                                    <action selector="export:" target="-1" id="TfW-38-X9Y"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Print…" keyEquivalent="p" id="aTl-1u-JFS">
@@ -420,6 +448,13 @@ DQ
                                     <action selector="addTitlePage:" target="-1" id="s6K-xU-xbT"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="NmP-5j-KWS"/>
+                            <menuItem title="Automatically Match Parentheses" state="on" id="s7C-kV-oq3">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleMatchParentheses:" target="-1" id="Bhq-on-LD2"/>
+                                </connections>
+                            </menuItem>
                         </items>
                     </menu>
                 </menuItem>
@@ -427,6 +462,38 @@ DQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Window" systemMenu="window" id="Td7-aD-5lo">
                         <items>
+                            <menuItem title="Theme" id="SdI-kP-vhN">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" id="RAa-ji-vvT"/>
+                                <connections>
+                                    <action selector="themes:" target="-1" id="fv6-OV-M7K"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Zoom" id="2bU-pu-Jv0">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <menu key="submenu" title="Zoom" id="xgR-jy-OLL">
+                                    <items>
+                                        <menuItem title="Zoom In" keyEquivalent="+" id="Vt3-Oc-Iy3">
+                                            <connections>
+                                                <action selector="increaseFontSize:" target="-1" id="lZE-WX-ntU"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Zoom Out" keyEquivalent="-" id="LBq-PQ-NGT">
+                                            <connections>
+                                                <action selector="decreaseFontSize:" target="-1" id="jGK-5e-gzd"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Reset Zoom" keyEquivalent="." id="iVC-v6-5CT">
+                                            <connections>
+                                                <action selector="resetFontSize:" target="-1" id="Ike-5t-niu"/>
+                                            </connections>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                                <connections>
+                                    <action selector="zoom:" target="-1" id="nJn-W7-IXG"/>
+                                </connections>
+                            </menuItem>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="VwT-WD-YPe"/>

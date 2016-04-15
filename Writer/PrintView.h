@@ -33,6 +33,6 @@
 
 @interface PrintView : NSView
 
-- (id)initWithDocument:(Document*)document;
+- (id)initWithDocument:(Document*)document toPDF:(bool)pdf;
 
 @end

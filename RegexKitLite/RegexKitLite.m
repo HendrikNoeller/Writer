@@ -36,6 +36,10 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+//Deactivated, since I don't want warnings for mistakes that aren't mine and that I can't fix
+#pragma GCC diagnostic ignored "-Wtautological-pointer-compare"
+#pragma GCC diagnostic ignored "-Wunreachable-code"
+
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFArray.h>
 #include <CoreFoundation/CFString.h>

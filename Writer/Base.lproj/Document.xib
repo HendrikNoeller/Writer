@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
         <plugIn identifier="com.apple.WebKitIBPlugin" version="10116"/>
     </dependencies>
@@ -21,7 +22,7 @@
                 <outlet property="previewToolbarButton" destination="7Wv-7c-Fh6" id="pJg-Z0-rAe"/>
                 <outlet property="printToolbarButton" destination="gEp-KZ-Tzf" id="MUG-H0-AZe"/>
                 <outlet property="tabView" destination="gz5-tZ-Ofd" id="v37-ia-HrJ"/>
-                <outlet property="textView" destination="XpL-ef-jhx" id="8vu-y3-46B"/>
+                <outlet property="textView" destination="6pm-Ac-n3m" id="cty-Cr-AYB"/>
                 <outlet property="titlepageToolbarButton" destination="qaE-x4-VZq" id="llA-7J-z5i"/>
                 <outlet property="toolbar" destination="4If-wa-HNF" id="Nx5-w4-mgL"/>
                 <outlet property="underlineToolbarButton" destination="t2S-ck-wt0" id="BDP-Yj-YGk"/>
@@ -36,11 +37,11 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="133" y="235" width="800" height="599"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1920" height="1177"/>
             <value key="minSize" type="size" width="800" height="400"/>
             <view key="contentView" id="gIp-Ho-8D9">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="3qa-Wg-PsD" customClass="ColorView">
                         <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
@@ -54,51 +55,51 @@
                                     <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" findBarPosition="aboveHorizontalRuler" translatesAutoresizingMaskIntoConstraints="NO" id="rMk-On-uQK">
+                                        <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mky-48-wwA">
                                             <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
-                                            <clipView key="contentView" drawsBackground="NO" copiesOnScroll="NO" id="wnt-On-gB3">
+                                            <clipView key="contentView" id="sxN-R8-PHt">
                                                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <textView importsGraphics="NO" richText="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" quoteSubstitution="YES" dashSubstitution="YES" spellingCorrection="YES" smartInsertDelete="YES" id="XpL-ef-jhx">
-                                                        <rect key="frame" x="0.0" y="0.0" width="599" height="599"/>
+                                                    <textView importsGraphics="NO" richText="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" smartInsertDelete="YES" id="6pm-Ac-n3m">
+                                                        <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <size key="minSize" width="800" height="599"/>
-                                                        <size key="maxSize" width="942" height="10000000"/>
+                                                        <size key="minSize" width="785" height="599"/>
+                                                        <size key="maxSize" width="836" height="10000000"/>
                                                         <attributedString key="textStorage">
-                                                            <fragment content="Kein Text">
+                                                            <fragment content="TEXT">
                                                                 <attributes>
-                                                                    <font key="NSFont" size="13" name="Courier"/>
-                                                                    <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                                    <font key="NSFont" size="13" name="CourierPrime"/>
+                                                                    <paragraphStyle key="NSParagraphStyle" alignment="natural" lineBreakMode="wordWrapping" baseWritingDirection="natural" tighteningFactorForTruncation="0.0"/>
                                                                 </attributes>
                                                             </fragment>
                                                         </attributedString>
                                                         <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="minSize" width="800" height="599"/>
-                                                        <size key="maxSize" width="942" height="10000000"/>
+                                                        <size key="minSize" width="785" height="599"/>
+                                                        <size key="maxSize" width="836" height="10000000"/>
                                                         <connections>
-                                                            <outlet property="delegate" destination="-2" id="Eul-oQ-hYD"/>
+                                                            <outlet property="delegate" destination="-2" id="lmD-aH-hkQ"/>
                                                         </connections>
                                                     </textView>
                                                 </subviews>
-                                                <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </clipView>
-                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="fAI-Ka-pty">
-                                                <rect key="frame" x="-100" y="-100" width="800" height="16"/>
+                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="LxF-lQ-YYW">
+                                                <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
-                                            <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="FQ7-37-2It">
-                                                <rect key="frame" x="784" y="0.0" width="16" height="599"/>
+                                            <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="NLv-wd-O2O">
+                                                <rect key="frame" x="785" y="0.0" width="15" height="599"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="rMk-On-uQK" firstAttribute="top" secondItem="Qth-9B-jWR" secondAttribute="top" id="FHS-d4-izn"/>
-                                        <constraint firstItem="rMk-On-uQK" firstAttribute="leading" secondItem="Qth-9B-jWR" secondAttribute="leading" id="MRo-CK-AOy"/>
-                                        <constraint firstAttribute="trailing" secondItem="rMk-On-uQK" secondAttribute="trailing" id="bkS-lU-8wA"/>
-                                        <constraint firstAttribute="bottom" secondItem="rMk-On-uQK" secondAttribute="bottom" id="n92-ZO-GWZ"/>
+                                        <constraint firstItem="Mky-48-wwA" firstAttribute="top" secondItem="Qth-9B-jWR" secondAttribute="top" id="2sf-fb-9XP"/>
+                                        <constraint firstAttribute="trailing" secondItem="Mky-48-wwA" secondAttribute="trailing" id="jp6-cC-eDj"/>
+                                        <constraint firstAttribute="bottom" secondItem="Mky-48-wwA" secondAttribute="bottom" id="lbh-yN-sJt"/>
+                                        <constraint firstItem="Mky-48-wwA" firstAttribute="leading" secondItem="Qth-9B-jWR" secondAttribute="leading" id="wLK-It-sn2"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>
@@ -145,8 +146,7 @@
                 <allowedToolbarItems>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="4jl-xj-Gg1"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="pWc-gq-qZ8"/>
-                    <toolbarItem implicitItemIdentifier="A1CDB983-675B-41EF-8084-AA9EC7CBF232" label="Bold" paletteLabel="Bold" image="Bold" id="GNH-Jy-OnK">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="A1CDB983-675B-41EF-8084-AA9EC7CBF232" label="Bold" paletteLabel="Bold" toolTip="Makes the currently selected text bold, or makes you start typing bold if you have not selected any text." image="Bold" id="GNH-Jy-OnK">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="6Zj-2I-mQJ">
@@ -161,14 +161,13 @@
                             <action selector="makeBold:" target="-2" id="RQ9-qg-711"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="545B460A-75D7-433C-9108-E0AD9E236747" label="Italic" paletteLabel="Italic" image="Italic" id="3tX-t0-2gN">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="545B460A-75D7-433C-9108-E0AD9E236747" label="Italic" paletteLabel="Italic" toolTip="Makes the currently selected text italic, or makes you start typing italic if you have not selected any text." image="Italic" id="3tX-t0-2gN">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="YZl-B1-yyf">
                             <rect key="frame" x="0.0" y="14" width="46" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Italic" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXK-96-jf3">
+                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Italic" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXK-96-jf3">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
@@ -177,8 +176,7 @@
                             <action selector="makeItalic:" target="-2" id="JgP-Iu-Tr5"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="D0409D1F-9A14-42CC-B93C-1FE9651FE5ED" label="Underline" paletteLabel="Underline" image="Underline" id="2WA-eI-3L8">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="D0409D1F-9A14-42CC-B93C-1FE9651FE5ED" label="Underline" paletteLabel="Underline" toolTip="Makes the currently selected text underlined, or makes you start typing underlined if you have not selected any text." image="Underline" id="2WA-eI-3L8">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="t2S-ck-wt0">
@@ -193,8 +191,7 @@
                             <action selector="makeUnderlined:" target="-2" id="I7H-Ih-ZOi"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9F7AA6E6-3482-42E6-B802-E098DA143AF8" label="Ommit" paletteLabel="Ommit" image="Ommit" id="bwC-Ue-sbS">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="9F7AA6E6-3482-42E6-B802-E098DA143AF8" label="Ommit" paletteLabel="Ommit" toolTip="Makes the currently selected text ommited, or makes you start typing ommited if you have not selected any text." image="Ommit" id="bwC-Ue-sbS">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="UfY-1R-epx">
@@ -209,8 +206,7 @@
                             <action selector="makeOmmitted:" target="-2" id="XpO-HC-9MT"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="39B32448-75CD-457E-87C3-9EE0862BB06D" label="Note" paletteLabel="Note" image="Note" id="Ttm-LG-FuG">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="39B32448-75CD-457E-87C3-9EE0862BB06D" label="Note" paletteLabel="Note" toolTip="Makes the currently selected text a note, or makes you start typing a note if you have not selected any text." image="Note" id="Ttm-LG-FuG">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="5xl-bA-Iy2">
@@ -225,8 +221,7 @@
                             <action selector="makeNote:" target="-2" id="LNY-Tr-MCL"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="DDD4F5F5-BEB3-454D-818F-A691F56B8F3B" label="Title Page" paletteLabel="Title Page" image="TitlePage" id="aak-z8-Qj6">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="DDD4F5F5-BEB3-454D-818F-A691F56B8F3B" label="Title Page" paletteLabel="Title Page" toolTip="Adds a title page to the beginning of the document if none is in place." image="TitlePage" id="aak-z8-Qj6">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="qaE-x4-VZq">
@@ -241,8 +236,7 @@
                             <action selector="addTitlePage:" target="-2" id="dt8-bJ-axX"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="4F207046-E907-4381-A590-B2271A3B3879" label="Page Break" paletteLabel="Page Break" image="PageBreak" id="9mQ-A9-dsK">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="4F207046-E907-4381-A590-B2271A3B3879" label="Page Break" paletteLabel="Page Break" toolTip="Adds a page break after the currently selected line" image="PageBreak" id="9mQ-A9-dsK">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="A5m-Yr-VqJ">
@@ -257,8 +251,7 @@
                             <action selector="addPageBreak:" target="-2" id="kXD-0H-U4G"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="FD941BD9-F0D1-4A65-9600-C50CA61B7BFB" label="Preview" paletteLabel="Preview" image="NSQuickLookTemplate" id="lgj-ll-c7X">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="FD941BD9-F0D1-4A65-9600-C50CA61B7BFB" label="Preview" paletteLabel="Preview" toolTip="Toggles between editing and preview mode" image="NSQuickLookTemplate" id="lgj-ll-c7X">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="7Wv-7c-Fh6">
@@ -273,8 +266,7 @@
                             <action selector="preview:" target="-2" id="ZN0-2P-im7"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="E4D1ABE5-B8DB-445F-9818-56624C70EE12" label="Print" paletteLabel="Print" image="Print" id="cYi-BW-wsF">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="E4D1ABE5-B8DB-445F-9818-56624C70EE12" label="Print" paletteLabel="Print" toolTip="Prints the document" image="Print" id="cYi-BW-wsF">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="gEp-KZ-Tzf">
@@ -289,10 +281,9 @@
                             <action selector="printDocument:" target="-2" id="d8Y-We-4Xy"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="2D1F2E2E-8F56-427B-A830-0A77A08C709F" label="Force Heading" paletteLabel="Force Heading" image="ForceHeading" id="8pb-TY-T1u">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="2D1F2E2E-8F56-427B-A830-0A77A08C709F" label="Force Heading" paletteLabel="Force Heading" toolTip="Forces the currently selected line to be a heading." image="ForceHeading" id="8pb-TY-T1u">
                         <size key="minSize" width="46" height="32"/>
-                        <size key="maxSize" width="46" height="32"/>
+                        <size key="maxSize" width="60" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="4gP-Hh-L29">
                             <rect key="frame" x="19" y="14" width="46" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -305,8 +296,7 @@
                             <action selector="forceHeading:" target="-2" id="Z4K-Yd-9S4"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="756D4E17-427D-4E36-890E-32D7E81348E1" label="Force Action" paletteLabel="Force Action" image="ForceAction" id="OxO-pW-33M">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="756D4E17-427D-4E36-890E-32D7E81348E1" label="Force Action" paletteLabel="Force Action" toolTip="Forces the currently selected line to be action." image="ForceAction" id="OxO-pW-33M">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="oMv-P1-uQi">
@@ -321,8 +311,7 @@
                             <action selector="forceAction:" target="-2" id="k2S-fB-46r"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="AF9DFE4E-A1DE-41C1-8454-F2BBC2CE95E7" label="Force Character" paletteLabel="Force Chraracter" image="ForceCharacter" id="59F-3g-8gY">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="AF9DFE4E-A1DE-41C1-8454-F2BBC2CE95E7" label="Force Character" paletteLabel="Force Chraracter" toolTip="Forces the currently selected line to be a characters name." image="ForceCharacter" id="59F-3g-8gY">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="WCs-D3-8v5">
@@ -337,8 +326,7 @@
                             <action selector="forceCharacter:" target="-2" id="Q4x-p6-SbU"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="6D805B5C-0502-43B9-A794-04588FC6DE3A" label="Force Transition" paletteLabel="Force Transition" image="ForceTransition" id="wAT-Cr-nth">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="6D805B5C-0502-43B9-A794-04588FC6DE3A" label="Force Transition" paletteLabel="Force Transition" toolTip="Forces the currently selected line to be a transition." image="ForceTransition" id="wAT-Cr-nth">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="9LZ-bK-aoO">
@@ -353,8 +341,7 @@
                             <action selector="forceTransition:" target="-2" id="f02-gj-0Z0"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="A0F8F8C2-99FC-406A-8DE8-26AF3CD406CE" label="Force Lyrics" paletteLabel="Force Lyrics" image="ForceLyrics" id="Sah-Oq-pJx">
-                        <nil key="toolTip"/>
+                    <toolbarItem implicitItemIdentifier="A0F8F8C2-99FC-406A-8DE8-26AF3CD406CE" label="Force Lyrics" paletteLabel="Force Lyrics" toolTip="Forces the currently selected line to be lyrics." image="ForceLyrics" id="Sah-Oq-pJx">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="QVL-ic-xrE">
@@ -381,7 +368,6 @@
                     <toolbarItem reference="9mQ-A9-dsK"/>
                     <toolbarItem reference="pWc-gq-qZ8"/>
                     <toolbarItem reference="lgj-ll-c7X"/>
-                    <toolbarItem reference="cYi-BW-wsF"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>
