@@ -33,5 +33,6 @@ THE SOFTWARE.
 @interface Document : NSDocument <NSTextViewDelegate>
 
 - (NSString*)getText;
+- (NSString*)fileNameString;
 
 @end

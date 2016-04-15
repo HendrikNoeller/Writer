@@ -329,7 +329,7 @@
         line.numberOfPreceedingFormattingCharacters = 1;
         return section;
     }
-    if (firstChar == '=' && (length >= 2 ? [string characterAtIndex:1] != '=' : true)) {
+    if (firstChar == '=' && (length >= 2 ? [string characterAtIndex:1] != '=' : YES)) {
         line.numberOfPreceedingFormattingCharacters = 1;
         return synopse;
     }
@@ -480,10 +480,10 @@
         if (i > lastIndex) break;
         if ([excludes containsIndex:i]) continue;
         if (rangeBegin == -1) {
-            bool match = true;
+            bool match = YES;
             for (int j = 0; j < delimLength; j++) {
                 if (string[j+i] != startString[j]) {
-                    match = false;
+                    match = NO;
                     break;
                 }
             }
@@ -492,10 +492,10 @@
                 i += delimLength - 1;
             }
         } else {
-            bool match = true;
+            bool match = YES;
             for (int j = 0; j < delimLength; j++) {
                 if (string[j+i] != endString[j]) {
-                    match = false;
+                    match = NO;
                     break;
                 }
             }

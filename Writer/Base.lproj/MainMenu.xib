@@ -145,6 +145,9 @@
                                         </menuItem>
                                     </items>
                                 </menu>
+                                <connections>
+                                    <action selector="export:" target="-1" id="TfW-38-X9Y"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Print…" keyEquivalent="p" id="aTl-1u-JFS">
                                 <connections>
@@ -487,6 +490,9 @@ DQ
                                         </menuItem>
                                     </items>
                                 </menu>
+                                <connections>
+                                    <action selector="zoom:" target="-1" id="nJn-W7-IXG"/>
+                                </connections>
                             </menuItem>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>

@@ -179,7 +179,15 @@
 
 - (IBAction)printDocument:(id)sender
 {
-    self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
+    if ([[self getText] length] == 0) {
+        NSAlert* alert = [[NSAlert alloc] init];
+        alert.messageText = @"Can not print an empty document";
+        alert.informativeText = @"Please enter some text before printing, or obtain white paper directly by accessing you printers paper tray.";
+        alert.alertStyle = NSWarningAlertStyle;
+        [alert beginSheetModalForWindow:self.windowControllers[0].window completionHandler:nil];
+    } else {
+        self.printView = [[PrintView alloc] initWithDocument:self toPDF:NO];
+    }
 }
 
 - (IBAction)exportPDF:(id)sender
@@ -189,16 +197,16 @@
 
 - (IBAction)exportHTML:(id)sender
 {
-    FNScript* fnScript = [[FNScript alloc] initWithString:[self getText]];
-    FNHTMLScript* htmlScript = [[FNHTMLScript alloc] initWithScript:fnScript];
-    NSString* htmlString = [htmlScript html];
     
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
-    saveDialog.parentWindow = self.windowControllers[0].window;
     [saveDialog setAllowedFileTypes:@[@"html"]];
-    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog setRepresentedFilename:[self lastComponentOfFileName]];
+    [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
+            FNScript* fnScript = [[FNScript alloc] initWithString:[self getText]];
+            FNHTMLScript* htmlScript = [[FNHTMLScript alloc] initWithScript:fnScript];
+            NSString* htmlString = [htmlScript html];
             [htmlString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
@@ -206,17 +214,26 @@
 
 - (IBAction)exportFDX:(id)sender
 {
-    NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
-    
     NSSavePanel *saveDialog = [NSSavePanel savePanel];
-    saveDialog.parentWindow = self.windowControllers[0].window;
     [saveDialog setAllowedFileTypes:@[@"fdx"]];
-    [saveDialog setNameFieldLabel:[[[self.fileURL lastPathComponent] componentsSeparatedByString:@"."] firstObject]];
+    [saveDialog setNameFieldStringValue:[self fileNameString]];
     [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
         if (result == NSFileHandlingPanelOKButton) {
+            NSString* fdxString = [FDXInterface fdxFromString:[self getText]];
             [fdxString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
         }
     }];
+    
+}
+
+- (NSString*)fileNameString
+{
+    NSString* fileName = [self lastComponentOfFileName];
+    NSUInteger lastDotIndex = [fileName rangeOfString:@"." options:NSBackwardsSearch].location;
+    if (lastDotIndex != NSNotFound) {
+        fileName = [fileName substringToIndex:lastDotIndex];
+    } 
+    return fileName;
 }
 
 - (void)updateWebView
@@ -900,6 +917,10 @@ static NSString *forceLyricsSymbol = @"~";
 - (IBAction)share:(id)sender {}
 
 - (IBAction)themes:(id)sender {}
+
+- (IBAction)zoom:(id)sender {}
+
+- (IBAction)export:(id)sender {}
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {

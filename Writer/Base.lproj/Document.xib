@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
         <plugIn identifier="com.apple.WebKitIBPlugin" version="10116"/>
     </dependencies>
@@ -40,7 +41,7 @@
             <value key="minSize" type="size" width="800" height="400"/>
             <view key="contentView" id="gIp-Ho-8D9">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
-                <autoresizingMask key="autoresizingMask"/>
+                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
                     <customView translatesAutoresizingMaskIntoConstraints="NO" id="3qa-Wg-PsD" customClass="ColorView">
                         <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
@@ -166,7 +167,7 @@
                         <button key="view" verticalHuggingPriority="750" id="YZl-B1-yyf">
                             <rect key="frame" x="0.0" y="14" width="46" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Italic" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXK-96-jf3">
+                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Italic" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="pXK-96-jf3">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
