@@ -1,0 +1,44 @@
+Title: Fountain Cheat Sheet
+Credit: Written by
+Author: Hendrik Noeller
+Credit: Not sure who to credit for this
+Draft date: 16.04.2016
+Contact: noeller@me.com
+
+Use as many of these six keys or any others of your own, followed by a colon to create your title page. But note that only the six shown keys will be printed or exported.
+
+
+
+INT. SCENE HEADINGS BEGIN WITH INT OR EXT
+
+Text without any specialities is just regular action.
+If you want someone to talk, type a
+
+CHARACTER NAME
+in uppercase letters, followed by as many lines of regular text
+(or parentheticals)
+as you like to create the dialogue...
+
+...until you insert an empty line, and you're back at typing action
+
+[[This is a note, which is only for you, therefore it will not be printed or exported!]]
+
+/* And if you want to exclude a section of you screenplay without confusing them with your notes,
+just surround it in these slashes and stars to make it omitted  */
+
+
+
+TRANSITIONS TO:
+
+EXT. SOME OTHER SCENE
+
+Are done by ending a line in 'to:'
+
+
+
+You can also format you text, making it **bold** with two stars, *italic* with one star, or _underlined_ with an underscore.
+Of course, _**any**_ _*combination*_ ***is*** **_*allowed*_**.
+
+And if you need something to be centered, just put it in ticks:
+
+> The End <
