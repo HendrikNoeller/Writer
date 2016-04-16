@@ -204,7 +204,14 @@
     //If there is a next element, check if it might need a reparse
     if (index < [self.lines count] - 1) {
         Line* nextLine = self.lines[index+1];
-        if (currentLine.type == character ||
+        if (currentLine.type == titlePageTitle ||
+            currentLine.type == titlePageCredit ||
+            currentLine.type == titlePageAuthor ||
+            currentLine.type == titlePageDraftDate ||
+            currentLine.type == titlePageContact ||
+            currentLine.type == titlePageSource ||
+            currentLine.type == titlePageUnknown ||
+            currentLine.type == character ||
             currentLine.type == parenthetical ||
             currentLine.type == dialogue ||
             currentLine.type == doubleDialogueCharacter ||
@@ -214,6 +221,13 @@
             nextLine.type == dialogue ||
             nextLine.type == doubleDialogueParenthetical ||
             nextLine.type == doubleDialogue ||
+            nextLine.type == titlePageTitle ||
+            nextLine.type == titlePageCredit ||
+            nextLine.type == titlePageAuthor ||
+            nextLine.type == titlePageDraftDate ||
+            nextLine.type == titlePageContact ||
+            nextLine.type == titlePageSource ||
+            nextLine.type == titlePageUnknown ||
             nextLine.ommitIn != currentLine.ommitOut) {
             
             [self correctParseInLine:index+1 indicesToDo:indices];

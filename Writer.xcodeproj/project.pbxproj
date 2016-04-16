@@ -45,6 +45,7 @@
 		B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */; };
 		B1F04EDA1C88ACAD001C4D27 /* Courier Prime Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */; };
 		B1F04EDB1C88ACAD001C4D27 /* Courier Prime.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */; };
+		B1FE6DA41CC28C3500287E73 /* Cheatsheet.fountain in Resources */ = {isa = PBXBuildFile; fileRef = B1FE6DA31CC28C3500287E73 /* Cheatsheet.fountain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -122,6 +123,7 @@
 		B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Bold.ttf"; sourceTree = "<group>"; };
 		B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Italic.ttf"; sourceTree = "<group>"; };
 		B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime.ttf"; sourceTree = "<group>"; };
+		B1FE6DA31CC28C3500287E73 /* Cheatsheet.fountain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cheatsheet.fountain; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -206,6 +208,7 @@
 				B13111911CB2A41B00D07A0C /* Parsing */,
 				B1509A3D1CB5C0B400884918 /* Export */,
 				B138B58019E1C973000489C4 /* Images.xcassets */,
+				B1FE6DA31CC28C3500287E73 /* Cheatsheet.fountain */,
 				B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */,
 				B138B57619E1C973000489C4 /* Supporting Files */,
 			);
@@ -407,6 +410,7 @@
 				B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */,
 				B138B57F19E1C973000489C4 /* Document.xib in Resources */,
 				B138B66E19E1E8CA000489C4 /* License.rtf in Resources */,
+				B1FE6DA41CC28C3500287E73 /* Cheatsheet.fountain in Resources */,
 				B138B58119E1C973000489C4 /* Images.xcassets in Resources */,
 				B138B66D19E1E8CA000489C4 /* ScriptCSS.css in Resources */,
 				B1E7FF531BC45969008E2B99 /* Credits.rtf in Resources */,
