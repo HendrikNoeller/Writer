@@ -39,6 +39,7 @@
 //Deactivated, since I don't want warnings for mistakes that aren't mine and that I can't fix
 #pragma GCC diagnostic ignored "-Wtautological-pointer-compare"
 #pragma GCC diagnostic ignored "-Wunreachable-code"
+#pragma GCC diagnostic ignored "-Wunused-function"
 
 #include <CoreFoundation/CFBase.h>
 #include <CoreFoundation/CFArray.h>
