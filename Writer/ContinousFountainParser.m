@@ -437,32 +437,20 @@
 
     //If it's just usual text, see if it might be (double) dialogue or a parenthetical.
     if (preceedingLine) {
-        if (preceedingLine.type == dialogue) {
-            //Regular text after a dialogue line is another line of dialogue
-            return dialogue;
-        } else if (preceedingLine.type == doubleDialogue) {
-            //Regular text after a double dialogue line is another line of double dialogue
-            return doubleDialogue;
-        } else if (preceedingLine.type == character) {
-            //Text in parentheses after character is a parenthetical, else its dialogue
+        if (preceedingLine.type == character || preceedingLine.type == dialogue || preceedingLine.type == parenthetical) {
+            //Text in parentheses after character or dialogue is a parenthetical, else its dialogue
             if (firstChar == '(' && lastChar == ')') {
                 return parenthetical;
             } else {
                 return dialogue;
             }
-        } else if (preceedingLine.type == doubleDialogueCharacter) {
-            //Text in parentheses after character is a parenthetical, else its dialogue
+        } else if (preceedingLine.type == doubleDialogueCharacter || preceedingLine.type == doubleDialogue || preceedingLine.type == doubleDialogueParenthetical) {
+            //Text in parentheses after character or dialogue is a parenthetical, else its dialogue
             if (firstChar == '(' && lastChar == ')') {
                 return doubleDialogueParenthetical;
             } else {
                 return doubleDialogue;
             }
-        } else if (preceedingLine.type == parenthetical) {
-            //Text after a parenthetical is dialogue, as it's indirectly preceeded by a character
-            return dialogue;
-        } else if (preceedingLine.type == doubleDialogueParenthetical) {
-            //Text after a parenthetical is dialogue, as it's indirectly preceeded by a character
-            return doubleDialogue;
         }
     }
     

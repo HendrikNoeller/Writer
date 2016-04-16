@@ -78,6 +78,7 @@
     XCTAssertEqual([parser typeAtLine:i], parenthetical); i++;
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
+    XCTAssertEqual([parser typeAtLine:i], parenthetical); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], doubleDialogueCharacter); i++;
     XCTAssertEqual([parser typeAtLine:i], doubleDialogueParenthetical); i++;
@@ -216,6 +217,7 @@
     XCTAssertEqual([parser typeAtLine:i], parenthetical); i++;
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
+    XCTAssertEqual([parser typeAtLine:i], parenthetical); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], doubleDialogueCharacter); i++;
     XCTAssertEqual([parser typeAtLine:i], doubleDialogueParenthetical); i++;
@@ -462,6 +464,7 @@ NSString* script = @""
 @"(slightly irritated)\n"
 @"Why do i have parentheses?\n"
 @"They are weird!\n"
+@"(still slightly irritated)\n"
 @"\n"
 @"CHIRS ^\n"
 @"(looking at harray)\n"
