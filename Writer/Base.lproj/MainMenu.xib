@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
     </dependencies>
     <objects>
@@ -519,20 +520,26 @@ DQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="jA1-Lj-Irm">
                         <items>
-                            <menuItem title="Fountain Syntax" id="FKE-Sm-Kum">
+                            <menuItem title="Fountain Quick Reference" id="ZsI-w6-Fec">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showReference:" target="-1" id="by9-HS-caM"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Foutnain Syntax (Online)" id="FKE-Sm-Kum">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showFountainSyntax:" target="-1" id="frK-K3-QxC"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Fountain Website" id="oSB-uU-Wcb">
+                            <menuItem title="Fountain Website (Online)" id="oSB-uU-Wcb">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showFountainWebsite:" target="-1" id="3SP-ph-sv7"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="gZd-FK-fD7"/>
-                            <menuItem title="Writer on GitHub" id="guF-zs-YEi">
+                            <menuItem title="Writer on GitHub (Online)" id="guF-zs-YEi">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="showWriterOnGitHub:" target="-1" id="Nyh-ka-eya"/>

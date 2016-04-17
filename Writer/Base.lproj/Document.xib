@@ -65,7 +65,7 @@
                                                         <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                        <size key="minSize" width="785" height="599"/>
+                                                        <size key="minSize" width="800" height="599"/>
                                                         <size key="maxSize" width="836" height="10000000"/>
                                                         <attributedString key="textStorage">
                                                             <fragment content="TEXT">
@@ -76,7 +76,7 @@
                                                             </fragment>
                                                         </attributedString>
                                                         <color key="insertionPointColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
-                                                        <size key="minSize" width="785" height="599"/>
+                                                        <size key="minSize" width="800" height="599"/>
                                                         <size key="maxSize" width="836" height="10000000"/>
                                                         <connections>
                                                             <outlet property="delegate" destination="-2" id="lmD-aH-hkQ"/>
@@ -90,7 +90,7 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                             <scroller key="verticalScroller" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="NLv-wd-O2O">
-                                                <rect key="frame" x="785" y="0.0" width="15" height="599"/>
+                                                <rect key="frame" x="784" y="0.0" width="16" height="599"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>

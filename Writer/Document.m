@@ -1053,6 +1053,13 @@ static NSString *forceLyricsSymbol = @"~";
 
 #pragma mark - Help
 
+- (IBAction)showReference:(id)sender
+{
+    NSURL* referenceFile = [[NSBundle mainBundle] URLForResource:@"Reference"
+                                                   withExtension:@"fountain"];
+    
+}
+
 - (IBAction)showFountainSyntax:(id)sender
 {
     [self openURLInWebBrowser:@"http://www.fountain.io/syntax#section-overview"];
