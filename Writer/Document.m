@@ -345,9 +345,10 @@
         
     } else if (line.type == lyrics) {
         //Set Font to itliac
-        [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
+        [attributes setObject:[self italicCourier] forKey:NSFontAttributeName];
         
-    } else if (!fontOnly) {
+    }
+    if (!fontOnly) {
         if (line.type == titlePageTitle  ||
             line.type == titlePageAuthor ||
             line.type == titlePageCredit ||
@@ -363,7 +364,7 @@
             
             [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
-        } else if (line.type == centered) {
+        } else if (line.type == centered || line.type == lyrics) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
             [paragraphStyle setAlignment:NSTextAlignmentCenter];
             
@@ -427,7 +428,7 @@
     
     //Remove all former paragraph styles and overwrite fonts
     if (!fontOnly) {
-//        [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
+        [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
         
         if (![attributes valueForKey:NSForegroundColorAttributeName]) {
             [attributes setObject:self.themeManager.currentTextColor forKey:NSForegroundColorAttributeName];
@@ -441,7 +442,7 @@
     }
     
     //Add selected attributes
-    [textStorage setAttributes:attributes range:range];
+    [textStorage addAttributes:attributes range:range];
     
     //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
     
