@@ -69,6 +69,7 @@
 @property (strong, nonatomic) NSFont *boldCourier;
 @property (strong, nonatomic) NSFont *italicCourier;
 @property (nonatomic) NSUInteger fontSize;
+@property (nonatomic) bool livePreview;
 @property (nonatomic) bool matchParentheses;
 
 @property (strong, nonatomic) PrintView *printView; //To keep the asynchronously working print data generator in memory
@@ -80,6 +81,7 @@
 
 
 #define MATCH_PARENTHESES_KEY @"Match Parentheses"
+#define LIVE_PREVIEW_KEY @"Live Preview"
 #define FONTSIZE_KEY @"Fontsize"
 #define DEFAULT_FONTSIZE 13
 
@@ -122,8 +124,12 @@
         self.matchParentheses = [[NSUserDefaults standardUserDefaults] boolForKey:MATCH_PARENTHESES_KEY];
     }
     
-    NSMutableDictionary *typingAttributes = [[NSMutableDictionary alloc] init];
-    [typingAttributes setObject:[self courier] forKey:@"Font"];
+    if (![[NSUserDefaults standardUserDefaults] objectForKey:LIVE_PREVIEW_KEY]) {
+        self.livePreview = YES;
+    } else {
+        self.livePreview = [[NSUserDefaults standardUserDefaults] boolForKey:LIVE_PREVIEW_KEY];
+    }
+    
     
     //Put any previously loaded data into the text view
     if (self.contentBuffer) {
@@ -284,8 +290,20 @@
 
 - (void)formattAllLines
 {
-    for (Line* line in self.parser.lines) {
-        [self formatLineOfScreenplay:line onlyFormatFont:NO];
+    if (self.livePreview) {
+        for (Line* line in self.parser.lines) {
+            [self formatLineOfScreenplay:line onlyFormatFont:NO];
+        }
+    } else {
+        [self.textView setFont:[self courier]];
+        [self.textView setTextColor:self.themeManager.currentTextColor];
+        
+        NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc] init];
+        [paragraphStyle setAlignment:NSTextAlignmentLeft];
+        [paragraphStyle setFirstLineHeadIndent:0];
+        [paragraphStyle setHeadIndent:0];
+        [paragraphStyle setTailIndent:0];
+        [self.textView.textStorage addAttribute:NSParagraphStyleAttributeName value:paragraphStyle range:NSMakeRange(0, [self getText].length)];
     }
     
 }
@@ -318,186 +336,146 @@
 
 - (void)formatLineOfScreenplay:(Line*)line onlyFormatFont:(bool)fontOnly
 {
-    NSTextStorage *textStorage = [self.textView textStorage];
-    
-    NSUInteger begin = line.position;
-    NSUInteger length = [line.string length];
-    NSRange range = NSMakeRange(begin, length);
-    
-    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
-    
-    
-    //Formatt according to style
-    if (line.type == transition || line.type == heading) {
-        //Make uppercase, and then reapply cursor position, because they'd get lost otherwise
-        NSArray<NSValue*>* selectedRanges = self.textView.selectedRanges;
-        [textStorage replaceCharactersInRange:range
-                                   withString:[[textStorage.string substringWithRange:range] uppercaseString]];
-        [self.textView setSelectedRanges:selectedRanges];
-    }
-    if (line.type == heading) {
-        //Set Font to bold
-        [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
+    if (self.livePreview) {
+        NSTextStorage *textStorage = [self.textView textStorage];
         
-    } else if (line.type == pageBreak) {
-        //Set Font to bold
-        [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
+        NSUInteger begin = line.position;
+        NSUInteger length = [line.string length];
+        NSRange range = NSMakeRange(begin, length);
         
-    } else if (line.type == lyrics) {
-        //Set Font to itliac
-        [attributes setObject:[self italicCourier] forKey:NSFontAttributeName];
+        NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
         
-    }
-    if (!fontOnly) {
-        if (line.type == titlePageTitle  ||
-            line.type == titlePageAuthor ||
-            line.type == titlePageCredit ||
-            line.type == titlePageSource) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setAlignment:NSTextAlignmentCenter];
+        
+        //Formatt according to style
+        if (line.type == transition || line.type == heading) {
+            //Make uppercase, and then reapply cursor position, because they'd get lost otherwise
+            NSArray<NSValue*>* selectedRanges = self.textView.selectedRanges;
+            [textStorage replaceCharactersInRange:range
+                                       withString:[[textStorage.string substringWithRange:range] uppercaseString]];
+            [self.textView setSelectedRanges:selectedRanges];
+        }
+        if (line.type == heading) {
+            //Set Font to bold
+            [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
             
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+        } else if (line.type == pageBreak) {
+            //Set Font to bold
+            [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
             
-        } else if (line.type == transition) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setAlignment:NSTextAlignmentRight];
+        } else if (line.type == lyrics) {
+            //Set Font to itliac
+            [attributes setObject:[self italicCourier] forKey:NSFontAttributeName];
             
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == centered || line.type == lyrics) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setAlignment:NSTextAlignmentCenter];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == character) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setFirstLineHeadIndent:CHARACTER_INDENT];
-            [paragraphStyle setHeadIndent:CHARACTER_INDENT];
-            [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == parenthetical) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setFirstLineHeadIndent:PARENTHETICAL_INDENT];
-            [paragraphStyle setHeadIndent:PARENTHETICAL_INDENT];
-            [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == dialogue) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setFirstLineHeadIndent:DIALOGUE_INDENT];
-            [paragraphStyle setHeadIndent:DIALOGUE_INDENT];
-            [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == doubleDialogueCharacter) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setFirstLineHeadIndent:DD_CHARACTER_INDENT];
-            [paragraphStyle setHeadIndent:DD_CHARACTER_INDENT];
-            [paragraphStyle setTailIndent:DD_RIGHT];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == doubleDialogueParenthetical) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
-            [paragraphStyle setFirstLineHeadIndent:DD_PARENTHETICAL_INDENT];
-            [paragraphStyle setHeadIndent:DD_PARENTHETICAL_INDENT];
-            [paragraphStyle setTailIndent:DD_RIGHT];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == doubleDialogue) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
-            [paragraphStyle setFirstLineHeadIndent:DOUBLE_DIALOGUE_INDENT];
-            [paragraphStyle setHeadIndent:DOUBLE_DIALOGUE_INDENT];
-            [paragraphStyle setTailIndent:DD_RIGHT];
-            
-            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
-            
-        } else if (line.type == section || line.type == synopse || line.type == titlePageUnknown) {
-            if (self.themeManager) {
-                NSColor* commentColor = [self.themeManager currentCommentColor];
-                [attributes setObject:commentColor forKey:NSForegroundColorAttributeName];
+        }
+        if (!fontOnly) {
+            if (line.type == titlePageTitle  ||
+                line.type == titlePageAuthor ||
+                line.type == titlePageCredit ||
+                line.type == titlePageSource) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setAlignment:NSTextAlignmentCenter];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == transition) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setAlignment:NSTextAlignmentRight];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == centered || line.type == lyrics) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setAlignment:NSTextAlignmentCenter];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == character) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setFirstLineHeadIndent:CHARACTER_INDENT];
+                [paragraphStyle setHeadIndent:CHARACTER_INDENT];
+                [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == parenthetical) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setFirstLineHeadIndent:PARENTHETICAL_INDENT];
+                [paragraphStyle setHeadIndent:PARENTHETICAL_INDENT];
+                [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == dialogue) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setFirstLineHeadIndent:DIALOGUE_INDENT];
+                [paragraphStyle setHeadIndent:DIALOGUE_INDENT];
+                [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == doubleDialogueCharacter) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setFirstLineHeadIndent:DD_CHARACTER_INDENT];
+                [paragraphStyle setHeadIndent:DD_CHARACTER_INDENT];
+                [paragraphStyle setTailIndent:DD_RIGHT];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == doubleDialogueParenthetical) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+                [paragraphStyle setFirstLineHeadIndent:DD_PARENTHETICAL_INDENT];
+                [paragraphStyle setHeadIndent:DD_PARENTHETICAL_INDENT];
+                [paragraphStyle setTailIndent:DD_RIGHT];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == doubleDialogue) {
+                NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
+                [paragraphStyle setFirstLineHeadIndent:DOUBLE_DIALOGUE_INDENT];
+                [paragraphStyle setHeadIndent:DOUBLE_DIALOGUE_INDENT];
+                [paragraphStyle setTailIndent:DD_RIGHT];
+                
+                [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
+                
+            } else if (line.type == section || line.type == synopse || line.type == titlePageUnknown) {
+                if (self.themeManager) {
+                    NSColor* commentColor = [self.themeManager currentCommentColor];
+                    [attributes setObject:commentColor forKey:NSForegroundColorAttributeName];
+                }
             }
         }
-    }
-    
-    //Remove all former paragraph styles and overwrite fonts
-    if (!fontOnly) {
-        [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
         
-        if (![attributes valueForKey:NSForegroundColorAttributeName]) {
-            [attributes setObject:self.themeManager.currentTextColor forKey:NSForegroundColorAttributeName];
-        }
-        if (![attributes valueForKey:NSUnderlineStyleAttributeName]) {
-            [attributes setObject:@0 forKey:NSUnderlineStyleAttributeName];
-        }
-    }
-    if (![attributes valueForKey:NSFontAttributeName]) {
-        [attributes setObject:[self courier] forKey:NSFontAttributeName];
-    }
-    
-    //Add selected attributes
-    [textStorage addAttributes:attributes range:range];
-    
-    //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
-    
-    
-    [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        NSUInteger symbolLength = 1;
-        NSRange effectiveRange;
-        if (range.length >= 2*symbolLength) {
-            effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
-        } else {
-            effectiveRange = NSMakeRange(range.location + symbolLength, 0);
-        }
-        [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
-                            range:[self globalRangeFromLocalRange:&effectiveRange
-                                                 inLineAtPosition:line.position]];
-        
-        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
-        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
-        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
-                            range:[self globalRangeFromLocalRange:&openSymbolRange
-                                                 inLineAtPosition:line.position]];
-        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
-                            range:[self globalRangeFromLocalRange:&closeSymbolRange
-                                                 inLineAtPosition:line.position]];
-    }];
-    
-    [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-        NSUInteger symbolLength = 2;
-        NSRange effectiveRange;
-        if (range.length >= 2*symbolLength) {
-            effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
-        } else {
-            effectiveRange = NSMakeRange(range.location + symbolLength, 0);
-        }
-        
-        [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
-                            range:[self globalRangeFromLocalRange:&effectiveRange
-                                                 inLineAtPosition:line.position]];
-        
-        NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
-        NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
-        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
-                            range:[self globalRangeFromLocalRange:&openSymbolRange
-                                                 inLineAtPosition:line.position]];
-        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
-                            range:[self globalRangeFromLocalRange:&closeSymbolRange
-                                                 inLineAtPosition:line.position]];
-    }];
-    
-    if (!fontOnly) {
-        [line.underlinedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-            NSUInteger symbolLength = 1;
+        //Remove all former paragraph styles and overwrite fonts
+        if (!fontOnly) {
+            [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
             
-            [textStorage addAttribute:NSUnderlineStyleAttributeName value:@1
-                                range:[self globalRangeFromLocalRange:&range
+            if (![attributes valueForKey:NSForegroundColorAttributeName]) {
+                [attributes setObject:self.themeManager.currentTextColor forKey:NSForegroundColorAttributeName];
+            }
+            if (![attributes valueForKey:NSUnderlineStyleAttributeName]) {
+                [attributes setObject:@0 forKey:NSUnderlineStyleAttributeName];
+            }
+        }
+        if (![attributes valueForKey:NSFontAttributeName]) {
+            [attributes setObject:[self courier] forKey:NSFontAttributeName];
+        }
+        
+        //Add selected attributes
+        [textStorage addAttributes:attributes range:range];
+        
+        //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
+        
+        
+        [line.italicRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+            NSUInteger symbolLength = 1;
+            NSRange effectiveRange;
+            if (range.length >= 2*symbolLength) {
+                effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+            } else {
+                effectiveRange = NSMakeRange(range.location + symbolLength, 0);
+            }
+            [textStorage addAttribute:NSFontAttributeName value:self.italicCourier
+                                range:[self globalRangeFromLocalRange:&effectiveRange
                                                      inLineAtPosition:line.position]];
             
             NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
@@ -510,17 +488,59 @@
                                                      inLineAtPosition:line.position]];
         }];
         
-        [line.noteRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentCommentColor
-                                range:[self globalRangeFromLocalRange:&range
+        [line.boldRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+            NSUInteger symbolLength = 2;
+            NSRange effectiveRange;
+            if (range.length >= 2*symbolLength) {
+                effectiveRange = NSMakeRange(range.location + symbolLength, range.length - 2*symbolLength);
+            } else {
+                effectiveRange = NSMakeRange(range.location + symbolLength, 0);
+            }
+            
+            [textStorage addAttribute:NSFontAttributeName value:self.boldCourier
+                                range:[self globalRangeFromLocalRange:&effectiveRange
+                                                     inLineAtPosition:line.position]];
+            
+            NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+            NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                     inLineAtPosition:line.position]];
+            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                range:[self globalRangeFromLocalRange:&closeSymbolRange
                                                      inLineAtPosition:line.position]];
         }];
         
-        [line.omitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
-            [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
-                                range:[self globalRangeFromLocalRange:&range
-                                                     inLineAtPosition:line.position]];
-        }];
+        if (!fontOnly) {
+            [line.underlinedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+                NSUInteger symbolLength = 1;
+                
+                [textStorage addAttribute:NSUnderlineStyleAttributeName value:@1
+                                    range:[self globalRangeFromLocalRange:&range
+                                                         inLineAtPosition:line.position]];
+                
+                NSRange openSymbolRange = NSMakeRange(range.location, symbolLength);
+                NSRange closeSymbolRange = NSMakeRange(range.location+range.length-symbolLength, symbolLength);
+                [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                    range:[self globalRangeFromLocalRange:&openSymbolRange
+                                                         inLineAtPosition:line.position]];
+                [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                    range:[self globalRangeFromLocalRange:&closeSymbolRange
+                                                         inLineAtPosition:line.position]];
+            }];
+            
+            [line.noteRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+                [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentCommentColor
+                                    range:[self globalRangeFromLocalRange:&range
+                                                         inLineAtPosition:line.position]];
+            }];
+            
+            [line.omitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+                [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
+                                    range:[self globalRangeFromLocalRange:&range
+                                                         inLineAtPosition:line.position]];
+            }];
+        }
     }
 }
 
@@ -991,6 +1011,12 @@ static NSString *forceLyricsSymbol = @"~";
         } else {
             [menuItem setState:NSOffState];
         }
+    } else if ([menuItem.title isEqualToString:@"Live Preview"]) {
+        if (self.livePreview) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
     }
     
     return YES;
@@ -1011,6 +1037,16 @@ static NSString *forceLyricsSymbol = @"~";
     }
 }
 
+- (IBAction)toggleLivePreview:(id)sender
+{
+    NSArray* openDocuments = [[NSApplication sharedApplication] orderedDocuments];
+    
+    for (Document* doc in openDocuments) {
+        doc.livePreview = !doc.livePreview;
+        [doc formattAllLines];
+    }
+    [[NSUserDefaults standardUserDefaults] setBool:self.livePreview forKey:LIVE_PREVIEW_KEY];
+}
 
 - (IBAction)toggleMatchParentheses:(id)sender
 {
@@ -1018,8 +1054,8 @@ static NSString *forceLyricsSymbol = @"~";
     
     for (Document* doc in openDocuments) {
         doc.matchParentheses = !doc.matchParentheses;
-        [[NSUserDefaults standardUserDefaults] setBool:doc.matchParentheses forKey:MATCH_PARENTHESES_KEY];
     }
+    [[NSUserDefaults standardUserDefaults] setBool:self.matchParentheses forKey:MATCH_PARENTHESES_KEY];
 }
 
 - (void)loadSelectedTheme

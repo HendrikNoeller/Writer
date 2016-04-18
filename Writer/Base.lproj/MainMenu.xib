@@ -499,6 +499,13 @@ DQ
                                     <action selector="zoom:" target="-1" id="nJn-W7-IXG"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Live Preview" id="lYw-08-5AI">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleLivePreview:" target="-1" id="dod-fg-QA1"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="c52-PG-mqe"/>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="VwT-WD-YPe"/>
