@@ -462,7 +462,7 @@
         return centered;
     }
 
-    //If it's just usual text, see if it might be (double) dialogue or a parenthetical.
+    //If it's just usual text, see if it might be (double) dialogue or a parenthetical, or seciton/synopsis
     if (preceedingLine) {
         if (preceedingLine.type == character || preceedingLine.type == dialogue || preceedingLine.type == parenthetical) {
             //Text in parentheses after character or dialogue is a parenthetical, else its dialogue
@@ -478,6 +478,10 @@
             } else {
                 return doubleDialogue;
             }
+        } else if (preceedingLine.type == section) {
+            return section;
+        } else if (preceedingLine.type == synopse) {
+            return synopse;
         }
     }
     
