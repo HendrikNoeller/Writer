@@ -5,7 +5,11 @@
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="vEX-2F-hcj" id="ft7-OP-E44"/>
+            </connections>
+        </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -526,23 +530,29 @@ DQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="jA1-Lj-Irm">
                         <items>
-                            <menuItem title="Fountain Syntax" id="FKE-Sm-Kum">
+                            <menuItem title="Fountain Quick Reference" id="ZsI-w6-Fec">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showFountainSyntax:" target="-1" id="frK-K3-QxC"/>
+                                    <action selector="showReference:" target="vEX-2F-hcj" id="qax-XK-0yN"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Fountain Website" id="oSB-uU-Wcb">
+                            <menuItem title="Foutnain Syntax (Online)" id="FKE-Sm-Kum">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showFountainWebsite:" target="-1" id="3SP-ph-sv7"/>
+                                    <action selector="showFountainSyntax:" target="vEX-2F-hcj" id="6sK-eZ-AKi"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Fountain Website (Online)" id="oSB-uU-Wcb">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showFountainWebsite:" target="vEX-2F-hcj" id="TIG-tL-lWJ"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="gZd-FK-fD7"/>
-                            <menuItem title="Writer on GitHub" id="guF-zs-YEi">
+                            <menuItem title="Writer on GitHub (Online)" id="guF-zs-YEi">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showWriterOnGitHub:" target="-1" id="Nyh-ka-eya"/>
+                                    <action selector="showWriterOnGitHub:" target="vEX-2F-hcj" id="Vgl-v2-niS"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -550,5 +560,6 @@ DQ
                 </menuItem>
             </items>
         </menu>
+        <customObject id="vEX-2F-hcj" customClass="ApplicationDelegate"/>
     </objects>
 </document>

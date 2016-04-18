@@ -1072,26 +1072,5 @@ static NSString *forceLyricsSymbol = @"~";
     [self.tabView selectTabViewItem:[self.tabView tabViewItemAtIndex:index]];
 }
 
-#pragma mark - Help
-
-- (IBAction)showFountainSyntax:(id)sender
-{
-    [self openURLInWebBrowser:@"http://www.fountain.io/syntax#section-overview"];
-}
-
-- (IBAction)showFountainWebsite:(id)sender
-{
-    [self openURLInWebBrowser:@"http://www.fountain.io"];
-}
-
-- (IBAction)showWriterOnGitHub:(id)sender
-{
-    [self openURLInWebBrowser:@"https://github.com/HendrikNoeller/Writer-Mac"];
-}
-
-- (void)openURLInWebBrowser:(NSString*)urlString
-{
-    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:urlString]];
-}
 
 @end
