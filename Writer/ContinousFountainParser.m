@@ -204,31 +204,41 @@
     //If there is a next element, check if it might need a reparse
     if (index < [self.lines count] - 1) {
         Line* nextLine = self.lines[index+1];
-        if (currentLine.type == titlePageTitle ||
-            currentLine.type == titlePageCredit ||
-            currentLine.type == titlePageAuthor ||
+        if (currentLine.type == titlePageTitle ||       //if the line became a title page,
+            currentLine.type == titlePageCredit ||      //it may cause the next one to be
+            currentLine.type == titlePageAuthor ||      //a title page
             currentLine.type == titlePageDraftDate ||
             currentLine.type == titlePageContact ||
             currentLine.type == titlePageSource ||
             currentLine.type == titlePageUnknown ||
-            currentLine.type == character ||
-            currentLine.type == parenthetical ||
-            currentLine.type == dialogue ||
+            currentLine.type == character ||            //if the line became anythign to
+            currentLine.type == parenthetical ||        //do with dialogue, it might cause
+            currentLine.type == dialogue ||             //the next lines to be dialogue
             currentLine.type == doubleDialogueCharacter ||
             currentLine.type == doubleDialogueParenthetical ||
             currentLine.type == doubleDialogue ||
-            nextLine.type == parenthetical ||
-            nextLine.type == dialogue ||
-            nextLine.type == doubleDialogueParenthetical ||
-            nextLine.type == doubleDialogue ||
-            nextLine.type == titlePageTitle ||
-            nextLine.type == titlePageCredit ||
+            currentLine.type == empty ||                //If the line became empty, it might
+                                                        //enable the next on to be a heading
+                                                        //or character
+            
+            nextLine.type == titlePageTitle ||          //if the next line is a title page,
+            nextLine.type == titlePageCredit ||         //it might not be anymore
             nextLine.type == titlePageAuthor ||
             nextLine.type == titlePageDraftDate ||
             nextLine.type == titlePageContact ||
             nextLine.type == titlePageSource ||
             nextLine.type == titlePageUnknown ||
-            nextLine.ommitIn != currentLine.ommitOut) {
+            nextLine.type == heading ||                 //If the next line is a heading or
+            nextLine.type == character ||               //character or anything dialogue
+            nextLine.type == doubleDialogueCharacter || //related, it might not be anymore
+            nextLine.type == parenthetical ||
+            nextLine.type == dialogue ||
+            nextLine.type == doubleDialogueParenthetical ||
+            nextLine.type == doubleDialogue ||
+            nextLine.ommitIn != currentLine.ommitOut) { //If the next line expected the end
+                                                        //of the last line to end or not end
+                                                        //with an open ommit other than the
+                                                        //line actually does, ommites changed
             
             [self correctParseInLine:index+1 indicesToDo:indices];
         }
@@ -402,14 +412,15 @@
     }
     
     //Check for scene headings (lines beginning with "INT", "EXT", "EST",  "I/E"). "INT./EXT" and "INT/EXT" are also inside the spec, but already covered by "INT".
-    
-    if (length >= 3) {
-        NSString* firstChars = [[string substringToIndex:3] lowercaseString];
-        if ([firstChars isEqualToString:@"int"] ||
-            [firstChars isEqualToString:@"ext"] ||
-            [firstChars isEqualToString:@"est"] ||
-            [firstChars isEqualToString:@"i/e"]) {
-            return heading;
+    if (preceedingLine.type == empty) {
+        if (length >= 3) {
+            NSString* firstChars = [[string substringToIndex:3] lowercaseString];
+            if ([firstChars isEqualToString:@"int"] ||
+                [firstChars isEqualToString:@"ext"] ||
+                [firstChars isEqualToString:@"est"] ||
+                [firstChars isEqualToString:@"i/e"]) {
+                return heading;
+            }
         }
     }
     
@@ -435,12 +446,14 @@
     }
     
     //Check if all uppercase (and at least 3 characters to not indent every capital leter before anything else follows) = character name.
-    if (length >= 3 && [string containsOnlyUppercase] && !containsOnlyWhitespace) {
-        // A character line ending in ^ is a double dialogue character
-        if (lastChar == '^') {
-            return doubleDialogueCharacter;
-        } else {
-            return character;
+    if (preceedingLine.type == empty) {
+        if (length >= 3 && [string containsOnlyUppercase] && !containsOnlyWhitespace) {
+            // A character line ending in ^ is a double dialogue character
+            if (lastChar == '^') {
+                return doubleDialogueCharacter;
+            } else {
+                return character;
+            }
         }
     }
     
