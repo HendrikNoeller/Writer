@@ -100,8 +100,6 @@
         
         Line* newLine = [[Line alloc] initWithString:cutOffString
                                             position:position+1];
-        newLine.type = [self parseLineType:newLine
-                                   atIndex:lineIndex+1];
         [self.lines insertObject:newLine atIndex:lineIndex+1];
         
         [self incrementLinePositionsFromIndex:lineIndex+2 amount:1];
@@ -198,49 +196,55 @@
     
     //Correct type on this line
     Line* currentLine = self.lines[index];
+    LineType oldType = currentLine.type;
+    bool oldOmmitOut = currentLine.ommitOut;
     [self parseTypeAndFormattingForLine:currentLine atIndex:index];
+    
+    
     [self.changedIndices addObject:@(index)];
     
-    //If there is a next element, check if it might need a reparse
-    if (index < [self.lines count] - 1) {
-        Line* nextLine = self.lines[index+1];
-        if (currentLine.type == titlePageTitle ||       //if the line became a title page,
-            currentLine.type == titlePageCredit ||      //it may cause the next one to be
-            currentLine.type == titlePageAuthor ||      //a title page
-            currentLine.type == titlePageDraftDate ||
-            currentLine.type == titlePageContact ||
-            currentLine.type == titlePageSource ||
-            currentLine.type == titlePageUnknown ||
-            currentLine.type == character ||            //if the line became anythign to
-            currentLine.type == parenthetical ||        //do with dialogue, it might cause
-            currentLine.type == dialogue ||             //the next lines to be dialogue
-            currentLine.type == doubleDialogueCharacter ||
-            currentLine.type == doubleDialogueParenthetical ||
-            currentLine.type == doubleDialogue ||
-            currentLine.type == empty ||                //If the line became empty, it might
-                                                        //enable the next on to be a heading
-                                                        //or character
-            
-            nextLine.type == titlePageTitle ||          //if the next line is a title page,
-            nextLine.type == titlePageCredit ||         //it might not be anymore
-            nextLine.type == titlePageAuthor ||
-            nextLine.type == titlePageDraftDate ||
-            nextLine.type == titlePageContact ||
-            nextLine.type == titlePageSource ||
-            nextLine.type == titlePageUnknown ||
-            nextLine.type == heading ||                 //If the next line is a heading or
-            nextLine.type == character ||               //character or anything dialogue
-            nextLine.type == doubleDialogueCharacter || //related, it might not be anymore
-            nextLine.type == parenthetical ||
-            nextLine.type == dialogue ||
-            nextLine.type == doubleDialogueParenthetical ||
-            nextLine.type == doubleDialogue ||
-            nextLine.ommitIn != currentLine.ommitOut) { //If the next line expected the end
-                                                        //of the last line to end or not end
-                                                        //with an open ommit other than the
-                                                        //line actually does, ommites changed
-            
-            [self correctParseInLine:index+1 indicesToDo:indices];
+    if (oldType != currentLine.type || oldOmmitOut != currentLine.ommitOut) {
+        //If there is a next element, check if it might need a reparse because of a change in type or ommit out
+        if (index < [self.lines count] - 1) {
+            Line* nextLine = self.lines[index+1];
+            if (currentLine.type == titlePageTitle ||       //if the line became a title page,
+                currentLine.type == titlePageCredit ||      //it may cause the next one to be
+                currentLine.type == titlePageAuthor ||      //a title page
+                currentLine.type == titlePageDraftDate ||
+                currentLine.type == titlePageContact ||
+                currentLine.type == titlePageSource ||
+                currentLine.type == titlePageUnknown ||
+                currentLine.type == character ||            //if the line became anythign to
+                currentLine.type == parenthetical ||        //do with dialogue, it might cause
+                currentLine.type == dialogue ||             //the next lines to be dialogue
+                currentLine.type == doubleDialogueCharacter ||
+                currentLine.type == doubleDialogueParenthetical ||
+                currentLine.type == doubleDialogue ||
+                currentLine.type == empty ||                //If the line became empty, it might
+                                                            //enable the next on to be a heading
+                                                            //or character
+                
+                nextLine.type == titlePageTitle ||          //if the next line is a title page,
+                nextLine.type == titlePageCredit ||         //it might not be anymore
+                nextLine.type == titlePageAuthor ||
+                nextLine.type == titlePageDraftDate ||
+                nextLine.type == titlePageContact ||
+                nextLine.type == titlePageSource ||
+                nextLine.type == titlePageUnknown ||
+                nextLine.type == heading ||                 //If the next line is a heading or
+                nextLine.type == character ||               //character or anything dialogue
+                nextLine.type == doubleDialogueCharacter || //related, it might not be anymore
+                nextLine.type == parenthetical ||
+                nextLine.type == dialogue ||
+                nextLine.type == doubleDialogueParenthetical ||
+                nextLine.type == doubleDialogue ||
+                nextLine.ommitIn != currentLine.ommitOut) { //If the next line expected the end
+                                                            //of the last line to end or not end
+                                                            //with an open ommit other than the
+                                                            //line actually does, ommites changed
+                
+                [self correctParseInLine:index+1 indicesToDo:indices];
+            }
         }
     }
 }
