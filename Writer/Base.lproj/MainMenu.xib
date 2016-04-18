@@ -427,9 +427,9 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="Ygd-Y8-VFo"/>
-                            <menuItem title="Ommit" keyEquivalent="/" id="5Y3-LZ-qMb">
+                            <menuItem title="Omit" keyEquivalent="/" id="5Y3-LZ-qMb">
                                 <connections>
-                                    <action selector="makeOmmitted:" target="-1" id="90f-5c-LBm"/>
+                                    <action selector="makeOmitted:" target="-1" id="uw4-3u-NKQ"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Note" id="fKt-Xk-jG8">

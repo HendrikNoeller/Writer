@@ -49,7 +49,7 @@
 @property (weak) IBOutlet NSButton *boldToolbarButton;
 @property (weak) IBOutlet NSButton *italicToolbarButton;
 @property (weak) IBOutlet NSButton *underlineToolbarButton;
-@property (weak) IBOutlet NSButton *ommitToolbarButton;
+@property (weak) IBOutlet NSButton *omitToolbarButton;
 @property (weak) IBOutlet NSButton *noteToolbarButton;
 @property (weak) IBOutlet NSButton *forceHeadingToolbarButton;
 @property (weak) IBOutlet NSButton *forceActionToolbarButton;
@@ -104,7 +104,7 @@
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
     
-    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _ommitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
+    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _omitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
     self.textView.textContainerInset = NSMakeSize(TEXT_INSET_SIDE, TEXT_INSET_TOP);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
@@ -516,7 +516,7 @@
                                                      inLineAtPosition:line.position]];
         }];
         
-        [line.ommitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
+        [line.omitedRanges enumerateRangesUsingBlock:^(NSRange range, BOOL * _Nonnull stop) {
             [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentInvisibleTextColor
                                 range:[self globalRangeFromLocalRange:&range
                                                      inLineAtPosition:line.position]];
@@ -575,8 +575,8 @@ static NSString *italicSymbol = @"*";
 static NSString *underlinedSymbol = @"_";
 static NSString *noteOpen = @"[[";
 static NSString *noteClose= @"]]";
-static NSString *ommitOpen = @"/*";
-static NSString *ommitClose= @"*/";
+static NSString *omitOpen = @"/*";
+static NSString *omitClose= @"*/";
 static NSString *forceHeadingSymbol = @".";
 static NSString *forceActionSymbol = @"!";
 static NSString *forceCharacterSymbol = @"@";
@@ -682,13 +682,13 @@ static NSString *forceLyricsSymbol = @"~";
     }
 }
 
-- (IBAction)makeOmmitted:(id)sender
+- (IBAction)makeOmitted:(id)sender
 {
     //Check if the currently selected tab is the one for editing
     if ([self selectedTabViewTab] == 0) {
         //Retreiving the cursor location
         NSRange cursorLocation = [self cursorLocation];
-        [self format:cursorLocation beginningSymbol:ommitOpen endSymbol:ommitClose];
+        [self format:cursorLocation beginningSymbol:omitOpen endSymbol:omitClose];
     }
 }
 

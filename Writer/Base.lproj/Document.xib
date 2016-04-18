@@ -17,7 +17,7 @@
                 <outlet property="forceTransitionToolbarButton" destination="9LZ-bK-aoO" id="R9N-DP-vBF"/>
                 <outlet property="italicToolbarButton" destination="YZl-B1-yyf" id="gXy-bv-sJV"/>
                 <outlet property="noteToolbarButton" destination="5xl-bA-Iy2" id="ukI-9P-RUr"/>
-                <outlet property="ommitToolbarButton" destination="UfY-1R-epx" id="iOv-Uw-dDR"/>
+                <outlet property="omitToolbarButton" destination="UfY-1R-epx" id="f1f-wR-6eX"/>
                 <outlet property="pagebreakToolbarButton" destination="A5m-Yr-VqJ" id="N6k-EA-TpG"/>
                 <outlet property="previewToolbarButton" destination="7Wv-7c-Fh6" id="pJg-Z0-rAe"/>
                 <outlet property="printToolbarButton" destination="gEp-KZ-Tzf" id="MUG-H0-AZe"/>
@@ -191,19 +191,19 @@
                             <action selector="makeUnderlined:" target="-2" id="I7H-Ih-ZOi"/>
                         </connections>
                     </toolbarItem>
-                    <toolbarItem implicitItemIdentifier="9F7AA6E6-3482-42E6-B802-E098DA143AF8" label="Ommit" paletteLabel="Ommit" toolTip="Makes the currently selected text ommited, or makes you start typing ommited if you have not selected any text." image="Ommit" id="bwC-Ue-sbS">
+                    <toolbarItem implicitItemIdentifier="9F7AA6E6-3482-42E6-B802-E098DA143AF8" label="Omit" paletteLabel="Omit" toolTip="Makes the currently selected text omited, or makes you start typing omited if you have not selected any text." image="Omit" id="bwC-Ue-sbS">
                         <size key="minSize" width="46" height="32"/>
                         <size key="maxSize" width="46" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="UfY-1R-epx">
                             <rect key="frame" x="0.0" y="14" width="46" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Ommit" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jux-5P-dAO">
+                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="Omit" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="jux-5P-dAO">
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                         </button>
                         <connections>
-                            <action selector="makeOmmitted:" target="-2" id="XpO-HC-9MT"/>
+                            <action selector="makeOmitted:" target="-2" id="CAJ-9w-IC8"/>
                         </connections>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="39B32448-75CD-457E-87C3-9EE0862BB06D" label="Note" paletteLabel="Note" toolTip="Makes the currently selected text a note, or makes you start typing a note if you have not selected any text." image="Note" id="Ttm-LG-FuG">
@@ -386,7 +386,7 @@
         <image name="Italic" width="25" height="25"/>
         <image name="NSQuickLookTemplate" width="19" height="12"/>
         <image name="Note" width="25" height="25"/>
-        <image name="Ommit" width="25" height="25"/>
+        <image name="Omit" width="25" height="25"/>
         <image name="PageBreak" width="25" height="25"/>
         <image name="Print" width="25" height="25"/>
         <image name="TitlePage" width="25" height="25"/>

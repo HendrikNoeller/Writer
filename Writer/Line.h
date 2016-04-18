@@ -44,9 +44,9 @@ typedef enum : NSUInteger {
 @property NSMutableIndexSet* italicRanges;
 @property NSMutableIndexSet* underlinedRanges;
 @property NSMutableIndexSet* noteRanges;
-@property NSMutableIndexSet* ommitedRanges;
-@property bool ommitIn; //wether the line terminates an unfinished ommit
-@property bool ommitOut; //Wether the line starts an ommit and doesn't finish it
+@property NSMutableIndexSet* omitedRanges;
+@property bool omitIn; //wether the line terminates an unfinished omit
+@property bool omitOut; //Wether the line starts an omit and doesn't finish it
 
 - (Line*)initWithString:(NSString*)string position:(NSUInteger)position;
 - (NSString*)toString;
