@@ -324,15 +324,26 @@
     NSUInteger length = [line.string length];
     NSRange range = NSMakeRange(begin, length);
     
-    NSDictionary *attributes = @{};
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] init];
     
     
     //Formatt according to style
-    if (line.type == heading || line.type == pageBreak) {
-        attributes = @{NSFontAttributeName: [self boldCourier]};
+    if (line.type == heading) {
+        //Make uppercase while keeping cursor position
+        NSArray<NSValue*>* selectedRanges = self.textView.selectedRanges;
+        [textStorage replaceCharactersInRange:range
+                                   withString:[[textStorage.string substringWithRange:range] uppercaseString]];
+        [self.textView setSelectedRanges:selectedRanges];
+        //Set Font to bold
+        [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
+        
+    } else if (line.type == pageBreak) {
+        //Set Font to bold
+        [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
         
     } else if (line.type == lyrics) {
-        attributes = @{NSFontAttributeName: [self italicCourier]};
+        //Set Font to itliac
+        [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
         
     } else if (!fontOnly) {
         if (line.type == titlePageTitle  ||
@@ -342,19 +353,19 @@
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
             [paragraphStyle setAlignment:NSTextAlignmentCenter];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == transition) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
             [paragraphStyle setAlignment:NSTextAlignmentRight];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == centered) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
             [paragraphStyle setAlignment:NSTextAlignmentCenter];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == character) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -362,7 +373,7 @@
             [paragraphStyle setHeadIndent:CHARACTER_INDENT];
             [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == parenthetical) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -370,7 +381,7 @@
             [paragraphStyle setHeadIndent:PARENTHETICAL_INDENT];
             [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == dialogue) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -378,7 +389,7 @@
             [paragraphStyle setHeadIndent:DIALOGUE_INDENT];
             [paragraphStyle setTailIndent:DIALOGUE_RIGHT];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == doubleDialogueCharacter) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -386,7 +397,7 @@
             [paragraphStyle setHeadIndent:DD_CHARACTER_INDENT];
             [paragraphStyle setTailIndent:DD_RIGHT];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == doubleDialogueParenthetical) {
             NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
@@ -394,34 +405,41 @@
             [paragraphStyle setHeadIndent:DD_PARENTHETICAL_INDENT];
             [paragraphStyle setTailIndent:DD_RIGHT];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == doubleDialogue) {
-            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init] ;
+            NSMutableParagraphStyle *paragraphStyle = [[NSMutableParagraphStyle alloc]init];
             [paragraphStyle setFirstLineHeadIndent:DOUBLE_DIALOGUE_INDENT];
             [paragraphStyle setHeadIndent:DOUBLE_DIALOGUE_INDENT];
             [paragraphStyle setTailIndent:DD_RIGHT];
             
-            attributes = @{NSParagraphStyleAttributeName: paragraphStyle};
+            [attributes setObject:paragraphStyle forKey:NSParagraphStyleAttributeName];
             
         } else if (line.type == section || line.type == synopse || line.type == titlePageUnknown) {
             if (self.themeManager) {
                 NSColor* commentColor = [self.themeManager currentCommentColor];
-                attributes = @{NSForegroundColorAttributeName: commentColor};
+                [attributes setObject:commentColor forKey:NSForegroundColorAttributeName];
             }
         }
     }
     
     //Remove all former paragraph styles and overwrite fonts
     if (!fontOnly) {
-        [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
-        [textStorage addAttribute:NSForegroundColorAttributeName value:self.themeManager.currentTextColor range:range];
-        [textStorage addAttribute:NSUnderlineStyleAttributeName value:@0 range:range];
+//        [textStorage removeAttribute:NSParagraphStyleAttributeName range:range];
+        
+        if (![attributes valueForKey:NSForegroundColorAttributeName]) {
+            [attributes setObject:self.themeManager.currentTextColor forKey:NSForegroundColorAttributeName];
+        }
+        if (![attributes valueForKey:NSUnderlineStyleAttributeName]) {
+            [attributes setObject:@0 forKey:NSUnderlineStyleAttributeName];
+        }
     }
-    [textStorage addAttribute:NSFontAttributeName value:[self courier] range:range];
+    if (![attributes valueForKey:NSFontAttributeName]) {
+        [attributes setObject:[self courier] forKey:NSFontAttributeName];
+    }
     
     //Add selected attributes
-    [textStorage addAttributes:attributes range:range];
+    [textStorage setAttributes:attributes range:range];
     
     //Add in bold, underline, italic and all that other good stuff. it looks like a lot of code, but the content is only executed for every formatted block. for unformatted text, this just whizzes by
     
