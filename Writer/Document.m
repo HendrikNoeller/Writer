@@ -328,12 +328,14 @@
     
     
     //Formatt according to style
-    if (line.type == heading) {
-        //Make uppercase while keeping cursor position
+    if (line.type == transition || line.type == heading) {
+        //Make uppercase, and then reapply cursor position, because they'd get lost otherwise
         NSArray<NSValue*>* selectedRanges = self.textView.selectedRanges;
         [textStorage replaceCharactersInRange:range
                                    withString:[[textStorage.string substringWithRange:range] uppercaseString]];
         [self.textView setSelectedRanges:selectedRanges];
+    }
+    if (line.type == heading) {
         //Set Font to bold
         [attributes setObject:[self boldCourier] forKey:NSFontAttributeName];
         
