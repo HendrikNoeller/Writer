@@ -368,12 +368,19 @@
 
 + (void)appendTitlePageFromLines:(NSArray*)lines toString:(NSMutableString*)result
 {
-    NSString* title = [self stringByRemovingKey:@"title:" fromString:[self firstStringForLineType:titlePageTitle fromLines:lines]];
-    NSString* credit = [self stringByRemovingKey:@"credit:" fromString:[self firstStringForLineType:titlePageCredit fromLines:lines]];
-    NSString* author = [self stringByRemovingKey:@"author:" fromString:[self firstStringForLineType:titlePageAuthor fromLines:lines]];
-    NSString* source = [self stringByRemovingKey:@"source:" fromString:[self firstStringForLineType:titlePageSource fromLines:lines]];
-    NSString* draftDate = [self stringByRemovingKey:@"draft date:" fromString:[self firstStringForLineType:titlePageDraftDate fromLines:lines]];
-    NSString* contact = [self stringByRemovingKey:@"contact:" fromString:[self firstStringForLineType:titlePageContact fromLines:lines]];
+    NSMutableString* title = [[self stringByRemovingKey:@"title:" fromString:[self firstStringForLineType:titlePageTitle fromLines:lines]] mutableCopy];
+    NSMutableString* credit = [[self stringByRemovingKey:@"credit:" fromString:[self firstStringForLineType:titlePageCredit fromLines:lines]] mutableCopy];
+    NSMutableString* author = [[self stringByRemovingKey:@"author:" fromString:[self firstStringForLineType:titlePageAuthor fromLines:lines]] mutableCopy];
+    NSMutableString* source = [[self stringByRemovingKey:@"source:" fromString:[self firstStringForLineType:titlePageSource fromLines:lines]] mutableCopy];
+    NSMutableString* draftDate = [[self stringByRemovingKey:@"draft date:" fromString:[self firstStringForLineType:titlePageDraftDate fromLines:lines]] mutableCopy];
+    NSMutableString* contact = [[self stringByRemovingKey:@"contact:" fromString:[self firstStringForLineType:titlePageContact fromLines:lines]] mutableCopy];
+    
+    [self escapeString:title];
+    [self escapeString:credit];
+    [self escapeString:author];
+    [self escapeString:source];
+    [self escapeString:draftDate];
+    [self escapeString:contact];
     
     [result appendString:@"  <TitlePage>\n"];
     [result appendString:@"    <Content>\n"];

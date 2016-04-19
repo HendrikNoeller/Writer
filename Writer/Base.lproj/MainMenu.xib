@@ -142,7 +142,7 @@
                                                 <action selector="exportHTML:" target="-1" id="uwn-TO-nla"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="FXD…" id="C9z-84-Cmq">
+                                        <menuItem title="FDX…" id="C9z-84-Cmq">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="exportFDX:" target="-1" id="F6e-vG-CJO"/>
