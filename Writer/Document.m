@@ -954,6 +954,11 @@ static NSString *forceLyricsSymbol = @"~";
 
 #pragma mark - User Interaction
 
+- (IBAction)toggleTreeView:(id)sender
+{
+    
+}
+
 //Empty function, which needs to exists to make the share access the validateMenuItems function
 - (IBAction)share:(id)sender {}
 
