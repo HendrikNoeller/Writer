@@ -41,11 +41,17 @@
 
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
+@property (weak) IBOutlet NSOutlineView *outlineView;
+
 @property (unsafe_unretained) IBOutlet WebView *webView;
 @property (unsafe_unretained) IBOutlet NSTabView *tabView;
 @property (weak) IBOutlet ColorView *backgroundView;
 
+@property (weak) IBOutlet NSLayoutConstraint *outlineViewWidth;
+
 #pragma mark - Toolbar Buttons
+
+@property (weak) IBOutlet NSButton *outlineToolbarButton;
 @property (weak) IBOutlet NSButton *boldToolbarButton;
 @property (weak) IBOutlet NSButton *italicToolbarButton;
 @property (weak) IBOutlet NSButton *underlineToolbarButton;
@@ -106,7 +112,7 @@
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
     
-    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _omitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
+    self.toolbarButtons = @[_outlineToolbarButton,_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _omitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
     self.textView.textContainerInset = NSMakeSize(TEXT_INSET_SIDE, TEXT_INSET_TOP);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
@@ -955,9 +961,16 @@ static NSString *forceLyricsSymbol = @"~";
 
 #pragma mark - User Interaction
 
+#define TREE_VIEW_WIDTH 200
+
 - (IBAction)toggleTreeView:(id)sender
 {
-    
+    if (self.outlineViewWidth.constant == 0) {
+        [self.outlineViewWidth.animator setConstant:TREE_VIEW_WIDTH];
+    } else {
+        [self.outlineViewWidth.animator setConstant:0];
+        
+    }
 }
 
 //Empty function, which needs to exists to make the share access the validateMenuItems function

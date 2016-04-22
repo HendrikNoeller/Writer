@@ -18,6 +18,9 @@
                 <outlet property="italicToolbarButton" destination="YZl-B1-yyf" id="gXy-bv-sJV"/>
                 <outlet property="noteToolbarButton" destination="5xl-bA-Iy2" id="ukI-9P-RUr"/>
                 <outlet property="omitToolbarButton" destination="UfY-1R-epx" id="f1f-wR-6eX"/>
+                <outlet property="outlineToolbarButton" destination="nal-lQ-yoE" id="ABm-at-FZI"/>
+                <outlet property="outlineView" destination="O7u-V8-6io" id="sSq-m7-RV9"/>
+                <outlet property="outlineViewWidth" destination="KW0-Xc-zMc" id="mKQ-6p-8zH"/>
                 <outlet property="pagebreakToolbarButton" destination="A5m-Yr-VqJ" id="N6k-EA-TpG"/>
                 <outlet property="previewToolbarButton" destination="7Wv-7c-Fh6" id="pJg-Z0-rAe"/>
                 <outlet property="printToolbarButton" destination="gEp-KZ-Tzf" id="MUG-H0-AZe"/>
@@ -37,8 +40,7 @@
             <windowCollectionBehavior key="collectionBehavior" fullScreenPrimary="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
             <rect key="contentRect" x="133" y="235" width="800" height="599"/>
-            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
-            <value key="minSize" type="size" width="800" height="400"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="900"/>
             <view key="contentView" id="gIp-Ho-8D9">
                 <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -62,7 +64,7 @@
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="14" outlineTableColumn="7xD-Qp-q9y" id="O7u-V8-6io">
-                                                        <rect key="frame" x="0.0" y="0.0" width="19" height="0.0"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="19" height="599"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="0.0"/>
                                                         <color key="backgroundColor" name="_sourceListBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -169,6 +171,9 @@
                                                 </subviews>
                                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                             </clipView>
+                                            <constraints>
+                                                <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="800" id="8Cv-qg-9m9"/>
+                                            </constraints>
                                             <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="YES" id="LxF-lQ-YYW">
                                                 <rect key="frame" x="-100" y="-100" width="87" height="18"/>
                                                 <autoresizingMask key="autoresizingMask"/>
@@ -206,11 +211,11 @@
                                         </webView>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="Vil-EQ-uOZ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ECs-3D-rzc" secondAttribute="leading" id="Gcx-Ok-nYn"/>
+                                        <constraint firstItem="Vil-EQ-uOZ" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="ECs-3D-rzc" secondAttribute="leading" constant="50" id="Gcx-Ok-nYn"/>
                                         <constraint firstAttribute="bottom" secondItem="Vil-EQ-uOZ" secondAttribute="bottom" id="I4p-Yj-SK0"/>
                                         <constraint firstAttribute="centerX" secondItem="Vil-EQ-uOZ" secondAttribute="centerX" id="XL5-It-09b"/>
                                         <constraint firstItem="Vil-EQ-uOZ" firstAttribute="top" secondItem="ECs-3D-rzc" secondAttribute="top" id="wI2-zh-sTV"/>
-                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Vil-EQ-uOZ" secondAttribute="trailing" id="zw4-Yu-AhX"/>
+                                        <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="Vil-EQ-uOZ" secondAttribute="trailing" constant="50" id="zw4-Yu-AhX"/>
                                     </constraints>
                                 </view>
                             </tabViewItem>
@@ -244,6 +249,9 @@
                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="toggleTreeView:" target="-2" id="PTJ-ol-d5W"/>
+                            </connections>
                         </button>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="A1CDB983-675B-41EF-8084-AA9EC7CBF232" label="Bold" paletteLabel="Bold" toolTip="Makes the currently selected text bold, or makes you start typing bold if you have not selected any text." image="Bold" id="GNH-Jy-OnK">
