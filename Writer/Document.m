@@ -347,7 +347,8 @@
         
         
         //Formatt according to style
-        if (line.type == transition || line.type == heading) {
+        if ((line.type == heading && [line.string characterAtIndex:0] != '.') ||
+            (line.type == transition && [line.string characterAtIndex:0] != '>')) {
             //Make uppercase, and then reapply cursor position, because they'd get lost otherwise
             NSArray<NSValue*>* selectedRanges = self.textView.selectedRanges;
             [textStorage replaceCharactersInRange:range
