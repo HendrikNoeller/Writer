@@ -614,6 +614,79 @@
     }
 }
 
+- (NSUInteger)numberOfTopLevelitems
+{
+    NSUInteger result = 0;
+    BOOL foundSection = false;
+    for (Line* line in self.lines) {
+        if (line.type == section) {
+            foundSection = true;
+            result++;
+        } else if (!foundSection && (line.type == synopse || line.type == heading)) {
+            result++;
+        }
+    }
+    return result;
+}
+
+- (NSArray*)topLevelItems;
+{
+    BOOL foundSection = false;
+    NSMutableArray* result = [[NSMutableArray alloc] init];
+    for (Line* line in self.lines) {
+        if (line.type == section) {
+            [result addObject:line];
+            foundSection = true;
+        } else if (!foundSection && (line.type == synopse || line.type == heading)) {
+            [result addObject:line];
+        }
+    }
+    return result;
+}
+
+- (NSUInteger)numberOfChildrenForLine:(Line*)sectionLine
+{
+    NSUInteger result = 0;
+    BOOL foundLine = false;
+    for (Line* line in self.lines) {
+        if (!foundLine) {
+            if (line == sectionLine) {
+                foundLine = true;
+            }
+        } else {
+            if (line.type == synopse || line.type == heading) {
+                result++;
+            } else if (line.type == section) {
+                break;
+            }
+        }
+    }
+    
+    return result;
+}
+
+- (NSArray*)childrenForLine:(Line*)sectionLine
+{
+    NSMutableArray* result = [[NSMutableArray alloc] init];
+    BOOL foundLine = false;
+    for (Line* line in self.lines) {
+        if (!foundLine) {
+            if (line == sectionLine) {
+                foundLine = true;
+            }
+        } else {
+            if (line.type == synopse || line.type == heading) {
+                [result addObject:line];
+            } else if (line.type == section) {
+                break;
+            }
+        }
+    }
+    
+    return result;
+}
+
+
 - (NSString *)toString
 {
     NSString *result = @"";

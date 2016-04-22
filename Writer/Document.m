@@ -291,6 +291,7 @@
 
 - (void)textDidChange:(NSNotification *)notification
 {
+    [self.outlineView reloadData];
     [self applyFormatChanges];
 }
 
@@ -1127,5 +1128,46 @@ static NSString *forceLyricsSymbol = @"~";
     [self.tabView selectTabViewItem:[self.tabView tabViewItemAtIndex:index]];
 }
 
+
+
+#pragma  mark - NSOutlineViewDelegate
+
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable id)item;
+{
+    if (item) {
+        return [self.parser numberOfChildrenForLine:item];
+    } else {
+        //Children of root
+        return [self.parser numberOfTopLevelitems];
+    }
+    return 0;
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable id)item
+{
+    if (item) {
+        return [self.parser childrenForLine:item][index];
+    } else {
+        return [self.parser topLevelItems][index];
+    }
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+{
+    Line* line = item;
+    if (line.type == section) {
+        return YES;
+    }
+    return NO;
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+{
+    if ([item isKindOfClass:[Line class]]) {
+        Line* line = item;
+        return line.string;
+    }
+    return @"quatsch";
+}
 
 @end
