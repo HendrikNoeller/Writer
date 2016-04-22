@@ -100,8 +100,6 @@
         
         Line* newLine = [[Line alloc] initWithString:cutOffString
                                             position:position+1];
-        newLine.type = [self parseLineType:newLine
-                                   atIndex:lineIndex+1];
         [self.lines insertObject:newLine atIndex:lineIndex+1];
         
         [self incrementLinePositionsFromIndex:lineIndex+2 amount:1];
@@ -198,25 +196,55 @@
     
     //Correct type on this line
     Line* currentLine = self.lines[index];
+    LineType oldType = currentLine.type;
+    bool oldOmitOut = currentLine.omitOut;
     [self parseTypeAndFormattingForLine:currentLine atIndex:index];
+    
+    
     [self.changedIndices addObject:@(index)];
     
-    //If there is a next element, check if it might need a reparse
-    if (index < [self.lines count] - 1) {
-        Line* nextLine = self.lines[index+1];
-        if (currentLine.type == character ||
-            currentLine.type == parenthetical ||
-            currentLine.type == dialogue ||
-            currentLine.type == doubleDialogueCharacter ||
-            currentLine.type == doubleDialogueParenthetical ||
-            currentLine.type == doubleDialogue ||
-            nextLine.type == parenthetical ||
-            nextLine.type == dialogue ||
-            nextLine.type == doubleDialogueParenthetical ||
-            nextLine.type == doubleDialogue ||
-            nextLine.ommitIn != currentLine.ommitOut) {
-            
-            [self correctParseInLine:index+1 indicesToDo:indices];
+    if (oldType != currentLine.type || oldOmitOut != currentLine.omitOut) {
+        //If there is a next element, check if it might need a reparse because of a change in type or omit out
+        if (index < [self.lines count] - 1) {
+            Line* nextLine = self.lines[index+1];
+            if (currentLine.type == titlePageTitle ||       //if the line became a title page,
+                currentLine.type == titlePageCredit ||      //it may cause the next one to be
+                currentLine.type == titlePageAuthor ||      //a title page
+                currentLine.type == titlePageDraftDate ||
+                currentLine.type == titlePageContact ||
+                currentLine.type == titlePageSource ||
+                currentLine.type == titlePageUnknown ||
+                currentLine.type == character ||            //if the line became anythign to
+                currentLine.type == parenthetical ||        //do with dialogue, it might cause
+                currentLine.type == dialogue ||             //the next lines to be dialogue
+                currentLine.type == doubleDialogueCharacter ||
+                currentLine.type == doubleDialogueParenthetical ||
+                currentLine.type == doubleDialogue ||
+                currentLine.type == empty ||                //If the line became empty, it might
+                                                            //enable the next on to be a heading
+                                                            //or character
+                
+                nextLine.type == titlePageTitle ||          //if the next line is a title page,
+                nextLine.type == titlePageCredit ||         //it might not be anymore
+                nextLine.type == titlePageAuthor ||
+                nextLine.type == titlePageDraftDate ||
+                nextLine.type == titlePageContact ||
+                nextLine.type == titlePageSource ||
+                nextLine.type == titlePageUnknown ||
+                nextLine.type == heading ||                 //If the next line is a heading or
+                nextLine.type == character ||               //character or anything dialogue
+                nextLine.type == doubleDialogueCharacter || //related, it might not be anymore
+                nextLine.type == parenthetical ||
+                nextLine.type == dialogue ||
+                nextLine.type == doubleDialogueParenthetical ||
+                nextLine.type == doubleDialogue ||
+                nextLine.omitIn != currentLine.omitOut) { //If the next line expected the end
+                                                            //of the last line to end or not end
+                                                            //with an open omit other than the
+                                                            //line actually does, omites changed
+                
+                [self correctParseInLine:index+1 indicesToDo:indices];
+            }
         }
     }
 }
@@ -229,14 +257,14 @@
 #define UNDERLINE_PATTERN "_"
 #define NOTE_OPEN_PATTERN "[["
 #define NOTE_CLOSE_PATTERN "]]"
-#define OMMIT_OPEN_PATTERN "/*"
-#define OMMIT_CLOSE_PATTERN "*/"
+#define OMIT_OPEN_PATTERN "/*"
+#define OMIT_CLOSE_PATTERN "*/"
 
 #define BOLD_PATTERN_LENGTH 2
 #define ITALIC_PATTERN_LENGTH 1
 #define UNDERLINE_PATTERN_LENGTH 1
 #define NOTE_PATTERN_LENGTH 2
-#define OMMIT_PATTERN_LENGTH 2
+#define OMIT_PATTERN_LENGTH 2
 
 - (void)parseTypeAndFormattingForLine:(Line*)line atIndex:(NSUInteger)index
 {
@@ -246,20 +274,20 @@
     unichar charArray[length];
     [line.string getCharacters:charArray];
     
-    NSMutableIndexSet* starsInOmmit = [[NSMutableIndexSet alloc] init];
+    NSMutableIndexSet* starsInOmit = [[NSMutableIndexSet alloc] init];
     if (index == 0) {
-        line.ommitedRanges = [self rangesOfOmmitChars:charArray
+        line.omitedRanges = [self rangesOfOmitChars:charArray
                                              ofLength:length
                                                inLine:line
-                                     lastLineOmmitOut:NO
-                                          saveStarsIn:starsInOmmit];
+                                     lastLineOmitOut:NO
+                                          saveStarsIn:starsInOmit];
     } else {
         Line* previousLine = self.lines[index-1];
-        line.ommitedRanges = [self rangesOfOmmitChars:charArray
+        line.omitedRanges = [self rangesOfOmitChars:charArray
                                              ofLength:length
                                                inLine:line
-                                     lastLineOmmitOut:previousLine.ommitOut
-                                          saveStarsIn:starsInOmmit];
+                                     lastLineOmitOut:previousLine.omitOut
+                                          saveStarsIn:starsInOmit];
     }
     
     line.boldRanges = [self rangesInChars:charArray
@@ -267,13 +295,13 @@
                                   between:BOLD_PATTERN
                                       and:BOLD_PATTERN
                                withLength:BOLD_PATTERN_LENGTH
-                         excludingIndices:starsInOmmit];
+                         excludingIndices:starsInOmit];
     line.italicRanges = [self rangesInChars:charArray
                                    ofLength:length
                                     between:ITALIC_PATTERN
                                         and:ITALIC_PATTERN
                                  withLength:ITALIC_PATTERN_LENGTH
-                           excludingIndices:starsInOmmit];
+                           excludingIndices:starsInOmit];
     line.underlinedRanges = [self rangesInChars:charArray
                                        ofLength:length
                                         between:UNDERLINE_PATTERN
@@ -388,14 +416,15 @@
     }
     
     //Check for scene headings (lines beginning with "INT", "EXT", "EST",  "I/E"). "INT./EXT" and "INT/EXT" are also inside the spec, but already covered by "INT".
-    
-    if (length >= 3) {
-        NSString* firstChars = [[string substringToIndex:3] lowercaseString];
-        if ([firstChars isEqualToString:@"int"] ||
-            [firstChars isEqualToString:@"ext"] ||
-            [firstChars isEqualToString:@"est"] ||
-            [firstChars isEqualToString:@"i/e"]) {
-            return heading;
+    if (preceedingLine.type == empty) {
+        if (length >= 3) {
+            NSString* firstChars = [[string substringToIndex:3] lowercaseString];
+            if ([firstChars isEqualToString:@"int"] ||
+                [firstChars isEqualToString:@"ext"] ||
+                [firstChars isEqualToString:@"est"] ||
+                [firstChars isEqualToString:@"i/e"]) {
+                return heading;
+            }
         }
     }
     
@@ -421,12 +450,14 @@
     }
     
     //Check if all uppercase (and at least 3 characters to not indent every capital leter before anything else follows) = character name.
-    if (length >= 3 && [string containsOnlyUppercase] && !containsOnlyWhitespace) {
-        // A character line ending in ^ is a double dialogue character
-        if (lastChar == '^') {
-            return doubleDialogueCharacter;
-        } else {
-            return character;
+    if (preceedingLine.type == empty) {
+        if (length >= 3 && [string containsOnlyUppercase] && !containsOnlyWhitespace) {
+            // A character line ending in ^ is a double dialogue character
+            if (lastChar == '^') {
+                return doubleDialogueCharacter;
+            } else {
+                return character;
+            }
         }
     }
     
@@ -435,34 +466,26 @@
         return centered;
     }
 
-    //If it's just usual text, see if it might be (double) dialogue or a parenthetical.
+    //If it's just usual text, see if it might be (double) dialogue or a parenthetical, or seciton/synopsis
     if (preceedingLine) {
-        if (preceedingLine.type == dialogue) {
-            //Regular text after a dialogue line is another line of dialogue
-            return dialogue;
-        } else if (preceedingLine.type == doubleDialogue) {
-            //Regular text after a double dialogue line is another line of double dialogue
-            return doubleDialogue;
-        } else if (preceedingLine.type == character) {
-            //Text in parentheses after character is a parenthetical, else its dialogue
+        if (preceedingLine.type == character || preceedingLine.type == dialogue || preceedingLine.type == parenthetical) {
+            //Text in parentheses after character or dialogue is a parenthetical, else its dialogue
             if (firstChar == '(' && lastChar == ')') {
                 return parenthetical;
             } else {
                 return dialogue;
             }
-        } else if (preceedingLine.type == doubleDialogueCharacter) {
-            //Text in parentheses after character is a parenthetical, else its dialogue
+        } else if (preceedingLine.type == doubleDialogueCharacter || preceedingLine.type == doubleDialogue || preceedingLine.type == doubleDialogueParenthetical) {
+            //Text in parentheses after character or dialogue is a parenthetical, else its dialogue
             if (firstChar == '(' && lastChar == ')') {
                 return doubleDialogueParenthetical;
             } else {
                 return doubleDialogue;
             }
-        } else if (preceedingLine.type == parenthetical) {
-            //Text after a parenthetical is dialogue, as it's indirectly preceeded by a character
-            return dialogue;
-        } else if (preceedingLine.type == doubleDialogueParenthetical) {
-            //Text after a parenthetical is dialogue, as it's indirectly preceeded by a character
-            return doubleDialogue;
+        } else if (preceedingLine.type == section) {
+            return section;
+        } else if (preceedingLine.type == synopse) {
+            return synopse;
         }
     }
     
@@ -509,20 +532,20 @@
     return indexSet;
 }
 
-- (NSMutableIndexSet*)rangesOfOmmitChars:(unichar*)string ofLength:(NSUInteger)length inLine:(Line*)line lastLineOmmitOut:(bool)lastLineOut saveStarsIn:(NSMutableIndexSet*)stars
+- (NSMutableIndexSet*)rangesOfOmitChars:(unichar*)string ofLength:(NSUInteger)length inLine:(Line*)line lastLineOmitOut:(bool)lastLineOut saveStarsIn:(NSMutableIndexSet*)stars
 {
     NSMutableIndexSet* indexSet = [[NSMutableIndexSet alloc] init];
     
-    NSInteger lastIndex = length - OMMIT_PATTERN_LENGTH; //Last index to look at if we are looking for start
+    NSInteger lastIndex = length - OMIT_PATTERN_LENGTH; //Last index to look at if we are looking for start
     NSInteger rangeBegin = lastLineOut ? 0 : -1; //Set to -1 when no range is currently inspected, or the the index of a detected beginning
-    line.ommitIn = lastLineOut;
+    line.omitIn = lastLineOut;
     
     for (int i = 0;;i++) {
         if (i > lastIndex) break;
         if (rangeBegin == -1) {
             bool match = YES;
-            for (int j = 0; j < OMMIT_PATTERN_LENGTH; j++) {
-                if (string[j+i] != OMMIT_OPEN_PATTERN[j]) {
+            for (int j = 0; j < OMIT_PATTERN_LENGTH; j++) {
+                if (string[j+i] != OMIT_OPEN_PATTERN[j]) {
                     match = NO;
                     break;
                 }
@@ -533,27 +556,27 @@
             }
         } else {
             bool match = YES;
-            for (int j = 0; j < OMMIT_PATTERN_LENGTH; j++) {
-                if (string[j+i] != OMMIT_CLOSE_PATTERN[j]) {
+            for (int j = 0; j < OMIT_PATTERN_LENGTH; j++) {
+                if (string[j+i] != OMIT_CLOSE_PATTERN[j]) {
                     match = NO;
                     break;
                 }
             }
             if (match) {
-                [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + OMMIT_PATTERN_LENGTH)];
+                [indexSet addIndexesInRange:NSMakeRange(rangeBegin, i - rangeBegin + OMIT_PATTERN_LENGTH)];
                 rangeBegin = -1;
                 [stars addIndex:i];
             }
         }
     }
     
-    //Terminate any open ranges at the end of the line so that this line is ommited untill the end
+    //Terminate any open ranges at the end of the line so that this line is omited untill the end
     if (rangeBegin != -1) {
         NSRange rangeToAdd = NSMakeRange(rangeBegin, length - rangeBegin);
         [indexSet addIndexesInRange:rangeToAdd];
-        line.ommitOut = YES;
+        line.omitOut = YES;
     } else {
-        line.ommitOut = NO;
+        line.omitOut = NO;
     }
     
     return indexSet;

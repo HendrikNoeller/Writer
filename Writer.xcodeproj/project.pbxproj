@@ -34,6 +34,7 @@
 		B138B66D19E1E8CA000489C4 /* ScriptCSS.css in Resources */ = {isa = PBXBuildFile; fileRef = B138B66019E1E8CA000489C4 /* ScriptCSS.css */; };
 		B138B66E19E1E8CA000489C4 /* License.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B138B66219E1E8CA000489C4 /* License.rtf */; };
 		B138B66F19E1E8CA000489C4 /* RegexKitLite.m in Sources */ = {isa = PBXBuildFile; fileRef = B138B66419E1E8CA000489C4 /* RegexKitLite.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		B13BC7F31CC5215900E91B8A /* ApplicationDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = B13BC7F21CC5215900E91B8A /* ApplicationDelegate.m */; };
 		B1509A401CB5C0C500884918 /* FDXInterface.m in Sources */ = {isa = PBXBuildFile; fileRef = B1509A3F1CB5C0C500884918 /* FDXInterface.m */; };
 		B1509A421CB6EBBC00884918 /* WriterFDXTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B1509A411CB6EBBC00884918 /* WriterFDXTests.m */; };
 		B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1B62A3919E3402F009F6E23 /* ColorView.m */; };
@@ -45,6 +46,7 @@
 		B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */; };
 		B1F04EDA1C88ACAD001C4D27 /* Courier Prime Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */; };
 		B1F04EDB1C88ACAD001C4D27 /* Courier Prime.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */; };
+		B1FE6DA41CC28C3500287E73 /* Reference.fountain in Resources */ = {isa = PBXBuildFile; fileRef = B1FE6DA31CC28C3500287E73 /* Reference.fountain */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +109,8 @@
 		B138B66219E1E8CA000489C4 /* License.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = License.rtf; sourceTree = "<group>"; };
 		B138B66319E1E8CA000489C4 /* RegexKitLite.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RegexKitLite.h; sourceTree = "<group>"; };
 		B138B66419E1E8CA000489C4 /* RegexKitLite.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RegexKitLite.m; sourceTree = "<group>"; };
+		B13BC7F11CC5215900E91B8A /* ApplicationDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplicationDelegate.h; sourceTree = "<group>"; };
+		B13BC7F21CC5215900E91B8A /* ApplicationDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApplicationDelegate.m; sourceTree = "<group>"; };
 		B1509A3E1CB5C0C500884918 /* FDXInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FDXInterface.h; sourceTree = "<group>"; };
 		B1509A3F1CB5C0C500884918 /* FDXInterface.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FDXInterface.m; sourceTree = "<group>"; };
 		B1509A411CB6EBBC00884918 /* WriterFDXTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WriterFDXTests.m; sourceTree = "<group>"; };
@@ -122,6 +126,7 @@
 		B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Bold.ttf"; sourceTree = "<group>"; };
 		B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Italic.ttf"; sourceTree = "<group>"; };
 		B1F04ED71C88AC99001C4D27 /* Courier Prime.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime.ttf"; sourceTree = "<group>"; };
+		B1FE6DA31CC28C3500287E73 /* Reference.fountain */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Reference.fountain; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -198,6 +203,8 @@
 				B1E7FF511BC4555B008E2B99 /* Writer.entitlements */,
 				B138B57A19E1C973000489C4 /* Document.h */,
 				B138B57B19E1C973000489C4 /* Document.m */,
+				B13BC7F11CC5215900E91B8A /* ApplicationDelegate.h */,
+				B13BC7F21CC5215900E91B8A /* ApplicationDelegate.m */,
 				B138B58219E1C973000489C4 /* MainMenu.xib */,
 				B138B57D19E1C973000489C4 /* Document.xib */,
 				B1B62A3819E3402F009F6E23 /* ColorView.h */,
@@ -207,6 +214,8 @@
 				B1509A3D1CB5C0B400884918 /* Export */,
 				B138B58019E1C973000489C4 /* Images.xcassets */,
 				B1C2DE5A1AACFF70002FE0F4 /* DocumentIcon.icns */,
+				B1FE6DA31CC28C3500287E73 /* Reference.fountain */,
+				B12DA7821CB44A4600EB17DB /* Big-Fish.fountain */,
 				B138B57619E1C973000489C4 /* Supporting Files */,
 			);
 			path = Writer;
@@ -215,7 +224,6 @@
 		B138B57619E1C973000489C4 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				B12DA7821CB44A4600EB17DB /* Big-Fish.fountain */,
 				B138B57719E1C973000489C4 /* Info.plist */,
 				B138B57819E1C973000489C4 /* main.m */,
 				B1E7FF521BC45969008E2B99 /* Credits.rtf */,
@@ -407,6 +415,7 @@
 				B1C2DE5B1AACFF70002FE0F4 /* DocumentIcon.icns in Resources */,
 				B138B57F19E1C973000489C4 /* Document.xib in Resources */,
 				B138B66E19E1E8CA000489C4 /* License.rtf in Resources */,
+				B1FE6DA41CC28C3500287E73 /* Reference.fountain in Resources */,
 				B138B58119E1C973000489C4 /* Images.xcassets in Resources */,
 				B138B66D19E1E8CA000489C4 /* ScriptCSS.css in Resources */,
 				B1E7FF531BC45969008E2B99 /* Credits.rtf in Resources */,
@@ -430,6 +439,7 @@
 			files = (
 				B1B62A3A19E3402F009F6E23 /* ColorView.m in Sources */,
 				B13111941CB2A42300D07A0C /* Line.m in Sources */,
+				B13BC7F31CC5215900E91B8A /* ApplicationDelegate.m in Sources */,
 				B138B66619E1E8CA000489C4 /* FNElement.m in Sources */,
 				B1509A401CB5C0C500884918 /* FDXInterface.m in Sources */,
 				B13111841CB2885200D07A0C /* ThemeManager.m in Sources */,
@@ -527,7 +537,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
@@ -564,7 +574,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
 				SDKROOT = macosx;

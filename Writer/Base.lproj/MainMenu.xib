@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
+        <deployment identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication"/>
+        <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
+            <connections>
+                <outlet property="delegate" destination="vEX-2F-hcj" id="ft7-OP-E44"/>
+            </connections>
+        </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
@@ -137,7 +142,7 @@
                                                 <action selector="exportHTML:" target="-1" id="uwn-TO-nla"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="FXD…" id="C9z-84-Cmq">
+                                        <menuItem title="FDX…" id="C9z-84-Cmq">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="exportFDX:" target="-1" id="F6e-vG-CJO"/>
@@ -422,9 +427,9 @@
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="Ygd-Y8-VFo"/>
-                            <menuItem title="Ommit" keyEquivalent="/" id="5Y3-LZ-qMb">
+                            <menuItem title="Omit" keyEquivalent="/" id="5Y3-LZ-qMb">
                                 <connections>
-                                    <action selector="makeOmmitted:" target="-1" id="90f-5c-LBm"/>
+                                    <action selector="makeOmitted:" target="-1" id="uw4-3u-NKQ"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Note" id="fKt-Xk-jG8">
@@ -494,6 +499,13 @@ DQ
                                     <action selector="zoom:" target="-1" id="nJn-W7-IXG"/>
                                 </connections>
                             </menuItem>
+                            <menuItem title="Live Preview" id="lYw-08-5AI">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleLivePreview:" target="-1" id="dod-fg-QA1"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem isSeparatorItem="YES" id="c52-PG-mqe"/>
                             <menuItem title="Minimize" keyEquivalent="m" id="OY7-WF-poV">
                                 <connections>
                                     <action selector="performMiniaturize:" target="-1" id="VwT-WD-YPe"/>
@@ -503,6 +515,12 @@ DQ
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="performZoom:" target="-1" id="DIl-cC-cCs"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="NJj-Ow-1UU">
+                                <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                <connections>
+                                    <action selector="toggleFullScreen:" target="-1" id="20F-LW-XZo"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="eu3-7i-yIM"/>
@@ -519,23 +537,29 @@ DQ
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="Help" systemMenu="help" id="jA1-Lj-Irm">
                         <items>
-                            <menuItem title="Fountain Syntax" id="FKE-Sm-Kum">
+                            <menuItem title="Fountain Quick Reference" id="ZsI-w6-Fec">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showFountainSyntax:" target="-1" id="frK-K3-QxC"/>
+                                    <action selector="showReference:" target="vEX-2F-hcj" id="qax-XK-0yN"/>
                                 </connections>
                             </menuItem>
-                            <menuItem title="Fountain Website" id="oSB-uU-Wcb">
+                            <menuItem title="Foutnain Syntax (Online)" id="FKE-Sm-Kum">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showFountainWebsite:" target="-1" id="3SP-ph-sv7"/>
+                                    <action selector="showFountainSyntax:" target="vEX-2F-hcj" id="6sK-eZ-AKi"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Fountain Website (Online)" id="oSB-uU-Wcb">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="showFountainWebsite:" target="vEX-2F-hcj" id="TIG-tL-lWJ"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="gZd-FK-fD7"/>
-                            <menuItem title="Writer on GitHub" id="guF-zs-YEi">
+                            <menuItem title="Writer on GitHub (Online)" id="guF-zs-YEi">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
-                                    <action selector="showWriterOnGitHub:" target="-1" id="Nyh-ka-eya"/>
+                                    <action selector="showWriterOnGitHub:" target="vEX-2F-hcj" id="Vgl-v2-niS"/>
                                 </connections>
                             </menuItem>
                         </items>
@@ -543,5 +567,6 @@ DQ
                 </menuItem>
             </items>
         </menu>
+        <customObject id="vEX-2F-hcj" customClass="ApplicationDelegate"/>
     </objects>
 </document>
