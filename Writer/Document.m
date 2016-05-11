@@ -1173,18 +1173,49 @@ static NSString *forceLyricsSymbol = @"~";
     if ([item isKindOfClass:[Line class]]) {
         Line* line = item;
         if (line.type == heading) {
-            NSString* string = [line.string stringByReplacingOccurrencesOfString:@"INT/EXT" withString:@"I/E"];
+            //Replace "INT/EXT" with "I/E" to make the lines match nicely
+            NSString* string = [line.string uppercaseString];
+            string = [string stringByReplacingOccurrencesOfString:@"INT/EXT" withString:@"I/E"];
             string = [string stringByReplacingOccurrencesOfString:@"INT./EXT" withString:@"I/E"];
             string = [string stringByReplacingOccurrencesOfString:@"EXT/INT" withString:@"I/E"];
             string = [string stringByReplacingOccurrencesOfString:@"EXT./INT" withString:@"I/E"];
             if (line.sceneNumber) {
-                return [NSString stringWithFormat:@"  %@: %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
+                return [NSString stringWithFormat:@"    #%@# %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
             } else {
-                return [@"  " stringByAppendingString:string];
+                return [@"    " stringByAppendingString:string];
             }
         }
         if (line.type == synopse) {
-            return [@" " stringByAppendingString:line.string];
+            NSString* string = line.string;
+            if ([string length] > 0) {
+                //Remove "="
+                if ([string characterAtIndex:0] == '=') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                //Remove leading whitespace
+                while (string.length && [string characterAtIndex:0] == ' ') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                return [@"  " stringByAppendingString:string];
+            } else {
+                return line.string;
+            }
+        }
+        if (line.type == section) {
+            NSString* string = line.string;
+            if ([string length] > 0) {
+                //Remove "#"
+                if ([string characterAtIndex:0] == '#') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                //Remove leading whitespace
+                while (string.length && [string characterAtIndex:0] == ' ') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                return string;
+            } else {
+                return line.string;
+            }
         }
         return line.string;
     }
