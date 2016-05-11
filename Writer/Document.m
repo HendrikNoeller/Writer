@@ -48,6 +48,7 @@
 @property (weak) IBOutlet ColorView *backgroundView;
 
 @property (weak) IBOutlet NSLayoutConstraint *outlineViewWidth;
+@property BOOL outlineViewVisible;
 
 #pragma mark - Toolbar Buttons
 
@@ -149,6 +150,9 @@
     
     self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
     [self applyFormatChanges];
+    
+    self.outlineViewVisible = false;
+    self.outlineViewWidth.constant = 0;
 }
 
 + (BOOL)autosavesInPlace {
@@ -291,7 +295,9 @@
 
 - (void)textDidChange:(NSNotification *)notification
 {
-    [self.outlineView reloadData];
+    if (self.outlineViewVisible && [self.parser getAndResetChangeInOutline]) {
+        [self.outlineView reloadData];
+    }
     [self applyFormatChanges];
 }
 
@@ -962,15 +968,17 @@ static NSString *forceLyricsSymbol = @"~";
 
 #pragma mark - User Interaction
 
-#define TREE_VIEW_WIDTH 200
+#define TREE_VIEW_WIDTH 250
 
-- (IBAction)toggleTreeView:(id)sender
+- (IBAction)toggleOutlineView:(id)sender
 {
-    if (self.outlineViewWidth.constant == 0) {
+    self.outlineViewVisible = !self.outlineViewVisible;
+    
+    if (self.outlineViewVisible) {
+        [self.outlineView reloadData];
         [self.outlineViewWidth.animator setConstant:TREE_VIEW_WIDTH];
     } else {
         [self.outlineViewWidth.animator setConstant:0];
-        
     }
 }
 
@@ -1130,34 +1138,27 @@ static NSString *forceLyricsSymbol = @"~";
 
 
 
-#pragma  mark - NSOutlineViewDelegate
+#pragma  mark - NSOutlineViewDataSource and Delegate
 
 - (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable id)item;
 {
-    if (item) {
-        return [self.parser numberOfChildrenForLine:item];
-    } else {
+    if (!item) {
         //Children of root
-        return [self.parser numberOfTopLevelitems];
+        return [self.parser numberOfOutlineItems];
     }
     return 0;
 }
 
 - (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable id)item
 {
-    if (item) {
-        return [self.parser childrenForLine:item][index];
-    } else {
-        return [self.parser topLevelItems][index];
+    if (!item) {
+        return [self.parser outlineItemAtIndex:index];
     }
+    return nil;
 }
 
 - (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
 {
-    Line* line = item;
-    if (line.type == section) {
-        return YES;
-    }
     return NO;
 }
 
@@ -1167,7 +1168,18 @@ static NSString *forceLyricsSymbol = @"~";
         Line* line = item;
         return line.string;
     }
-    return @"quatsch";
+    return @"";
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item
+{
+    if ([item isKindOfClass:[Line class]]) {
+        Line* line = item;
+        NSRange lineRange = NSMakeRange(line.position, line.string.length);
+        [self.textView setSelectedRange:lineRange];
+        [self.textView scrollRangeToVisible:lineRange];
+    }
+    return YES;
 }
 
 @end

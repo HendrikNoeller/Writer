@@ -32,8 +32,8 @@
         count += [s length] + 1; //+1 for the newline char that is omited in this representation
     }
     
-    //Check toString
-    NSString* toString = [parser toString];
+    //Check description
+    NSString* toString = [parser description];
     XCTAssertEqualObjects(toString, miniScriptExpectedToString);
     
     //Break test string at line, type at line and pos at line

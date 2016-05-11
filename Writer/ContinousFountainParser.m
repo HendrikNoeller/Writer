@@ -11,6 +11,10 @@
 #import "NSString+Whitespace.h"
 #import "NSMutableIndexSet+Lowest.h"
 
+@interface  ContinousFountainParser ()
+@property (nonatomic) BOOL changeInOutline;
+@end
+
 @implementation ContinousFountainParser
 
 #pragma mark - Parsing
@@ -48,6 +52,7 @@
         
         positon += [rawLine length] + 1; // +1 for newline character
     }
+    _changeInOutline = YES;
 }
 
 #pragma mark Contionous Parsing
@@ -200,6 +205,10 @@
     bool oldOmitOut = currentLine.omitOut;
     [self parseTypeAndFormattingForLine:currentLine atIndex:index];
     
+    if (!self.changeInOutline && (oldType == heading || oldType == section || oldType == synopse ||
+        currentLine.type == heading || currentLine.type == section || currentLine.type == synopse)) {
+        self.changeInOutline = YES;
+    }
     
     [self.changedIndices addObject:@(index)];
     
@@ -614,80 +623,46 @@
     }
 }
 
-- (NSUInteger)numberOfTopLevelitems
+
+#pragma mark - Outline Dat
+
+- (NSUInteger)numberOfOutlineItems
 {
     NSUInteger result = 0;
-    BOOL foundSection = false;
     for (Line* line in self.lines) {
-        if (line.type == section) {
-            foundSection = true;
-            result++;
-        } else if (!foundSection && (line.type == synopse || line.type == heading)) {
+        if (line.type == section || line.type == synopse || line.type == heading) {
             result++;
         }
     }
     return result;
 }
 
-- (NSArray*)topLevelItems;
+- (Line*)outlineItemAtIndex:(NSUInteger)index
 {
-    BOOL foundSection = false;
-    NSMutableArray* result = [[NSMutableArray alloc] init];
     for (Line* line in self.lines) {
-        if (line.type == section) {
-            [result addObject:line];
-            foundSection = true;
-        } else if (!foundSection && (line.type == synopse || line.type == heading)) {
-            [result addObject:line];
+        if (line.type == section || line.type == synopse || line.type == heading) {
+            if (index == 0) {
+                return line;
+            }
+            index--;
         }
     }
-    return result;
+    return nil;
 }
 
-- (NSUInteger)numberOfChildrenForLine:(Line*)sectionLine
+- (BOOL)getAndResetChangeInOutline
 {
-    NSUInteger result = 0;
-    BOOL foundLine = false;
-    for (Line* line in self.lines) {
-        if (!foundLine) {
-            if (line == sectionLine) {
-                foundLine = true;
-            }
-        } else {
-            if (line.type == synopse || line.type == heading) {
-                result++;
-            } else if (line.type == section) {
-                break;
-            }
-        }
+    if (_changeInOutline) {
+        _changeInOutline = NO;
+        return YES;
     }
-    
-    return result;
-}
-
-- (NSArray*)childrenForLine:(Line*)sectionLine
-{
-    NSMutableArray* result = [[NSMutableArray alloc] init];
-    BOOL foundLine = false;
-    for (Line* line in self.lines) {
-        if (!foundLine) {
-            if (line == sectionLine) {
-                foundLine = true;
-            }
-        } else {
-            if (line.type == synopse || line.type == heading) {
-                [result addObject:line];
-            } else if (line.type == section) {
-                break;
-            }
-        }
-    }
-    
-    return result;
+    return NO;
 }
 
 
-- (NSString *)toString
+#pragma mark - Utility
+
+- (NSString *)description
 {
     NSString *result = @"";
     NSUInteger index = 0;

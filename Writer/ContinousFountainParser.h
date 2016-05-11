@@ -24,10 +24,9 @@
 - (NSUInteger)positionAtLine:(NSUInteger)line;
 
 //Convenience Methods for Outlineview data
-- (NSUInteger)numberOfTopLevelitems; //Returns the number of synopses or headings before the first section + the number of sections
-- (NSArray*)topLevelItems; //Returns all synopses or headings before the first section and then all sections
-- (NSUInteger)numberOfChildrenForLine:(Line*)sectionLine;
-- (NSArray*)childrenForLine:(Line*)sectionLine;
+- (BOOL)getAndResetChangeInOutline;
+- (NSUInteger)numberOfOutlineItems; //Returns the number of items for the outline view
+- (Line*)outlineItemAtIndex:(NSUInteger)index; //Returns an items for the outline view
 
-- (NSString*)toString;
+- (NSString*)description;
 @end
