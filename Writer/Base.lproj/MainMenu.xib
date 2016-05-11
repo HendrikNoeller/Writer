@@ -502,7 +502,7 @@ DQ
                                     </items>
                                 </menu>
                                 <connections>
-                                    <action selector="zoom:" target="-1" id="nJn-W7-IXG"/>
+                                    <action selector="zoom:" target="-1" id="hGt-8H-RSC"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Live Preview" id="lYw-08-5AI">

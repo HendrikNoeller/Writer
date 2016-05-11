@@ -1046,12 +1046,17 @@ static NSString *forceLyricsSymbol = @"~";
             }
             [menuItem.submenu addItem:item];
         }
-        return YES;
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
+        }
     } else if ([menuItem.title isEqualToString:@"Automatically Match Parentheses"]) {
         if (self.matchParentheses) {
             [menuItem setState:NSOnState];
         } else {
             [menuItem setState:NSOffState];
+        }
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
         }
     } else if ([menuItem.title isEqualToString:@"Live Preview"]) {
         if (self.livePreview) {
@@ -1059,11 +1064,21 @@ static NSString *forceLyricsSymbol = @"~";
         } else {
             [menuItem setState:NSOffState];
         }
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
+        }
     } else if ([menuItem.title isEqualToString:@"Outline"]) {
         if (self.outlineViewVisible) {
             [menuItem setState:NSOnState];
         } else {
             [menuItem setState:NSOffState];
+        }
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
+        }
+    } else if ([menuItem.title isEqualToString:@"Zoom In"] || [menuItem.title isEqualToString:@"Zoom Out"] || [menuItem.title isEqualToString:@"Reset Zoom"]) {
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
         }
     }
     
