@@ -60,11 +60,11 @@
                                         <scrollView borderType="none" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mky-48-wwA">
                                             <rect key="frame" x="250" y="0.0" width="800" height="599"/>
                                             <clipView key="contentView" id="sxN-R8-PHt">
-                                                <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
+                                                <rect key="frame" x="0.0" y="0.0" width="785" height="599"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
                                                     <textView importsGraphics="NO" richText="NO" findStyle="bar" incrementalSearchingEnabled="YES" continuousSpellChecking="YES" allowsUndo="YES" verticallyResizable="YES" allowsNonContiguousLayout="YES" smartInsertDelete="YES" id="6pm-Ac-n3m">
-                                                        <rect key="frame" x="0.0" y="0.0" width="800" height="599"/>
+                                                        <rect key="frame" x="0.0" y="0.0" width="785" height="599"/>
                                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                         <size key="minSize" width="785" height="599"/>
@@ -99,13 +99,13 @@
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
-                                        <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasHorizontalScroller="NO" usesPredominantAxisScrolling="NO" verticalScrollElasticity="none" translatesAutoresizingMaskIntoConstraints="NO" id="Aqp-Fx-tid">
+                                        <scrollView borderType="none" autohidesScrollers="YES" horizontalLineScroll="22" horizontalPageScroll="10" verticalLineScroll="22" verticalPageScroll="10" hasVerticalScroller="NO" usesPredominantAxisScrolling="NO" scrollerKnobStyle="dark" translatesAutoresizingMaskIntoConstraints="NO" id="Aqp-Fx-tid">
                                             <rect key="frame" x="0.0" y="0.0" width="250" height="599"/>
                                             <clipView key="contentView" drawsBackground="NO" id="BFk-go-1Uf">
                                                 <rect key="frame" x="0.0" y="0.0" width="250" height="599"/>
                                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                 <subviews>
-                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="22" indentationPerLevel="14" outlineTableColumn="7xD-Qp-q9y" id="O7u-V8-6io">
+                                                    <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" columnReordering="NO" columnResizing="NO" multipleSelection="NO" autosaveColumns="NO" typeSelect="NO" rowHeight="22" indentationPerLevel="14" autoresizesOutlineColumn="YES" outlineTableColumn="7xD-Qp-q9y" id="O7u-V8-6io">
                                                         <rect key="frame" x="0.0" y="0.0" width="250" height="22"/>
                                                         <autoresizingMask key="autoresizingMask"/>
                                                         <size key="intercellSpacing" width="3" height="0.0"/>
@@ -118,7 +118,7 @@
                                                                     <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="headerColor" catalog="System" colorSpace="catalog"/>
                                                                 </tableHeaderCell>
-                                                                <textFieldCell key="dataCell" allowsUndo="NO" alignment="left" placeholderString="" usesSingleLineMode="YES" id="jjj-Jf-Gxh">
+                                                                <textFieldCell key="dataCell" lineBreakMode="truncatingTail" allowsUndo="NO" alignment="left" placeholderString="" usesSingleLineMode="YES" id="jjj-Jf-Gxh">
                                                                     <font key="font" size="13" name="CourierPrime"/>
                                                                     <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                                                                     <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>

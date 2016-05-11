@@ -1045,6 +1045,12 @@ static NSString *forceLyricsSymbol = @"~";
         } else {
             [menuItem setState:NSOffState];
         }
+    } else if ([menuItem.title isEqualToString:@"Outline"]) {
+        if (self.outlineViewVisible) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
     }
     
     return YES;
@@ -1166,6 +1172,12 @@ static NSString *forceLyricsSymbol = @"~";
 {
     if ([item isKindOfClass:[Line class]]) {
         Line* line = item;
+        if (line.type == heading) {
+            return [@"  " stringByAppendingString:line.string];
+        }
+        if (line.type == synopse) {
+            return [@" " stringByAppendingString:line.string];
+        }
         return line.string;
     }
     return @"";
@@ -1178,8 +1190,9 @@ static NSString *forceLyricsSymbol = @"~";
         NSRange lineRange = NSMakeRange(line.position, line.string.length);
         [self.textView setSelectedRange:lineRange];
         [self.textView scrollRangeToVisible:lineRange];
+        return YES;
     }
-    return YES;
+    return NO;
 }
 
 @end
