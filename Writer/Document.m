@@ -32,6 +32,7 @@
 #import "FNScript.h"
 #import "FNHTMLScript.h"
 #import "FDXInterface.h"
+#import "OutlineExtractor.h"
 #import "PrintView.h"
 #import "ColorView.h"
 #import "ContinousFountainParser.h"
@@ -240,6 +241,19 @@
         }
     }];
     
+}
+
+- (IBAction)exportOutline:(id)sender
+{
+    NSSavePanel *saveDialog = [NSSavePanel savePanel];
+    [saveDialog setAllowedFileTypes:@[@"fountain"]];
+    [saveDialog setNameFieldStringValue:[[self fileNameString] stringByAppendingString:@" Outline"]];
+    [saveDialog beginSheetModalForWindow:self.windowControllers[0].window completionHandler:^(NSInteger result) {
+        if (result == NSFileHandlingPanelOKButton) {
+            NSString* outlineString = [OutlineExtractor outlineFromParse:self.parser];
+            [outlineString writeToURL:saveDialog.URL atomically:YES encoding:NSUTF8StringEncoding error:nil];
+        }
+    }];
 }
 
 - (NSString*)fileNameString

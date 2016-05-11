@@ -148,6 +148,12 @@
                                                 <action selector="exportFDX:" target="-1" id="F6e-vG-CJO"/>
                                             </connections>
                                         </menuItem>
+                                        <menuItem title="Outline..." id="lAo-B9-uaU">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportOutline:" target="-1" id="HXB-My-Vhk"/>
+                                            </connections>
+                                        </menuItem>
                                     </items>
                                 </menu>
                                 <connections>
