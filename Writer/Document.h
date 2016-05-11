@@ -30,7 +30,7 @@ THE SOFTWARE.
 
 #import <Cocoa/Cocoa.h>
 
-@interface Document : NSDocument <NSTextViewDelegate>
+@interface Document : NSDocument <NSTextViewDelegate, NSOutlineViewDataSource, NSOutlineViewDelegate>
 
 - (NSString*)getText;
 - (NSString*)fileNameString;

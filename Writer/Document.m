@@ -41,11 +41,18 @@
 
 @property (unsafe_unretained) IBOutlet NSToolbar *toolbar;
 @property (unsafe_unretained) IBOutlet NSTextView *textView;
+@property (weak) IBOutlet NSOutlineView *outlineView;
+
 @property (unsafe_unretained) IBOutlet WebView *webView;
 @property (unsafe_unretained) IBOutlet NSTabView *tabView;
 @property (weak) IBOutlet ColorView *backgroundView;
 
+@property (weak) IBOutlet NSLayoutConstraint *outlineViewWidth;
+@property BOOL outlineViewVisible;
+
 #pragma mark - Toolbar Buttons
+
+@property (weak) IBOutlet NSButton *outlineToolbarButton;
 @property (weak) IBOutlet NSButton *boldToolbarButton;
 @property (weak) IBOutlet NSButton *italicToolbarButton;
 @property (weak) IBOutlet NSButton *underlineToolbarButton;
@@ -106,7 +113,7 @@
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
     
-    self.toolbarButtons = @[_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _omitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
+    self.toolbarButtons = @[_outlineToolbarButton,_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _omitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
     self.textView.textContainerInset = NSMakeSize(TEXT_INSET_SIDE, TEXT_INSET_TOP);
     self.backgroundView.fillColor = [NSColor colorWithCalibratedRed:0.5
@@ -143,6 +150,9 @@
     
     self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
     [self applyFormatChanges];
+    
+    self.outlineViewVisible = false;
+    self.outlineViewWidth.constant = 0;
 }
 
 + (BOOL)autosavesInPlace {
@@ -285,6 +295,9 @@
 
 - (void)textDidChange:(NSNotification *)notification
 {
+    if (self.outlineViewVisible && [self.parser getAndResetChangeInOutline]) {
+        [self.outlineView reloadData];
+    }
     [self applyFormatChanges];
 }
 
@@ -955,6 +968,20 @@ static NSString *forceLyricsSymbol = @"~";
 
 #pragma mark - User Interaction
 
+#define TREE_VIEW_WIDTH 250
+
+- (IBAction)toggleOutlineView:(id)sender
+{
+    self.outlineViewVisible = !self.outlineViewVisible;
+    
+    if (self.outlineViewVisible) {
+        [self.outlineView reloadData];
+        [self.outlineViewWidth.animator setConstant:TREE_VIEW_WIDTH];
+    } else {
+        [self.outlineViewWidth.animator setConstant:0];
+    }
+}
+
 //Empty function, which needs to exists to make the share access the validateMenuItems function
 - (IBAction)share:(id)sender {}
 
@@ -1014,6 +1041,12 @@ static NSString *forceLyricsSymbol = @"~";
         }
     } else if ([menuItem.title isEqualToString:@"Live Preview"]) {
         if (self.livePreview) {
+            [menuItem setState:NSOnState];
+        } else {
+            [menuItem setState:NSOffState];
+        }
+    } else if ([menuItem.title isEqualToString:@"Outline"]) {
+        if (self.outlineViewVisible) {
             [menuItem setState:NSOnState];
         } else {
             [menuItem setState:NSOffState];
@@ -1109,5 +1142,96 @@ static NSString *forceLyricsSymbol = @"~";
     [self.tabView selectTabViewItem:[self.tabView tabViewItemAtIndex:index]];
 }
 
+
+
+#pragma  mark - NSOutlineViewDataSource and Delegate
+
+- (NSInteger)outlineView:(NSOutlineView *)outlineView numberOfChildrenOfItem:(nullable id)item;
+{
+    if (!item) {
+        //Children of root
+        return [self.parser numberOfOutlineItems];
+    }
+    return 0;
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView child:(NSInteger)index ofItem:(nullable id)item
+{
+    if (!item) {
+        return [self.parser outlineItemAtIndex:index];
+    }
+    return nil;
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView isItemExpandable:(id)item
+{
+    return NO;
+}
+
+- (id)outlineView:(NSOutlineView *)outlineView objectValueForTableColumn:(NSTableColumn *)tableColumn byItem:(id)item
+{
+    if ([item isKindOfClass:[Line class]]) {
+        Line* line = item;
+        if (line.type == heading) {
+            //Replace "INT/EXT" with "I/E" to make the lines match nicely
+            NSString* string = [line.string uppercaseString];
+            string = [string stringByReplacingOccurrencesOfString:@"INT/EXT" withString:@"I/E"];
+            string = [string stringByReplacingOccurrencesOfString:@"INT./EXT" withString:@"I/E"];
+            string = [string stringByReplacingOccurrencesOfString:@"EXT/INT" withString:@"I/E"];
+            string = [string stringByReplacingOccurrencesOfString:@"EXT./INT" withString:@"I/E"];
+            if (line.sceneNumber) {
+                return [NSString stringWithFormat:@"    #%@# %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
+            } else {
+                return [@"    " stringByAppendingString:string];
+            }
+        }
+        if (line.type == synopse) {
+            NSString* string = line.string;
+            if ([string length] > 0) {
+                //Remove "="
+                if ([string characterAtIndex:0] == '=') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                //Remove leading whitespace
+                while (string.length && [string characterAtIndex:0] == ' ') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                return [@"  " stringByAppendingString:string];
+            } else {
+                return line.string;
+            }
+        }
+        if (line.type == section) {
+            NSString* string = line.string;
+            if ([string length] > 0) {
+                //Remove "#"
+                if ([string characterAtIndex:0] == '#') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                //Remove leading whitespace
+                while (string.length && [string characterAtIndex:0] == ' ') {
+                    string = [string stringByReplacingCharactersInRange:NSMakeRange(0, 1) withString:@""];
+                }
+                return string;
+            } else {
+                return line.string;
+            }
+        }
+        return line.string;
+    }
+    return @"";
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView shouldSelectItem:(id)item
+{
+    if ([item isKindOfClass:[Line class]]) {
+        Line* line = item;
+        NSRange lineRange = NSMakeRange(line.position, line.string.length);
+        [self.textView setSelectedRange:lineRange];
+        [self.textView scrollRangeToVisible:lineRange];
+        return YES;
+    }
+    return NO;
+}
 
 @end

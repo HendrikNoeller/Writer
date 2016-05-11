@@ -11,6 +11,10 @@
 #import "NSString+Whitespace.h"
 #import "NSMutableIndexSet+Lowest.h"
 
+@interface  ContinousFountainParser ()
+@property (nonatomic) BOOL changeInOutline;
+@end
+
 @implementation ContinousFountainParser
 
 #pragma mark - Parsing
@@ -48,6 +52,7 @@
         
         positon += [rawLine length] + 1; // +1 for newline character
     }
+    _changeInOutline = YES;
 }
 
 #pragma mark Contionous Parsing
@@ -200,6 +205,10 @@
     bool oldOmitOut = currentLine.omitOut;
     [self parseTypeAndFormattingForLine:currentLine atIndex:index];
     
+    if (!self.changeInOutline && (oldType == heading || oldType == section || oldType == synopse ||
+        currentLine.type == heading || currentLine.type == section || currentLine.type == synopse)) {
+        self.changeInOutline = YES;
+    }
     
     [self.changedIndices addObject:@(index)];
     
@@ -314,6 +323,15 @@
                                       and:NOTE_CLOSE_PATTERN
                                withLength:NOTE_PATTERN_LENGTH
                          excludingIndices:nil];
+    
+    if (line.type == heading) {
+        NSRange sceneNumberRange = [self sceneNumberForChars:charArray ofLength:length];
+        if (sceneNumberRange.length == 0) {
+            line.sceneNumber = nil;
+        } else {
+            line.sceneNumber = [line.string substringWithRange:sceneNumberRange];
+        }
+    }
 }
 
 - (LineType)parseLineType:(Line*)line atIndex:(NSUInteger)index
@@ -582,6 +600,25 @@
     return indexSet;
 }
 
+- (NSRange)sceneNumberForChars:(unichar*)string ofLength:(NSUInteger)length
+{
+    NSUInteger backNumberIndex = NSNotFound;
+    for(NSInteger i = length - 1; i >= 0; i--) {
+        char c = string[i];
+        if (c == ' ') continue;
+        if (backNumberIndex == NSNotFound) {
+            if (c == '#') backNumberIndex = i;
+            else break;
+        } else {
+            if (c == '#') {
+                return NSMakeRange(i+1, backNumberIndex-i-1);
+            }
+        }
+    }
+    return NSMakeRange(0, 0);
+}
+
+
 #pragma mark - Data access
 
 - (NSString*)stringAtLine:(NSUInteger)line
@@ -614,7 +651,56 @@
     }
 }
 
-- (NSString *)toString
+- (NSString*)sceneNumberAtLine:(NSUInteger)line
+{
+    if (line >= [self.lines count]) {
+        return nil;
+    } else {
+        Line* l = self.lines[line];
+        return l.sceneNumber;
+    }
+}
+
+
+#pragma mark - Outline Dat
+
+- (NSUInteger)numberOfOutlineItems
+{
+    NSUInteger result = 0;
+    for (Line* line in self.lines) {
+        if (line.type == section || line.type == synopse || line.type == heading) {
+            result++;
+        }
+    }
+    return result;
+}
+
+- (Line*)outlineItemAtIndex:(NSUInteger)index
+{
+    for (Line* line in self.lines) {
+        if (line.type == section || line.type == synopse || line.type == heading) {
+            if (index == 0) {
+                return line;
+            }
+            index--;
+        }
+    }
+    return nil;
+}
+
+- (BOOL)getAndResetChangeInOutline
+{
+    if (_changeInOutline) {
+        _changeInOutline = NO;
+        return YES;
+    }
+    return NO;
+}
+
+
+#pragma mark - Utility
+
+- (NSString *)description
 {
     NSString *result = @"";
     NSUInteger index = 0;
