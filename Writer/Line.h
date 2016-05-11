@@ -40,6 +40,8 @@ typedef enum : NSUInteger {
 @property (strong, nonatomic) NSString* string;
 @property NSUInteger position;
 @property NSUInteger numberOfPreceedingFormattingCharacters;
+@property NSString* sceneNumber;
+
 @property NSMutableIndexSet* boldRanges;
 @property NSMutableIndexSet* italicRanges;
 @property NSMutableIndexSet* underlinedRanges;

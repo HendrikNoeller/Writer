@@ -323,6 +323,15 @@
                                       and:NOTE_CLOSE_PATTERN
                                withLength:NOTE_PATTERN_LENGTH
                          excludingIndices:nil];
+    
+    if (line.type == heading) {
+        NSRange sceneNumberRange = [self sceneNumberForChars:charArray ofLength:length];
+        if (sceneNumberRange.length == 0) {
+            line.sceneNumber = nil;
+        } else {
+            line.sceneNumber = [line.string substringWithRange:sceneNumberRange];
+        }
+    }
 }
 
 - (LineType)parseLineType:(Line*)line atIndex:(NSUInteger)index
@@ -591,6 +600,25 @@
     return indexSet;
 }
 
+- (NSRange)sceneNumberForChars:(unichar*)string ofLength:(NSUInteger)length
+{
+    NSUInteger backNumberIndex = NSNotFound;
+    for(NSInteger i = length - 1; i >= 0; i--) {
+        char c = string[i];
+        if (c == ' ') continue;
+        if (backNumberIndex == NSNotFound) {
+            if (c == '#') backNumberIndex = i;
+            else break;
+        } else {
+            if (c == '#') {
+                return NSMakeRange(i+1, backNumberIndex-i-1);
+            }
+        }
+    }
+    return NSMakeRange(0, 0);
+}
+
+
 #pragma mark - Data access
 
 - (NSString*)stringAtLine:(NSUInteger)line
@@ -620,6 +648,16 @@
     } else {
         Line* l = self.lines[line];
         return l.position;
+    }
+}
+
+- (NSString*)sceneNumberAtLine:(NSUInteger)line
+{
+    if (line >= [self.lines count]) {
+        return nil;
+    } else {
+        Line* l = self.lines[line];
+        return l.sceneNumber;
     }
 }
 

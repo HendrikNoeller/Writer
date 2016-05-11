@@ -22,6 +22,7 @@
 - (NSString*)stringAtLine:(NSUInteger)line;
 - (LineType)typeAtLine:(NSUInteger)line;
 - (NSUInteger)positionAtLine:(NSUInteger)line;
+- (NSString*)sceneNumberAtLine:(NSUInteger)line;
 
 //Convenience Methods for Outlineview data
 - (BOOL)getAndResetChangeInOutline;
