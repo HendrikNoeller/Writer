@@ -1209,7 +1209,7 @@ static NSString *forceLyricsSymbol = @"~";
             string = [string stringByReplacingOccurrencesOfString:@"EXT/INT" withString:@"I/E"];
             string = [string stringByReplacingOccurrencesOfString:@"EXT./INT" withString:@"I/E"];
             if (line.sceneNumber) {
-                return [NSString stringWithFormat:@"    #%@# %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
+                return [NSString stringWithFormat:@"    %@: %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
             } else {
                 return [@"    " stringByAppendingString:string];
             }
