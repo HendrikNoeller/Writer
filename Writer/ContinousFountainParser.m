@@ -136,6 +136,9 @@
         }
         Line* nextLine = self.lines[lineIndex+1];
         line.string = [line.string stringByAppendingString:nextLine.string];
+        if (nextLine.type == heading || nextLine.type == section || nextLine.type == synopse) {
+            _changeInOutline = YES;
+        }
         [self.lines removeObjectAtIndex:lineIndex+1];
         [self decrementLinePositionsFromIndex:lineIndex+1 amount:1];
         
@@ -223,6 +226,8 @@
                 currentLine.type == titlePageContact ||
                 currentLine.type == titlePageSource ||
                 currentLine.type == titlePageUnknown ||
+                currentLine.type == section ||
+                currentLine.type == synopse ||
                 currentLine.type == character ||            //if the line became anythign to
                 currentLine.type == parenthetical ||        //do with dialogue, it might cause
                 currentLine.type == dialogue ||             //the next lines to be dialogue
@@ -240,6 +245,8 @@
                 nextLine.type == titlePageContact ||
                 nextLine.type == titlePageSource ||
                 nextLine.type == titlePageUnknown ||
+                nextLine.type == section ||
+                nextLine.type == synopse ||
                 nextLine.type == heading ||                 //If the next line is a heading or
                 nextLine.type == character ||               //character or anything dialogue
                 nextLine.type == doubleDialogueCharacter || //related, it might not be anymore

@@ -109,10 +109,23 @@
 #define TEXT_INSET_SIDE 50
 #define TEXT_INSET_TOP 20
 
+#define INITIAL_WIDTH 800
+
 - (void)windowControllerDidLoadNib:(NSWindowController *)aController {
     [super windowControllerDidLoadNib:aController];
     // Add any code here that needs to be executed once the windowController has loaded the document's window.
     //    aController.window.titleVisibility = NSWindowTitleHidden; //Makes the title and toolbar unified by hiding the title
+    
+    //Set the width programmatically since w've got the outline visible in IB to work on it, but don't want it visible on launch
+    NSWindow *window = aController.window;
+    NSRect newFrame = NSMakeRect(window.frame.origin.x,
+                                 window.frame.origin.y,
+                                 INITIAL_WIDTH,
+                                 window.frame.size.height);
+    [window setFrame:newFrame display:YES];
+    
+    self.outlineViewVisible = false;
+    self.outlineViewWidth.constant = 0;
     
     self.toolbarButtons = @[_outlineToolbarButton,_boldToolbarButton, _italicToolbarButton, _underlineToolbarButton, _omitToolbarButton, _noteToolbarButton, _forceHeadingToolbarButton, _forceActionToolbarButton, _forceCharacterToolbarButton, _forceTransitionToolbarButton, _forceLyricsToolbarButton, _titlepageToolbarButton, _pagebreakToolbarButton, _previewToolbarButton, _printToolbarButton];
     
@@ -151,9 +164,6 @@
     
     self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
     [self applyFormatChanges];
-    
-    self.outlineViewVisible = false;
-    self.outlineViewWidth.constant = 0;
 }
 
 + (BOOL)autosavesInPlace {
@@ -991,8 +1001,20 @@ static NSString *forceLyricsSymbol = @"~";
     if (self.outlineViewVisible) {
         [self.outlineView reloadData];
         [self.outlineViewWidth.animator setConstant:TREE_VIEW_WIDTH];
+        NSWindow *window = self.windowControllers[0].window;
+        NSRect newFrame = NSMakeRect(window.frame.origin.x,
+                                     window.frame.origin.y,
+                                     window.frame.size.width + TREE_VIEW_WIDTH,
+                                     window.frame.size.height);
+        [window.animator setFrame:newFrame display:YES];
     } else {
         [self.outlineViewWidth.animator setConstant:0];
+        NSWindow *window = self.windowControllers[0].window;
+        NSRect newFrame = NSMakeRect(window.frame.origin.x,
+                                     window.frame.origin.y,
+                                     window.frame.size.width - TREE_VIEW_WIDTH,
+                                     window.frame.size.height);
+        [window.animator setFrame:newFrame display:YES];
     }
 }
 
@@ -1046,12 +1068,17 @@ static NSString *forceLyricsSymbol = @"~";
             }
             [menuItem.submenu addItem:item];
         }
-        return YES;
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
+        }
     } else if ([menuItem.title isEqualToString:@"Automatically Match Parentheses"]) {
         if (self.matchParentheses) {
             [menuItem setState:NSOnState];
         } else {
             [menuItem setState:NSOffState];
+        }
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
         }
     } else if ([menuItem.title isEqualToString:@"Live Preview"]) {
         if (self.livePreview) {
@@ -1059,11 +1086,21 @@ static NSString *forceLyricsSymbol = @"~";
         } else {
             [menuItem setState:NSOffState];
         }
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
+        }
     } else if ([menuItem.title isEqualToString:@"Outline"]) {
         if (self.outlineViewVisible) {
             [menuItem setState:NSOnState];
         } else {
             [menuItem setState:NSOffState];
+        }
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
+        }
+    } else if ([menuItem.title isEqualToString:@"Zoom In"] || [menuItem.title isEqualToString:@"Zoom Out"] || [menuItem.title isEqualToString:@"Reset Zoom"]) {
+        if ([self selectedTabViewTab] == 1) {
+            return NO;
         }
     }
     
@@ -1194,7 +1231,7 @@ static NSString *forceLyricsSymbol = @"~";
             string = [string stringByReplacingOccurrencesOfString:@"EXT/INT" withString:@"I/E"];
             string = [string stringByReplacingOccurrencesOfString:@"EXT./INT" withString:@"I/E"];
             if (line.sceneNumber) {
-                return [NSString stringWithFormat:@"    #%@# %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
+                return [NSString stringWithFormat:@"    %@: %@", line.sceneNumber, [string stringByReplacingOccurrencesOfString:[NSString stringWithFormat:@"#%@#", line.sceneNumber] withString:@""]];
             } else {
                 return [@"    " stringByAppendingString:string];
             }
