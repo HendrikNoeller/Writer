@@ -42,6 +42,7 @@
 		B1D0B84B19E31B86005252E4 /* PrintView.m in Sources */ = {isa = PBXBuildFile; fileRef = B1D0B84A19E31B86005252E4 /* PrintView.m */; };
 		B1DCC4631CB32C5200438E7F /* WriterThemeManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = B1DCC4621CB32C5200438E7F /* WriterThemeManagerTests.m */; };
 		B1E7FF531BC45969008E2B99 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = B1E7FF521BC45969008E2B99 /* Credits.rtf */; };
+		B1EC6B9E1CE3B33200B48CDB /* OutlineExtractor.m in Sources */ = {isa = PBXBuildFile; fileRef = B1EC6B9D1CE3B33200B48CDB /* OutlineExtractor.m */; };
 		B1F04ED81C88ACAD001C4D27 /* Courier Prime Bold Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED41C88AC99001C4D27 /* Courier Prime Bold Italic.ttf */; };
 		B1F04ED91C88ACAD001C4D27 /* Courier Prime Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */; };
 		B1F04EDA1C88ACAD001C4D27 /* Courier Prime Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */; };
@@ -122,6 +123,8 @@
 		B1DCC4621CB32C5200438E7F /* WriterThemeManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WriterThemeManagerTests.m; sourceTree = "<group>"; };
 		B1E7FF511BC4555B008E2B99 /* Writer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Writer.entitlements; sourceTree = "<group>"; };
 		B1E7FF521BC45969008E2B99 /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		B1EC6B9C1CE3B33200B48CDB /* OutlineExtractor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OutlineExtractor.h; sourceTree = "<group>"; };
+		B1EC6B9D1CE3B33200B48CDB /* OutlineExtractor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OutlineExtractor.m; sourceTree = "<group>"; };
 		B1F04ED41C88AC99001C4D27 /* Courier Prime Bold Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Bold Italic.ttf"; sourceTree = "<group>"; };
 		B1F04ED51C88AC99001C4D27 /* Courier Prime Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Bold.ttf"; sourceTree = "<group>"; };
 		B1F04ED61C88AC99001C4D27 /* Courier Prime Italic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Courier Prime Italic.ttf"; sourceTree = "<group>"; };
@@ -302,6 +305,8 @@
 				B1D0B84A19E31B86005252E4 /* PrintView.m */,
 				B1509A3E1CB5C0C500884918 /* FDXInterface.h */,
 				B1509A3F1CB5C0C500884918 /* FDXInterface.m */,
+				B1EC6B9C1CE3B33200B48CDB /* OutlineExtractor.h */,
+				B1EC6B9D1CE3B33200B48CDB /* OutlineExtractor.m */,
 			);
 			name = Export;
 			sourceTree = "<group>";
@@ -452,6 +457,7 @@
 				B138B57919E1C973000489C4 /* main.m in Sources */,
 				B138B66A19E1E8CA000489C4 /* FountainParser.m in Sources */,
 				B138B66B19E1E8CA000489C4 /* FountainRegexes.m in Sources */,
+				B1EC6B9E1CE3B33200B48CDB /* OutlineExtractor.m in Sources */,
 				B138B66919E1E8CA000489C4 /* FNScript.m in Sources */,
 				B138B66519E1E8CA000489C4 /* FastFountainParser.m in Sources */,
 				B138B66C19E1E8CA000489C4 /* FountainWriter.m in Sources */,

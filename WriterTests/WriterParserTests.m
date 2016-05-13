@@ -32,8 +32,8 @@
         count += [s length] + 1; //+1 for the newline char that is omited in this representation
     }
     
-    //Check toString
-    NSString* toString = [parser toString];
+    //Check description
+    NSString* toString = [parser description];
     XCTAssertEqualObjects(toString, miniScriptExpectedToString);
     
     //Break test string at line, type at line and pos at line
@@ -64,9 +64,11 @@
     XCTAssertEqual([parser typeAtLine:i], titlePageUnknown); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertEqualObjects([parser sceneNumberAtLine:i-1], @"1");
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], character); i++;
@@ -92,6 +94,7 @@
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], transition); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], lyrics); i++;
     XCTAssertEqual([parser typeAtLine:i], transition); i++;
@@ -108,12 +111,16 @@
     XCTAssertEqual([parser typeAtLine:i], dialogue); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
 }
 
 - (void)testInsertions
@@ -232,9 +239,11 @@
     XCTAssertEqual([parser typeAtLine:i], titlePageUnknown); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertEqualObjects([parser sceneNumberAtLine:i-1], @"1");
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], heading); i++;
+    XCTAssertNil([parser sceneNumberAtLine:i-1]);
     XCTAssertEqual([parser typeAtLine:i], action); i++;
     XCTAssertEqual([parser typeAtLine:i], empty); i++;
     XCTAssertEqual([parser typeAtLine:i], character); i++;
@@ -486,7 +495,7 @@ NSString* script = @""
 @"\ttest@abc.\nde"
 @"Key: value\n"
 @"\n"
-@"INT. DAY - LIVING ROOM\n"
+@"INT. DAY - LIVING ROOM #1# \n"
 @"EXT. DAY - LIVING ROOM\n"
 @"\n"
 @"EXT. DAY - LIVING ROOM\n"

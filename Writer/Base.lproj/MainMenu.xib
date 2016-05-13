@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10117"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="NSApplication">
@@ -146,6 +146,12 @@
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
                                                 <action selector="exportFDX:" target="-1" id="F6e-vG-CJO"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Outline..." id="lAo-B9-uaU">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <action selector="exportOutline:" target="-1" id="HXB-My-Vhk"/>
                                             </connections>
                                         </menuItem>
                                     </items>
@@ -496,13 +502,19 @@ DQ
                                     </items>
                                 </menu>
                                 <connections>
-                                    <action selector="zoom:" target="-1" id="nJn-W7-IXG"/>
+                                    <action selector="zoom:" target="-1" id="hGt-8H-RSC"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Live Preview" id="lYw-08-5AI">
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <connections>
                                     <action selector="toggleLivePreview:" target="-1" id="dod-fg-QA1"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Outline" id="7cA-vF-vVK">
+                                <modifierMask key="keyEquivalentModifierMask"/>
+                                <connections>
+                                    <action selector="toggleOutlineView:" target="-1" id="jgE-Ew-h68"/>
                                 </connections>
                             </menuItem>
                             <menuItem isSeparatorItem="YES" id="c52-PG-mqe"/>
