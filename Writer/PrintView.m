@@ -153,7 +153,7 @@
                 pageWebView.mainFrame.frameView.allowsScrolling = NO;
                 [self addSubview:pageWebView];
                 FNHTMLScript *pageHTMLScript = [[FNHTMLScript alloc] initWithScript:pageScript document:document];
-                pageHTMLScript.customPage = [NSNumber numberWithInt:i];
+                pageHTMLScript.customPage = [NSNumber numberWithInt:i + (titleScript ? 0 : 1)];
                 pageHTMLScript.forRendering = @YES;
                 [pageWebView.mainFrame loadHTMLString:[pageHTMLScript html] baseURL:nil];
                 pageWebView.frame = NSMakeRect(0, lastObjectLowerRim, paperSize.width, paperSize.height);
