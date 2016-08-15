@@ -724,6 +724,17 @@
 	return index;
 }
 
+- (Line*)nextOutlineItemForItem:(Line*)item
+{
+	for (NSUInteger i = [self.lines indexOfObject:item] + 1; i < self.lines.count; i++) {
+		Line* line = self.lines[i];
+		if (line.type == section || line.type == synopse || line.type == heading) {
+				return line;
+		}
+	}
+	return nil;
+}
+
 - (BOOL)getAndResetChangeInOutline
 {
     if (_changeInOutline) {

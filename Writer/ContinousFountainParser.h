@@ -29,6 +29,7 @@
 - (NSUInteger)numberOfOutlineItems; //Returns the number of items for the outline view
 - (Line*)outlineItemAtIndex:(NSUInteger)index; //Returns an items for the outline view
 - (NSUInteger)outlineIndexOfLine:(Line*)line;
+- (Line*)nextOutlineItemForItem:(Line*)item;
 
 - (NSString*)description;
 @end

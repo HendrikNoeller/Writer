@@ -1310,7 +1310,17 @@ static NSString *forceLyricsSymbol = @"~";
 - (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forItems:(NSArray *)draggedItems
 {
 	_draggedLine = draggedItems[0];
-	[session.draggingPasteboard setString:_draggedLine.string forType:NSPasteboardTypeString];
+	//Get the next outline item to figure out the text that is part of this heading
+	NSRange draggedTextRange;
+	Line* nextOutlineItem = [self.parser nextOutlineItemForItem:_draggedLine];
+	if (nextOutlineItem) {
+		draggedTextRange = NSMakeRange(_draggedLine.position, nextOutlineItem.position - _draggedLine.position);
+	} else {
+		draggedTextRange = NSMakeRange(_draggedLine.position, self.getText.length - _draggedLine.position);
+	}
+	
+	NSLog([self.getText substringWithRange:draggedTextRange]);
+	[session.draggingPasteboard setString:[self.getText substringWithRange:draggedTextRange] forType:NSPasteboardTypeString];
 }
 
 - (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index
