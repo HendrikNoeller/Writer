@@ -50,6 +50,7 @@
 
 @property (weak) IBOutlet NSLayoutConstraint *outlineViewWidth;
 @property BOOL outlineViewVisible;
+@property (weak) Line* draggedLine;
 
 #pragma mark - Toolbar Buttons
 
@@ -164,6 +165,16 @@
     
     self.parser = [[ContinousFountainParser alloc] initWithString:[self getText]];
     [self applyFormatChanges];
+	
+	//Setup drag and drop for the outline view
+	// Register for the dropped object types we can accept.
+	[self.outlineView registerForDraggedTypes:@[NSPasteboardTypeString]];
+	
+	// Enable dragging items from our view to other applications.
+	[self.outlineView setDraggingSourceOperationMask:NSDragOperationCopy forLocal:NO];
+	
+	// Enable dragging items within and into our view.
+	[self.outlineView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
 }
 
 + (BOOL)autosavesInPlace {
@@ -1223,6 +1234,7 @@ static NSString *forceLyricsSymbol = @"~";
 {
     if ([item isKindOfClass:[Line class]]) {
         Line* line = item;
+		
         if (line.type == heading) {
             //Replace "INT/EXT" with "I/E" to make the lines match nicely
             NSString* string = [line.string uppercaseString];
@@ -1283,6 +1295,124 @@ static NSString *forceLyricsSymbol = @"~";
         return YES;
     }
     return NO;
+}
+
+#pragma mark OutlineView Reordering
+
+
+
+- (id<NSPasteboardWriting>)outlineView:(NSOutlineView *)outlineView pasteboardWriterForItem:(id)item
+{
+	return ((Line*)item).string;
+}
+
+
+- (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session willBeginAtPoint:(NSPoint)screenPoint forItems:(NSArray *)draggedItems
+{
+	_draggedLine = draggedItems[0];
+	[session.draggingPasteboard setString:_draggedLine.string forType:NSPasteboardTypeString];
+}
+
+- (NSDragOperation)outlineView:(NSOutlineView *)outlineView validateDrop:(id<NSDraggingInfo>)info proposedItem:(id)item proposedChildIndex:(NSInteger)index
+{
+	if (item) {
+		return NSDragOperationNone;
+	}
+	return NSDragOperationMove;
+}
+
+- (BOOL)outlineView:(NSOutlineView *)outlineView acceptDrop:(id<NSDraggingInfo>)info item:(id)item childIndex:(NSInteger)index
+{
+	//Find the index to insert, by either getting the element currently at this index, or the end of the document
+	NSUInteger indexToInsert;
+	if (index == [self.parser numberOfOutlineItems]) {
+		indexToInsert = self.getText.length;
+	} else {
+		indexToInsert = [self.parser outlineItemAtIndex:index].position;
+	}
+	
+	//Find the index and length of text to remove
+	NSUInteger indexToRemove = self.draggedLine.position;
+	NSUInteger lengthToRemove;
+	NSUInteger outlineIndexOfLine = [self.parser outlineIndexOfLine:self.draggedLine];
+	if (outlineIndexOfLine == [self.parser numberOfOutlineItems] - 1) {
+		lengthToRemove = self.getText.length - indexToRemove;
+	} else {
+		lengthToRemove = [self.parser outlineItemAtIndex:outlineIndexOfLine+1].position - indexToRemove;
+	}
+	
+	//Re-calculate the index to insert if the removed text is in front of its position to be inserted
+	if (indexToInsert > indexToRemove) {
+		indexToInsert -= lengthToRemove;
+	}
+	
+	//Stop if the passage shall be inserted where it came from
+	if (indexToInsert == indexToRemove) {
+		return YES;
+	}
+	
+	//Bake the range to be moved into an NSRange
+	NSRange movingRange = NSMakeRange(indexToRemove, lengthToRemove);
+	
+	//Move the range and add some new lines to ensure good padding
+	[self moveRange:movingRange toIndex:indexToInsert byAddingNewLinesInFront:2 andBack:2];
+	return YES;
+}
+
+
+- (void)moveRange:(NSRange)range toIndex:(NSUInteger)index byAddingNewLinesInFront:(NSUInteger)newLinesFront andBack:(NSUInteger)newLinesBack
+{
+	//Get the string that will be moved, and append the necessary newlines in the front and back
+	NSString* stringToInsert = [self.getText substringWithRange:range];
+	
+	for (int i = 0; i < newLinesFront; i++) {
+		stringToInsert = [@"\n" stringByAppendingString:stringToInsert];
+	}
+	
+	for (int i = 0; i < newLinesBack; i++) {
+		stringToInsert = [stringToInsert stringByAppendingString:@"\n"];
+	}
+	
+	
+	//Remove the text
+	[self replaceCharactersInRange:range withString:@""];
+	//Re-Insert it to the right position, with newlines attached
+	[self replaceCharactersInRange:NSMakeRange(index, 0) withString:stringToInsert];
+	
+	//Re-format everything
+	[self formattAllLines];
+	[self.outlineView reloadData];
+	
+	[[[self undoManager] prepareWithInvocationTarget:self] moveRange:NSMakeRange(index, stringToInsert.length)
+															 toIndex:range.location
+													byStrippingFront:newLinesFront
+															 andBack:newLinesBack];
+}
+
+- (void)moveRange:(NSRange)range toIndex:(NSUInteger)index byStrippingFront:(NSUInteger)stripFront andBack:(NSUInteger)stripBack
+{
+	//Create a range that is smaller on the edges by how many characters should be stripped, and save that amount of text to later insert
+	NSRange modifiedRange = NSMakeRange(range.location + stripFront, range.length - stripFront - stripBack);
+	NSString* removedString = [self.getText substringWithRange:modifiedRange];
+	
+	//Remove the text
+	[self replaceCharactersInRange:range withString:@""];
+	//Re-Insert it to the right position, with newlines stripped
+	[self replaceCharactersInRange:NSMakeRange(index, 0) withString:removedString];
+	
+	//Re-format everything
+	[self formattAllLines];
+	[self.outlineView reloadData];
+	
+	[[[self undoManager] prepareWithInvocationTarget:self] moveRange:NSMakeRange(index, removedString.length)
+															 toIndex:range.location
+											 byAddingNewLinesInFront:stripFront
+															 andBack:stripBack];
+}
+
+- (void)outlineView:(NSOutlineView *)outlineView draggingSession:(NSDraggingSession *)session endedAtPoint:(NSPoint)screenPoint operation:(NSDragOperation)operation
+{
+	_draggedLine = nil;
 }
 
 @end

@@ -11,7 +11,7 @@
 
 @interface ContinousFountainParser : NSObject
 
-@property (nonatomic) NSMutableArray *lines; //Stores every line as an element. Multiple lines of stuff
+@property (nonatomic) NSMutableArray<Line*> *lines; //Stores every line as an element. Multiple lines of stuff
 @property (nonatomic) NSMutableArray *changedIndices; //Stores every line that needs to be formatted according to the type
 
 //Parsing methods
@@ -28,6 +28,7 @@
 - (BOOL)getAndResetChangeInOutline;
 - (NSUInteger)numberOfOutlineItems; //Returns the number of items for the outline view
 - (Line*)outlineItemAtIndex:(NSUInteger)index; //Returns an items for the outline view
+- (NSUInteger)outlineIndexOfLine:(Line*)line;
 
 - (NSString*)description;
 @end

@@ -108,8 +108,13 @@
         [self.lines insertObject:newLine atIndex:lineIndex+1];
         
         [self incrementLinePositionsFromIndex:lineIndex+2 amount:1];
-        
-        return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(lineIndex, 2)];
+		
+		if (self.lines.count > lineIndex+2) {
+			return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(lineIndex, 3)];
+		} else {
+			
+			return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(lineIndex, 2)];
+		}
     } else {
         NSArray* pieces = @[[line.string substringToIndex:indexInLine],
                             character,
@@ -141,8 +146,12 @@
         }
         [self.lines removeObjectAtIndex:lineIndex+1];
         [self decrementLinePositionsFromIndex:lineIndex+1 amount:1];
-        
-        return [[NSIndexSet alloc] initWithIndex:lineIndex];
+		
+		if (self.lines.count > lineIndex + 1) {
+			return [NSIndexSet indexSetWithIndexesInRange:NSMakeRange(lineIndex, 2)];
+		} else {
+			return [[NSIndexSet alloc] initWithIndex:lineIndex];
+		}
     } else {
         NSArray* pieces = @[[line.string substringToIndex:indexInLine],
                             [line.string substringFromIndex:indexInLine+1]];
@@ -200,8 +209,13 @@
         if (lowestToDo == index) {
             [indices removeIndex:index];
         }
-    }
-    
+	}
+	
+	//Stop if the index is out of range
+	if (index >= self.lines.count) {
+		return;
+	}
+	
     //Correct type on this line
     Line* currentLine = self.lines[index];
     LineType oldType = currentLine.type;
@@ -693,6 +707,21 @@
         }
     }
     return nil;
+}
+
+- (NSUInteger)outlineIndexOfLine:(Line*)lineToFind
+{
+	NSUInteger index = 0;
+	for (Line* line in self.lines) {
+		if (line.type == section || line.type == synopse || line.type == heading) {
+			if (line == lineToFind) {
+				return index;
+			}
+			index++;
+		}
+	}
+	[NSException raise:@"Line is either not an outline line, or not part of the document" format:@"Line is %@", lineToFind.string];
+	return index;
 }
 
 - (BOOL)getAndResetChangeInOutline
