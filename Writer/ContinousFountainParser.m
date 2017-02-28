@@ -227,7 +227,8 @@
                 currentLine.type == titlePageSource ||
                 currentLine.type == titlePageUnknown ||
                 currentLine.type == section ||
-                currentLine.type == synopse ||
+				currentLine.type == synopse ||
+				currentLine.type == lyrics ||
                 currentLine.type == character ||            //if the line became anythign to
                 currentLine.type == parenthetical ||        //do with dialogue, it might cause
                 currentLine.type == dialogue ||             //the next lines to be dialogue
@@ -245,8 +246,9 @@
                 nextLine.type == titlePageContact ||
                 nextLine.type == titlePageSource ||
                 nextLine.type == titlePageUnknown ||
-                nextLine.type == section ||
-                nextLine.type == synopse ||
+				nextLine.type == section ||
+				nextLine.type == synopse ||
+				nextLine.type == lyrics ||
                 nextLine.type == heading ||                 //If the next line is a heading or
                 nextLine.type == character ||               //character or anything dialogue
                 nextLine.type == doubleDialogueCharacter || //related, it might not be anymore
@@ -511,7 +513,9 @@
             return section;
         } else if (preceedingLine.type == synopse) {
             return synopse;
-        }
+		} else if (preceedingLine.type == lyrics) {
+			return lyrics;
+		}
     }
     
     return action;
