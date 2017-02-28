@@ -174,6 +174,14 @@ static NSString * const kContentPattern = @"";
                 FNElement *element = [FNElement elementOfType:@"Lyrics" text:@" "];
                 [self.elements addObject:element];
             }
+			
+			if ([lastElement.elementType isEqualToString:@"Lyrics"]) {
+				lastElement.elementText = [NSString stringWithFormat:@"%@\n%@", lastElement.elementText, [line substringFromIndex:1]];
+				[self.elements removeLastObject];
+				[self.elements addObject:lastElement];
+				newlinesBefore = 0;
+				continue;
+			}
             
             FNElement *element = [FNElement elementOfType:@"Lyrics" text:line];
             [self.elements addObject:element];
