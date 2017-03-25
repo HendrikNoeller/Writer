@@ -174,7 +174,7 @@
     double red = redValue.doubleValue / 255.0;
     double green = greenValue.doubleValue / 255.0;
     double blue = blueValue.doubleValue / 255.0;
-    return [NSColor colorWithRed:red green:green blue:blue alpha:1.0];
+    return [NSColor colorWithCalibratedRed:red green:green blue:blue alpha:1.0];
 }
 
 #pragma mark Value Access
@@ -220,12 +220,12 @@
 {
     if (!_fallbackTheme) {
         _fallbackTheme = [[Theme alloc] init];
-        _fallbackTheme.backgroundColor = [NSColor colorWithWhite:0.0 alpha:1.0];
-        _fallbackTheme.selectionColor = [NSColor colorWithWhite:0.8 alpha:1.0];
-        _fallbackTheme.textColor = [NSColor colorWithWhite:1.0 alpha:1.0];
-        _fallbackTheme.invisibleTextColor = [NSColor colorWithWhite:0.7 alpha:1.0];
-        _fallbackTheme.caretColor = [NSColor colorWithWhite:0.1 alpha:1.0];
-        _fallbackTheme.commentColor = [NSColor colorWithWhite:0.5 alpha:1.0];
+        _fallbackTheme.backgroundColor = [NSColor colorWithCalibratedWhite:0.0 alpha:1.0];
+        _fallbackTheme.selectionColor = [NSColor colorWithCalibratedWhite:0.8 alpha:1.0];
+        _fallbackTheme.textColor = [NSColor colorWithCalibratedWhite:1.0 alpha:1.0];
+        _fallbackTheme.invisibleTextColor = [NSColor colorWithCalibratedWhite:0.7 alpha:1.0];
+        _fallbackTheme.caretColor = [NSColor colorWithCalibratedWhite:0.1 alpha:1.0];
+        _fallbackTheme.commentColor = [NSColor colorWithCalibratedWhite:0.5 alpha:1.0];
     }
     return _fallbackTheme;
 }

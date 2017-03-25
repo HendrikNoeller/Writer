@@ -372,6 +372,7 @@
 					B138B57219E1C973000489C4 = {
 						CreatedOnToolsVersion = 6.0.1;
 						DevelopmentTeam = RX98DMF4TJ;
+						ProvisioningStyle = Manual;
 						SystemCapabilities = {
 							com.apple.Maps.Mac = {
 								enabled = 0;
@@ -595,6 +596,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = RX98DMF4TJ;
 				INFOPLIST_FILE = Writer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -602,7 +604,8 @@
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
 				PRODUCT_BUNDLE_IDENTIFIER = de.HendrikNoeller.Writer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
+				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 			};
 			name = Debug;
 		};
@@ -614,6 +617,7 @@
 				CODE_SIGN_IDENTITY = "Mac Developer";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Developer ID Application";
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = RX98DMF4TJ;
 				INFOPLIST_FILE = Writer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.8;
@@ -621,7 +625,7 @@
 				"OTHER_LDFLAGS[arch=*]" = "-licucore";
 				PRODUCT_BUNDLE_IDENTIFIER = de.HendrikNoeller.Writer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "1fb912d3-f6d9-4f87-aa4a-ac45325e173a";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
